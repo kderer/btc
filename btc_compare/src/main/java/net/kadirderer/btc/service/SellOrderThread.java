@@ -105,11 +105,7 @@ public class SellOrderThread implements Runnable {
 					if (basePrice > 0) {
 						profit = (qor.getPrice() - basePrice) * (qor.getCompletedAmount() - lastCompletedAmount);
 						sellOrderService.addProfit(orderId, profit);
-					}	
-
-					double money = (qor.getCompletedAmount() - lastCompletedAmount) * qor.getPrice();
-					double price = mdr.getHighestBid();
-					buyOrderService.buyOrder(username, price, money / price);
+					}
 					
 					lastCompletedAmount = qor.getCompletedAmount();
 				}

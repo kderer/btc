@@ -29,6 +29,7 @@ public class ConfigController {
 		model.addAttribute("autotrade_enabled", configValueMap.get("autotrade_enabled"));
 		model.addAttribute("sellorder_check_period", configValueMap.get("sellorder_check_period"));
 		model.addAttribute("sellorder_delta", configValueMap.get("sellorder_delta"));
+		model.addAttribute("sellreorder_delta", configValueMap.get("sellreorder_delta"));
 		model.addAttribute("sellorder_time_limit", configValueMap.get("sellorder_time_limit"));
 		model.addAttribute("buyorder_time_limit", configValueMap.get("buyorder_time_limit"));
 		model.addAttribute("buyorder_delta", configValueMap.get("buyorder_delta"));
@@ -51,6 +52,7 @@ public class ConfigController {
 			@RequestParam(value = "recordgroupjob_enabled") @NotNull String recordgroupjob_enabled, 
 			@RequestParam(value = "autotrade_enabled") @NotNull String autotrade_enabled,
 			@RequestParam(value = "sellorder_delta") @NotNull String sellorder_delta,
+			@RequestParam(value = "sellreorder_delta") @NotNull String sellreorder_delta,
 			@RequestParam(value = "sellorder_check_period") @NotNull String sellorder_check_period,
 			@RequestParam(value = "sellorder_time_limit") @NotNull String sellorder_time_limit,
 			@RequestParam(value = "buyorder_time_limit") @NotNull String buyorder_time_limit,
@@ -62,13 +64,14 @@ public class ConfigController {
 		updateValue(configValueMap, "recordgroupjob_enabled", recordgroupjob_enabled);
 		updateValue(configValueMap, "autotrade_enabled", autotrade_enabled);
 		updateValue(configValueMap, "sellorder_delta", sellorder_delta);
+		updateValue(configValueMap, "sellreorder_delta", sellreorder_delta);
 		updateValue(configValueMap, "sellorder_check_period", sellorder_check_period);
 		updateValue(configValueMap, "sellorder_time_limit", sellorder_time_limit);
 		updateValue(configValueMap, "buyorder_time_limit", buyorder_time_limit);
 		updateValue(configValueMap, "buyorder_delta", buyorder_delta);
 		updateValue(configValueMap, "buyorder_check_period", buyorder_check_period);
 
-		return "config/list_config";
+		return "redirect:/config.html";
 	}
 	
 	

@@ -147,12 +147,12 @@ public class UserOrderDaoImpl implements UserOrderDao {
 		}
 		
 		if(criteria.getProfitEnd() != null) {
-			predicate = criteriaBuilder.and(criteriaBuilder.le(from.get("profit"),
+			predicate = criteriaBuilder.and(criteriaBuilder.lt(from.get("profit"),
 					criteria.getProfitEnd()), predicate);
 		}
 		
 		if(criteria.getProfitStart() != null) {
-			predicate = criteriaBuilder.and(criteriaBuilder.ge(from.get("profit"),
+			predicate = criteriaBuilder.and(criteriaBuilder.gt(from.get("profit"),
 					criteria.getProfitStart()), predicate);
 		}
 		

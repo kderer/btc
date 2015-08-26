@@ -63,6 +63,19 @@
 		</div>
 		
 		<div class="form-group">
+			<label for="sellReOrderDeltaDiv" class="col-sm-2 control-label">
+				<@spring.message code="label.updateconfig.sellreorder.delta"/>
+			</label>
+			
+			<div id="sellReOrderDeltaDiv" class="col-sm-10">
+				<div class="col-sm-4">
+					<input name="sellreorder_delta" class="form-control"
+						value="${sellreorder_delta}"/>
+				</div>
+			</div>
+		</div>
+		
+		<div class="form-group">
 			<label for="sellOrderTimeLimitDiv" class="col-sm-2 control-label">
 				<@spring.message code="label.updateconfig.sellorder.timelimit"/>
 			</label>

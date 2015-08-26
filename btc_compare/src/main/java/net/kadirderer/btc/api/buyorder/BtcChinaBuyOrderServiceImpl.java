@@ -18,6 +18,7 @@ import net.kadirderer.btc.api.util.btcchina.NumberUtil;
 import net.kadirderer.btc.db.dao.BtcPlatformDao;
 import net.kadirderer.btc.db.dao.UserOrderDao;
 import net.kadirderer.btc.db.model.BtcPlatform;
+import net.kadirderer.btc.db.model.FailedSellOrder;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.service.BuyOrderThread;
 
@@ -101,6 +102,15 @@ public class BtcChinaBuyOrderServiceImpl implements BuyOrderService, BtcChinaApi
 			logger.warn("-32004 error occured. Amount: {}, New Amount: {}", amount, newAmount);
 			
 			buyOrder("kadir", price, newAmount);			
+		} else {
+			FailedSellOrder failedOrder = new FailedSellOrder();
+			failedOrder.setAmount(amount);
+			failedOrder.setMessage(result.getError().getMessage());
+			failedOrder.setPlatformId(btcPlatformDao.queryByCode("BTCCHINA").getId());
+			failedOrder.setPrice(price * -1);
+			failedOrder.setUsername(username);
+			failedOrder.setBasePrice(0);
+			failedOrder.setStatus('D');
 		}
 		
 		return result;

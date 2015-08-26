@@ -25,9 +25,9 @@ public abstract class ConfigMap {
 		
 		configMap.put(RECORDGROUPJOB_ENABLED, "true");
 		configMap.put(AUTOTRADE_ENABLED, "true");
-		configMap.put(SELLORDER_CHECK_PERIOD, "30");
-		configMap.put(SELLORDER_DELTA, "0.1");
-		configMap.put(SELLREORDER_DELTA, "1");
+		configMap.put(SELLORDER_CHECK_PERIOD, "120");
+		configMap.put(SELLORDER_DELTA, "0.2");
+		configMap.put(SELLREORDER_DELTA, "0.25");
 		configMap.put(SELLORDER_TIME_LIMIT, "1800");
 		configMap.put(BUYORDER_CHECK_PERIOD, "20");
 		configMap.put(BUYORDER_DELTA, "0.5");

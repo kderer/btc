@@ -75,6 +75,21 @@
 			</div>
 			
 			<div class="form-group">
+				<label for="profitDiv" class="col-sm-2 control-label">
+					<@spring.message code="label.filterorder.profit"/>					
+				</label>			
+				
+				<div id="profitDiv" class="col-sm-10">
+					<div class="col-sm-4">
+		      			<input name="profitStart" class="form-control">
+					</div>
+					<div class="col-sm-4">
+		      			<input name="profitEnd" class="form-control">
+					</div>
+				</div>
+			</div>
+			
+			<div class="form-group">
 				<label for="createdateDiv" class="col-sm-2 control-label">
 					<@spring.message code="label.filterorder.createdate"/>					
 				</label>			
