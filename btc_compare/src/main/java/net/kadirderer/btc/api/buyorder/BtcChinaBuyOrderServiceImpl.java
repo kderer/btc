@@ -93,26 +93,8 @@ public class BtcChinaBuyOrderServiceImpl implements BuyOrderService, BtcChinaApi
 			
 			Thread boThread = new Thread(bot);
 			boThread.start();			
-		} else if (result.getError().getCode().equals("-32004")) {
-			
-			QueryAccountInfoResult qaiResult = queryAccountInfoService.queryAccountInfo("kadir");			
-			double balance = qaiResult.getCurrencyBalance();
-			double newAmount = NumberUtil.format(balance / price);
-					
-			logger.warn("-32004 error occured. Amount: {}, New Amount: {}", amount, newAmount);
-			
-			buyOrder("kadir", price, newAmount);			
-		} else {
-			FailedSellOrder failedOrder = new FailedSellOrder();
-			failedOrder.setAmount(amount);
-			failedOrder.setMessage(result.getError().getMessage());
-			failedOrder.setPlatformId(btcPlatformDao.queryByCode("BTCCHINA").getId());
-			failedOrder.setPrice(price * -1);
-			failedOrder.setUsername(username);
-			failedOrder.setBasePrice(0);
-			failedOrder.setStatus('D');
 		}
-		
+
 		return result;
 	}
 	

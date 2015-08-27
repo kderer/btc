@@ -107,22 +107,13 @@ public class BtcChinaSellOrderServiceImpl implements SellOrderService, BtcChinaA
 			FailedSellOrder failedOrder = new FailedSellOrder();
 			failedOrder.setAmount(amount);
 			failedOrder.setMessage(result.getError().getMessage());
-			failedOrder.setPlatformId(btcPlatformDao.queryByCode("BTCCHINA").getId());
+            failedOrder.setPlatformId(btcPlatformDao.queryByCode("BTCCHINA").getId());
 			failedOrder.setPrice(price);
 			failedOrder.setUsername(username);
 			failedOrder.setBasePrice(basePrice);
 			failedOrder.setStatus('P');
-			
-			if (result.getError().getCode().equals("-32004")) {
-				QueryAccountInfoResult qaiResult = queryAccountInfoService.queryAccountInfo("kadir");			
-				amount = qaiResult.getBtcBalance();
-				
-				sellOrder("kadir", price, amount, basePrice);
-				
-				failedOrder.setStatus('D');
-			}
-			
-			failedOrderDao.save(failedOrder);
+            
+            failedOrderDao.save(failedOrder);
 		}
 		
 		return result;

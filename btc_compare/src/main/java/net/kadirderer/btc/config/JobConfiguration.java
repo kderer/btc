@@ -91,7 +91,7 @@ public class JobConfiguration {
 		SimpleTriggerFactoryBean failedSellOrderTrigger = new SimpleTriggerFactoryBean();
 		
 		failedSellOrderTrigger.setJobDetail(setupFailedSellOrderJob().getObject());
-		failedSellOrderTrigger.setRepeatInterval(15 * 60 * 1000);		
+		failedSellOrderTrigger.setRepeatInterval(6 * 60 * 1000);		
 		failedSellOrderTrigger.setStartDelay(60 * 1000);
 				
 		return failedSellOrderTrigger;
