@@ -69,7 +69,9 @@ public class BtcChinaApiUtil {
 		String postdata = "{\"method\": \"" + api.getApiName() + "\", "
 				+ "\"params\": [" + api.getJSONRequestParameters(parameters) + "], "
 				+ "\"id\": 1}";
-
+		
+		Thread.sleep(200);
+		
 		// Send post request
 		con.setDoOutput(true);
 		DataOutputStream wr = new DataOutputStream(con.getOutputStream());

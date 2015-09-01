@@ -57,7 +57,11 @@
 					<div class="col-sm-4">
 		      			<select name="currency" class="form-control">		      				
 		      				<#list platformList as platform>
-								<option value="${platform.currency}">${platform.currency}</option>
+		      					<#if platform.currency == 'CNY'>
+									<option value="${platform.currency}" selected>${platform.currency}</option>
+								<#else>
+									<option value="${platform.currency}">${platform.currency}</option>
+								</#if>
 							</#list>
 		      			</select>
 					</div>

@@ -129,6 +129,8 @@ public class SellOrderThread implements Runnable {
 			
 			double newPrice = mdr.getLowestAsk();
 			
+			Thread.sleep(2 * 1000);
+			
 			if(qor.getPrice() - newPrice > ConfigMap.sellReOrderDelta()) {
 				sellOrderService.sellOrder(username, qor.getPrice() - ConfigMap.sellReOrderDelta(),
 						qor.getAmount(), basePrice);
