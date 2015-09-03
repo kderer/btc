@@ -122,6 +122,8 @@ public class BuyOrderThread implements Runnable {
 				double price = mdr.getHighestBid();
 				double amount = balance / (price);
 				
+				Thread.sleep(2 * 1000);
+				
 				buyOrderService.buyOrder(username, price, amount);
 			}
 
