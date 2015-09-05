@@ -22,7 +22,7 @@ public class ReportDaoImpl implements ReportDao {
 	public List<DailyReportDetail> queryDailyProfit() {
 		Query query = entityManager.createNativeQuery("select date(createdate) as date, "
 				+ "status, count(*) as amount, sum(profit) as profit "
-				+ "from t_userorder "
+				+ "from T_USERORDER "
 				+ "where profit <> 0 "
 				+ "group by date(createdate), status "
 				+ "order by createdate desc", "DailyProfitReport");
