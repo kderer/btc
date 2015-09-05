@@ -20,12 +20,12 @@ public class ReportDaoImpl implements ReportDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<DailyReportDetail> queryDailyProfit() {
-		Query query = entityManager.createNativeQuery("select date(createdate) as date, "
-				+ "status, count(*) as amount, sum(profit) as profit "
+		Query query = entityManager.createNativeQuery("select date(CREATEDATE) as date, "
+				+ "STATUS, count(*) as amount, sum(PROFIT) as profit "
 				+ "from T_USERORDER "
-				+ "where profit <> 0 "
-				+ "group by date(createdate), status "
-				+ "order by createdate desc", "DailyProfitReport");
+				+ "where PROFIT <> 0 "
+				+ "group by date(CREATEDATE), status "
+				+ "order by CREATEDATE desc", "DailyProfitReport");
 		
 		List<DailyReportDetail> resultList = new ArrayList<DailyReportDetail>();
 		List<Object[]> rawList = query.getResultList();		
