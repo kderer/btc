@@ -6,6 +6,7 @@
 <#assign orderListUrl><@spring.url value="/order.html"/></#assign>
 <#assign exchangeRatesUrl><@spring.url value="/exchangeRates.html"/></#assign>
 <#assign tradeJobSettingsUrl><@spring.url value="/config.html"/></#assign>
+<#assign reportUrl><@spring.url value="/report/dailyprofit.html"/></#assign>
 
 <#assign isUserAuthorized="false"/>
 <@sec.authorize access="hasRole('ADMIN')">
@@ -65,6 +66,12 @@
 				<a role="menuitem" class="menuanchor" tabindex="-1" href="${orderListUrl}">
 					<span class="glyphicon glyphicon-shopping-cart menuspan"></span>
 					<@spring.message code="label.menu.userorderList"/>
+				</a>
+			</li>
+			<li role="presentation">
+				<a role="menuitem" class="menuanchor" tabindex="-1" href="${reportUrl}">
+					<span class="glyphicon glyphicon glyphicon-file menuspan"></span>
+					<@spring.message code="label.menu.report"/>
 				</a>
 			</li>
 			<li role="presentation">
