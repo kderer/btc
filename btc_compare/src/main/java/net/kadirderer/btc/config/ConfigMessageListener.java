@@ -29,11 +29,10 @@ public class ConfigMessageListener implements MessageListener {
 				
 				if(!"sendConfigValue".equals(configName)) {
 					ConfigMap.setKeyValue(configName, configValue);
-				}				
-				
-				messagingService.sendMessage("btc_config_value_queue", ConfigMap.valueMapJson());				
-			}
-			
+				} else {				
+					messagingService.sendMessage("btc_config_value_queue", ConfigMap.valueMapJson());
+				}
+			}			
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}

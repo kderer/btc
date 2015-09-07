@@ -46,6 +46,7 @@ public class SellOrderThread implements Runnable {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void sellStrategyOne() {
 		try {
 			Thread.sleep(ConfigMap.sellOrderCheckPeriod() * 1000);

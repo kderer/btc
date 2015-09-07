@@ -49,7 +49,7 @@ public abstract class AutoTradeThreadService {
 		
 		MarketDepthResult mdr = getMarketDepthService().getMarketDepth(username);
 		double lowestAsk = mdr.getHighestBid() + ConfigMap.sellOrderDelta();
-		double highestBid = mdr.getLowestAsk() - ConfigMap.buyOrderDelta();
+		double highestBid = mdr.getHighestBid() - ConfigMap.buyOrderDelta();
 		
 		QueryAccountInfoResult qaiResult = getQueryAccountInfoService().queryAccountInfo(username);
 		double btcBalance = qaiResult.getBtcBalance();

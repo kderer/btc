@@ -16,6 +16,7 @@ public abstract class ConfigMap {
 	private static final String SELLORDER_TIME_LIMIT = "sellorder_time_limit";
 	private static final String BUYORDER_CHECK_PERIOD = "buyorder_check_period";
 	private static final String BUYORDER_DELTA = "buyorder_delta";
+	private static final String BUYREORDER_DELTA = "buyreorder_delta";
 	private static final String BUYORDER_TIME_LIMIT = "buyorder_time_limit";
 	
 	private static Map<String, String> configMap; 
@@ -97,6 +98,14 @@ public abstract class ConfigMap {
 	
 	public static void setBuyOrderDelta(String value) {
 		configMap.put(BUYORDER_DELTA, value);
+	}
+	
+	public static Double buyReOrderDelta() {
+		return Double.parseDouble(configMap.get(BUYREORDER_DELTA));
+	}
+	
+	public static void setBuyReOrderDelta(String value) {
+		configMap.put(BUYREORDER_DELTA, value);
 	}
 	
 	public static int buyOrderTimeLimit() {

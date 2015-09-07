@@ -33,22 +33,25 @@ public class ConfigController {
 		model.addAttribute("sellorder_time_limit", configValueMap.get("sellorder_time_limit"));
 		model.addAttribute("buyorder_time_limit", configValueMap.get("buyorder_time_limit"));
 		model.addAttribute("buyorder_delta", configValueMap.get("buyorder_delta"));
+		model.addAttribute("buyreorder_delta", configValueMap.get("buyreorder_delta"));
 		model.addAttribute("buyorder_check_period", configValueMap.get("buyorder_check_period"));
 		
 //		model.addAttribute("recordgroupjob_enabled", "true");		
 //		model.addAttribute("autotrade_enabled", "ture");
 //		model.addAttribute("sellorder_check_period", "ture");
 //		model.addAttribute("sellorder_delta", "ture");
+//		model.addAttribute("sellreorder_delta", "ture");
 //		model.addAttribute("sellorder_time_limit", "ture");
 //		model.addAttribute("buyorder_time_limit", "ture");
 //		model.addAttribute("buyorder_delta", "ture");
+//		model.addAttribute("buyreorder_delta", "ture");
 //		model.addAttribute("buyorder_check_period", "ture");
 		
 		return "config/list_config";
 	}
 	
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String addPlatformApi(ModelMap model, 
+	public String updateConfig(ModelMap model, 
 			@RequestParam(value = "recordgroupjob_enabled") @NotNull String recordgroupjob_enabled, 
 			@RequestParam(value = "autotrade_enabled") @NotNull String autotrade_enabled,
 			@RequestParam(value = "sellorder_delta") @NotNull String sellorder_delta,
@@ -57,6 +60,7 @@ public class ConfigController {
 			@RequestParam(value = "sellorder_time_limit") @NotNull String sellorder_time_limit,
 			@RequestParam(value = "buyorder_time_limit") @NotNull String buyorder_time_limit,
 			@RequestParam(value = "buyorder_delta") @NotNull String buyorder_delta,
+			@RequestParam(value = "buyreorder_delta") @NotNull String buyreorder_delta,
 			@RequestParam(value = "buyorder_check_period") @NotNull String buyorder_check_period) {
 		
 		Map<String, String> configValueMap = configService.receiveConfigValues();
@@ -69,6 +73,7 @@ public class ConfigController {
 		updateValue(configValueMap, "sellorder_time_limit", sellorder_time_limit);
 		updateValue(configValueMap, "buyorder_time_limit", buyorder_time_limit);
 		updateValue(configValueMap, "buyorder_delta", buyorder_delta);
+		updateValue(configValueMap, "buyreorder_delta", buyreorder_delta);
 		updateValue(configValueMap, "buyorder_check_period", buyorder_check_period);
 
 		return "redirect:/config.html";
