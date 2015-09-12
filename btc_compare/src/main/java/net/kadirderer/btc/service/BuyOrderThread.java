@@ -2,6 +2,7 @@ package net.kadirderer.btc.service;
 
 import java.util.Calendar;
 
+import net.kadirderer.btc.api.OrderStatus;
 import net.kadirderer.btc.api.buyorder.BuyOrderService;
 import net.kadirderer.btc.api.cancelorder.CancelOrderService;
 import net.kadirderer.btc.api.marketdepth.MarketDepthResult;
@@ -95,6 +96,11 @@ public class BuyOrderThread implements Runnable {
 
 			try {
 				qor = queryOrderService.queryOrder(username, orderId);
+				
+				if (OrderStatus.CANCELLED.equals(qor.getStatus())) {
+					return;
+				}
+				
 				mdr = marketDepthService.getMarketDepth(username);
 				
 				if (lastCompletedAmount < qor.getCompletedAmount()) {
