@@ -26,12 +26,12 @@ public abstract class ConfigMap {
 		
 		configMap.put(RECORDGROUPJOB_ENABLED, "true");
 		configMap.put(AUTOTRADE_ENABLED, "true");
-		configMap.put(SELLORDER_CHECK_PERIOD, "59");
+		configMap.put(SELLORDER_CHECK_PERIOD, "61");
 		configMap.put(SELLORDER_DELTA, "3");
 		configMap.put(SELLREORDER_DELTA, "0.05");
 		configMap.put(SELLORDER_TIME_LIMIT, "120");
-		configMap.put(BUYORDER_CHECK_PERIOD, "29");
-		configMap.put(BUYORDER_DELTA, "3");
+		configMap.put(BUYORDER_CHECK_PERIOD, "31");
+		configMap.put(BUYORDER_DELTA, "1.5");
 		configMap.put(BUYREORDER_DELTA, "0.1");
 		configMap.put(BUYORDER_TIME_LIMIT, "120");
 	}
