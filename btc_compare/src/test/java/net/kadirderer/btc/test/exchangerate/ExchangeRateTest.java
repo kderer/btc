@@ -3,26 +3,24 @@ package net.kadirderer.btc.test.exchangerate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import net.kadirderer.btc.exchangerate.ExchangeRateQuery;
-import net.kadirderer.btc.exchangerate.ExchangeRateQueryResult;
-import net.kadirderer.btc.exchangerate.ExchangeRateQueryService;
-import net.kadirderer.btc.exchangerate.ExchangeRatesTable;
-import net.kadirderer.btc.service.ExchangeRatesService;
-import net.kadirderer.btc.test.config.TestConfig;
 
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import net.kadirderer.btc.exchangerate.ExchangeRateQuery;
+import net.kadirderer.btc.exchangerate.ExchangeRateQueryResult;
+import net.kadirderer.btc.exchangerate.ExchangeRateQueryService;
+import net.kadirderer.btc.exchangerate.ExchangeRatesTable;
+import net.kadirderer.btc.test.config.TestConfig;
+
 public class ExchangeRateTest extends TestConfig {
 	
 	private ExchangeRateQueryService erqs;
-	private ExchangeRatesService ers;
 	
 	
 	@Override
 	public void getObjectFromContext(AnnotationConfigApplicationContext context) {
 		erqs = context.getBean(ExchangeRateQueryService.class);
-		ers = context.getBean(ExchangeRatesService.class);
 	}
 	
 	

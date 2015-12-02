@@ -2,13 +2,17 @@ package net.kadirderer.btc.api.buyorder;
 
 import java.util.Calendar;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.kadirderer.btc.api.ApiType;
 import net.kadirderer.btc.api.OrderStatus;
 import net.kadirderer.btc.api.OrderType;
 import net.kadirderer.btc.api.cancelorder.CancelOrderService;
 import net.kadirderer.btc.api.marketdepth.MarketDepthService;
-import net.kadirderer.btc.api.queryaccountinfo.QueryAccountInfoResult;
-import net.kadirderer.btc.api.queryaccountinfo.QueryAccountInfoService;
 import net.kadirderer.btc.api.queryorder.QueryOrderService;
 import net.kadirderer.btc.api.sellorder.SellOrderService;
 import net.kadirderer.btc.api.util.btcchina.BtcChinaApiCallable;
@@ -18,23 +22,12 @@ import net.kadirderer.btc.api.util.btcchina.NumberUtil;
 import net.kadirderer.btc.db.dao.BtcPlatformDao;
 import net.kadirderer.btc.db.dao.UserOrderDao;
 import net.kadirderer.btc.db.model.BtcPlatform;
-import net.kadirderer.btc.db.model.FailedSellOrder;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.service.BuyOrderThread;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class BtcChinaBuyOrderServiceImpl implements BuyOrderService, BtcChinaApiCallable {
 	
-	private static Logger logger = LoggerFactory.getLogger(BtcChinaBuyOrderServiceImpl.class);
-		
 	@Autowired
 	private BtcPlatformDao btcPlatformDao;
 	
@@ -53,9 +46,6 @@ public class BtcChinaBuyOrderServiceImpl implements BuyOrderService, BtcChinaApi
 	@Autowired
 	private MarketDepthService marketDepthService;
 	
-	@Autowired
-	private QueryAccountInfoService queryAccountInfoService;
-
 	@Override
 	@Transactional
 	public BtcChinaBuyOrderResult buyOrder(String username, double price, double amount) throws Exception {

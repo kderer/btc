@@ -10,14 +10,8 @@ import net.kadirderer.btc.api.queryaccountinfo.QueryAccountInfoService;
 import net.kadirderer.btc.api.queryorder.QueryOrderService;
 import net.kadirderer.btc.api.sellorder.SellOrderService;
 import net.kadirderer.btc.config.ConfigMap;
-import net.kadirderer.btc.db.dao.UserOrderDao;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AutoTradeThreadService {
-	
-	@Autowired
-	private UserOrderDao userOrderDao;
 	
 	public abstract SellOrderService getSellOrderService();
 	

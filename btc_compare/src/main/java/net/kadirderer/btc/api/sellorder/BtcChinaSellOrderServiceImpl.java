@@ -4,14 +4,18 @@ import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.kadirderer.btc.api.ApiType;
 import net.kadirderer.btc.api.OrderStatus;
 import net.kadirderer.btc.api.OrderType;
 import net.kadirderer.btc.api.buyorder.BuyOrderService;
 import net.kadirderer.btc.api.cancelorder.CancelOrderService;
 import net.kadirderer.btc.api.marketdepth.MarketDepthService;
-import net.kadirderer.btc.api.queryaccountinfo.QueryAccountInfoResult;
-import net.kadirderer.btc.api.queryaccountinfo.QueryAccountInfoService;
 import net.kadirderer.btc.api.queryorder.QueryOrderService;
 import net.kadirderer.btc.api.util.btcchina.BtcChinaApiCallable;
 import net.kadirderer.btc.api.util.btcchina.BtcChinaApiUtil;
@@ -25,12 +29,6 @@ import net.kadirderer.btc.db.model.FailedSellOrder;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.service.SellOrderThread;
 import net.kadirderer.btc.service.UserOrderService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class BtcChinaSellOrderServiceImpl implements SellOrderService, BtcChinaApiCallable {
@@ -58,9 +56,6 @@ public class BtcChinaSellOrderServiceImpl implements SellOrderService, BtcChinaA
 	
 	@Autowired
 	private UserOrderService userOrderService;
-	
-	@Autowired
-	private QueryAccountInfoService queryAccountInfoService;
 	
 	private Map<String, Double> profitMap = new Hashtable<String, Double>();
 

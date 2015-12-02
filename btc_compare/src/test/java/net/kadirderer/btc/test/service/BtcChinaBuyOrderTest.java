@@ -28,6 +28,7 @@ public class BtcChinaBuyOrderTest {
 	private BtcPlatformDao btcPlatformDao;
 	
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void testBuyOrder() {
 		try {

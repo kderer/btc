@@ -3,7 +3,12 @@ package net.kadirderer.btc.test.service;
 import java.util.Calendar;
 import java.util.Date;
 
-import net.kadirderer.btc.api.marketdepth.MarketDepthService;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import net.kadirderer.btc.api.sellorder.SellOrderService;
 import net.kadirderer.btc.config.ApplicationConfig;
 import net.kadirderer.btc.config.ConfigMap;
@@ -11,12 +16,6 @@ import net.kadirderer.btc.config.PlatformApiConfig;
 import net.kadirderer.btc.db.dao.FailedSellOrderDao;
 import net.kadirderer.btc.db.model.FailedSellOrder;
 import net.kadirderer.btc.test.config.DatabaseTestConfig;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {DatabaseTestConfig.class, PlatformApiConfig.class, ApplicationConfig.class})
@@ -27,9 +26,6 @@ public class FailedSellOrderTaskTest {
 	
 	@Autowired
 	private SellOrderService sellOrderService;
-	
-	@Autowired
-	private MarketDepthService marketDepthService;
 	
 	@Test
 	public void testAutoTradeFailedSellOrder() {

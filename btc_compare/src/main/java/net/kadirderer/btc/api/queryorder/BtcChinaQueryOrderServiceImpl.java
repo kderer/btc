@@ -2,27 +2,23 @@ package net.kadirderer.btc.api.queryorder;
 
 import java.util.Calendar;
 
-import net.kadirderer.btc.api.ApiType;
-import net.kadirderer.btc.api.OrderStatus;
-import net.kadirderer.btc.api.util.btcchina.BtcChinaApiCallable;
-import net.kadirderer.btc.api.util.btcchina.BtcChinaApiUtil;
-import net.kadirderer.btc.db.dao.BtcPlatformDao;
-import net.kadirderer.btc.db.dao.UserAccessKeyDao;
-import net.kadirderer.btc.db.dao.UserOrderDao;
-import net.kadirderer.btc.db.model.BtcPlatform;
-import net.kadirderer.btc.db.model.UserOrder;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.kadirderer.btc.api.ApiType;
+import net.kadirderer.btc.api.OrderStatus;
+import net.kadirderer.btc.api.util.btcchina.BtcChinaApiCallable;
+import net.kadirderer.btc.api.util.btcchina.BtcChinaApiUtil;
+import net.kadirderer.btc.db.dao.BtcPlatformDao;
+import net.kadirderer.btc.db.dao.UserOrderDao;
+import net.kadirderer.btc.db.model.BtcPlatform;
+import net.kadirderer.btc.db.model.UserOrder;
+
 @Service
 public class BtcChinaQueryOrderServiceImpl implements QueryOrderService, BtcChinaApiCallable {
-	
-	@Autowired
-	private UserAccessKeyDao uakDao;
 	
 	@Autowired
 	private BtcPlatformDao btcPlatformDao;

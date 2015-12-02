@@ -2,16 +2,15 @@ package net.kadirderer.btc.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import net.kadirderer.btc.api.ApiType;
-import net.kadirderer.btc.db.dao.BtcPlatformDao;
 import net.kadirderer.btc.db.dao.PlatformAPIDao;
 import net.kadirderer.btc.db.model.BtcPlatform;
 import net.kadirderer.btc.db.model.PlatformAPI;
 import net.kadirderer.btc.web.dto.PlatformApiDto;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PlatformApiServiceImpl extends BaseDtoService<PlatformAPI , PlatformApiDto> implements
@@ -20,9 +19,6 @@ public class PlatformApiServiceImpl extends BaseDtoService<PlatformAPI , Platfor
 	@Autowired
 	private PlatformAPIDao paDao;
 	
-	@Autowired 
-	private BtcPlatformDao bpDao;
-
 	@Override
 	public PlatformAPI save(PlatformApiDto newPlatformApi) {
 		return paDao.save(createModel(newPlatformApi));
