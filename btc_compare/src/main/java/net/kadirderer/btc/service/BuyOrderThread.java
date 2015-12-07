@@ -1,5 +1,7 @@
 package net.kadirderer.btc.service;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Calendar;
 
 import net.kadirderer.btc.api.OrderStatus;
@@ -11,6 +13,8 @@ import net.kadirderer.btc.api.queryorder.QueryOrderResult;
 import net.kadirderer.btc.api.queryorder.QueryOrderService;
 import net.kadirderer.btc.api.sellorder.SellOrderService;
 import net.kadirderer.btc.config.ConfigMap;
+import net.kadirderer.btc.util.email.Email;
+import net.kadirderer.btc.util.email.EmailSendService;
 
 public class BuyOrderThread implements Runnable {
 	
@@ -21,6 +25,8 @@ public class BuyOrderThread implements Runnable {
 	private BuyOrderService buyOrderService;
 	private String username;
 	private String orderId;
+	
+	private EmailSendService emailSendService;
 		
 	public BuyOrderThread() {
 		
@@ -116,7 +122,17 @@ public class BuyOrderThread implements Runnable {
 				
 				timeElapsed = Calendar.getInstance().getTimeInMillis() - startTime;
 			} catch (Exception e) {
-				e.printStackTrace();
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				e.printStackTrace(pw);
+				
+				Email email = new Email();
+				email.addToToList("kderer@hotmail.com");
+				email.setSubject("BTC Exception");
+				email.setFrom("exception@btc.kadirderer.net");
+				email.setBody(sw.toString());
+				
+				emailSendService.sendMail(email);
 			}
 		}
 		
@@ -139,7 +155,17 @@ public class BuyOrderThread implements Runnable {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			
+			Email email = new Email();
+			email.addToToList("kderer@hotmail.com");
+			email.setSubject("BTC Exception");
+			email.setFrom("exception@btc.kadirderer.net");
+			email.setBody(sw.toString());
+			
+			emailSendService.sendMail(email);
 		}
 	}
 	
@@ -198,5 +224,12 @@ public class BuyOrderThread implements Runnable {
 	public void setBuyOrderService(BuyOrderService buyOrderService) {
 		this.buyOrderService = buyOrderService;
 	}
-	
+
+	public EmailSendService getEmailSendService() {
+		return emailSendService;
+	}
+
+	public void setEmailSendService(EmailSendService emailSendService) {
+		this.emailSendService = emailSendService;
+	}
 }

@@ -29,6 +29,7 @@ import net.kadirderer.btc.db.model.FailedSellOrder;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.service.SellOrderThread;
 import net.kadirderer.btc.service.UserOrderService;
+import net.kadirderer.btc.util.email.EmailSendService;
 
 @Service
 public class BtcChinaSellOrderServiceImpl implements SellOrderService, BtcChinaApiCallable {
@@ -56,6 +57,9 @@ public class BtcChinaSellOrderServiceImpl implements SellOrderService, BtcChinaA
 	
 	@Autowired
 	private UserOrderService userOrderService;
+	
+	@Autowired
+	private EmailSendService emailSendService;
 	
 	private Map<String, Double> profitMap = new Hashtable<String, Double>();
 
@@ -94,6 +98,7 @@ public class BtcChinaSellOrderServiceImpl implements SellOrderService, BtcChinaA
 			sot.setMarketDepthService(marketDepthSevice);
 			sot.setUsername(username);
 			sot.setBasePrice(basePrice);
+			sot.setEmailSendService(emailSendService);
 			
 			Thread boThread = new Thread(sot);
 			boThread.start();			

@@ -19,7 +19,8 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 
 @Configuration
-@ComponentScan(basePackages = {"net.kadirderer.btc.exchangerate", "net.kadirderer.btc.service"})
+@ComponentScan(basePackages = { "net.kadirderer.btc.exchangerate", "net.kadirderer.btc.service",
+		"net.kadirderer.btc.util.email" })
 @PropertySource(value = "classpath:app-config.properties")
 public class ApplicationConfig {	
 		

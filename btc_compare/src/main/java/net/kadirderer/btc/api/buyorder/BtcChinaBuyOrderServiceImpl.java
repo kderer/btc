@@ -24,6 +24,7 @@ import net.kadirderer.btc.db.dao.UserOrderDao;
 import net.kadirderer.btc.db.model.BtcPlatform;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.service.BuyOrderThread;
+import net.kadirderer.btc.util.email.EmailSendService;
 
 @Service
 public class BtcChinaBuyOrderServiceImpl implements BuyOrderService, BtcChinaApiCallable {
@@ -45,6 +46,9 @@ public class BtcChinaBuyOrderServiceImpl implements BuyOrderService, BtcChinaApi
 	
 	@Autowired
 	private MarketDepthService marketDepthService;
+	
+	@Autowired
+	private EmailSendService emailSendService;
 	
 	@Override
 	@Transactional
@@ -80,6 +84,7 @@ public class BtcChinaBuyOrderServiceImpl implements BuyOrderService, BtcChinaApi
 			bot.setBuyOrderService(this);
 			bot.setUsername(username);
 			bot.setMarketDepthService(marketDepthService);
+			bot.setEmailSendService(emailSendService);
 			
 			Thread boThread = new Thread(bot);
 			boThread.start();			

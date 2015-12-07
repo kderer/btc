@@ -1,5 +1,7 @@
 package net.kadirderer.btc.service;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Calendar;
 
 import net.kadirderer.btc.api.OrderStatus;
@@ -11,6 +13,8 @@ import net.kadirderer.btc.api.queryorder.QueryOrderResult;
 import net.kadirderer.btc.api.queryorder.QueryOrderService;
 import net.kadirderer.btc.api.sellorder.SellOrderService;
 import net.kadirderer.btc.config.ConfigMap;
+import net.kadirderer.btc.util.email.Email;
+import net.kadirderer.btc.util.email.EmailSendService;
 
 public class SellOrderThread implements Runnable {
 	
@@ -18,7 +22,8 @@ public class SellOrderThread implements Runnable {
 	private CancelOrderService cancelOrderService;
 	private BuyOrderService buyOrderService;
 	private SellOrderService sellOrderService;
-	private MarketDepthService marketDepthService;
+	private MarketDepthService marketDepthService;	
+	private EmailSendService emailSendService;
 	
 	private double basePrice; 
 	
@@ -74,7 +79,6 @@ public class SellOrderThread implements Runnable {
 			if (qor.getAmount() > 0) {
 				sellOrderService.sellOrder(username, mdr.getPriceOfMaxAskAmount(), qor.getAmount(), 0);
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -123,7 +127,17 @@ public class SellOrderThread implements Runnable {
 				
 				timeElapsed = Calendar.getInstance().getTimeInMillis() - startTime;
 			} catch (Exception e) {
-				e.printStackTrace();
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				e.printStackTrace(pw);
+				
+				Email email = new Email();
+				email.addToToList("kderer@hotmail.com");
+				email.setSubject("BTC Exception");
+				email.setFrom("exception@btc.kadirderer.net");
+				email.setBody(sw.toString());
+				
+				emailSendService.sendMail(email);
 			}
 		}
 		
@@ -145,7 +159,17 @@ public class SellOrderThread implements Runnable {
 				sellOrderService.sellOrder(username, newPrice, qor.getAmount(), basePrice);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			
+			Email email = new Email();
+			email.addToToList("kderer@hotmail.com");
+			email.setSubject("BTC Exception");
+			email.setFrom("exception@btc.kadirderer.net");
+			email.setBody(sw.toString());
+			
+			emailSendService.sendMail(email);
 		}		
 		
 	}
@@ -212,6 +236,14 @@ public class SellOrderThread implements Runnable {
 
 	public void setBasePrice(double basePrice) {
 		this.basePrice = basePrice;
+	}
+
+	public EmailSendService getEmailSendService() {
+		return emailSendService;
+	}
+
+	public void setEmailSendService(EmailSendService emailSendService) {
+		this.emailSendService = emailSendService;
 	}
 	
 }
