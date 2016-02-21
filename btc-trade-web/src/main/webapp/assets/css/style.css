@@ -1,0 +1,70 @@
+@CHARSET "ISO-8859-1";
+
+#mainDiv {
+	margin: 0 auto;
+	width: 1024px;
+}
+
+.page-header {
+	margin-top: 5px !important;
+}
+
+.valueLabel {
+	padding-top: 7px;
+}
+
+.boldtext {
+	font-weight: bold;
+}
+
+.menubutton {
+	padding: 5px 8px;
+}
+
+.menuspan {
+	margin-right: 5px;
+}
+
+.menuanchor {
+	padding-left: 13px !important;
+}
+
+#platformListTable td:nth-child(5), #platformListTable th:nth-child(5) {
+	text-align: center;
+}
+
+.buttonActionDiv {
+	padding-left: 15px;
+	padding-right: 15px;
+	margin-bottom: 10px;
+}
+
+#editPlatformApiListTable td:nth-child(2), #editPlatformApiListTable th:nth-child(2) {
+	white-space: nowrap;
+	width: 16%;
+}
+
+#editPlatformApiListTable td:nth-child(5), #editPlatformApiListTable th:nth-child(5) {
+	text-align: center; 
+	white-space: nowrap;
+	width: 11%;
+}
+
+#editPlatformApiListTable td:nth-child(4), #editPlatformApiListTable th:nth-child(4) {
+	word-wrap: break-word;  
+}
+
+#exchangeRatioTable td:nth-child(3), #exchangeRatioTable th:nth-child(3) {
+	text-align: center; 
+	white-space: nowrap;
+	width: 11%;
+}
+#exchangeRatioTable td:nth-child(3), #exchangeRatioTable th:nth-child(3) {
+	text-align: center; 
+	white-space: nowrap;
+	width: 12%;
+}
+#exchangeRatioTable td:nth-child(2), #exchangeRatioTable th:nth-child(2) {
+	white-space: nowrap;
+	width: 44%;
+}

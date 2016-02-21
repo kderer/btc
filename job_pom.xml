@@ -2,12 +2,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.kadirderer</groupId>
 	<artifactId>btc-compare-job-group</artifactId>
-	<version>0.1</version>
+	<version>1.0</version>
 	<packaging>pom</packaging>
 	<name>btc-compare-job-group</name>	
 	
 	<modules>
-		<module>btc_compare</module>
-		<module>btc_compare_dao</module>
+		<module>btc-trade-job</module>
+		<module>btc-trade-dao</module>
+		<module>btc-trade-api</module>
+		<module>btc-trade-impl</module>
+		<module>btc-trade-util</module>		
 	</modules>	
 </project>
