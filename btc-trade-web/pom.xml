@@ -164,7 +164,7 @@
 			<version>${spring.version}</version>
 			<scope>test</scope>
 		</dependency>
-
+		<!-- 
 		<dependency>
 			<groupId>net.kadirderer.btc</groupId>
 			<artifactId>btc-trade-dao</artifactId>
@@ -172,7 +172,7 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-
+		 -->
 	</dependencies>
 
 	<build>
