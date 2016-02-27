@@ -110,6 +110,8 @@ public abstract class AutoTradeService {
 				double price = userOrder.getPrice() + ConfigMap.buyReOrderDelta();
 				double amount = NumberUtil.format(oldCost / price);
 				
+				Thread.sleep(2 * 1000);
+				
 				UserOrder order = new UserOrder();
 				order.setUsername(userOrder.getUsername());
 				order.setBasePrice(userOrder.getBasePrice());
