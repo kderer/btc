@@ -15,13 +15,13 @@
 				</tr>
 			</thead>
 			<tr>
-				<td><@spring.message code="label.dailyreport.status.header"/></td>
-				<td><@spring.message code="label.dailyreport.status.amount"/></td>
-				<td><@spring.message code="label.dailyreport.status.profit"/></td>
+				<td><@spring.message code="label.dailyreport.orderType.header"/></td>
+				<td><@spring.message code="label.dailyreport.amount.header"/></td>
+				<td><@spring.message code="label.dailyreport.profit.header"/></td>
 			</tr>			
 			<#list dailyProfit.detailList as detail>
 				<tr>
-					<td>${detail.status}</td>
+					<td>${detail.orderType}</td>
 					<td>${detail.amount}</td>
 					<td>${detail.totalProfit}</td>
 				</tr>

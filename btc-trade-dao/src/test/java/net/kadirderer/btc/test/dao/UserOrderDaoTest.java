@@ -54,8 +54,7 @@ public class UserOrderDaoTest {
 	public void testFindByCriteria() {
 		UserOrderCriteria criteria = new UserOrderCriteria();
 		criteria.addPlatformId(9);
-		criteria.addPlatformId(10);
-		criteria.addPlatformId(11);
+		criteria.setProfitStart(0.0);
 		
 		List<UserOrder> resultList = uoDao.findByCriteria(criteria);
 		

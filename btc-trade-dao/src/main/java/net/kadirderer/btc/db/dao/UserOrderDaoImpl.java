@@ -141,22 +141,36 @@ public class UserOrderDaoImpl implements UserOrderDao {
 					criteria.getPriceStart()), predicate);
 		}
 		
-		if(criteria.getProfitEnd() != null) {
+		if(criteria.getProfitEnd() != null) {			
 			predicate = criteriaBuilder.and(criteriaBuilder.gt(from.get("basePrice"), 0), predicate);
 			
-			predicate = criteriaBuilder.and(criteriaBuilder.lt(
-					criteriaBuilder.prod(from.get("completedAmount"), 
-							criteriaBuilder.diff(from.get("price"), from.get("basePrice"))),
-					criteria.getProfitEnd()), predicate);
+			predicate = criteriaBuilder.and(criteriaBuilder.or(
+					criteriaBuilder.and(
+							criteriaBuilder.equal(from.get("orderType"), 'S'),
+							criteriaBuilder.lt(criteriaBuilder.prod(from.get("completedAmount"), 
+									criteriaBuilder.diff(from.get("price"), from.get("basePrice"))),
+									criteria.getProfitEnd()), predicate), 
+					criteriaBuilder.and(
+							criteriaBuilder.equal(from.get("orderType"), 'B'), 
+							criteriaBuilder.lt(criteriaBuilder.prod(-1, criteriaBuilder.prod(from.get("completedAmount"), 
+							criteriaBuilder.diff(from.get("price"), from.get("basePrice")))),
+							criteria.getProfitEnd()))));
 		}
 		
 		if(criteria.getProfitStart() != null) {
 			predicate = criteriaBuilder.and(criteriaBuilder.gt(from.get("basePrice"), 0), predicate);
 			
-			predicate = criteriaBuilder.and(criteriaBuilder.gt(
-					criteriaBuilder.prod(from.get("completedAmount"), 
-							criteriaBuilder.diff(from.get("price"), from.get("basePrice"))),
-					criteria.getProfitStart()), predicate);
+			predicate = criteriaBuilder.and(criteriaBuilder.or(
+					criteriaBuilder.and(
+							criteriaBuilder.equal(from.get("orderType"), 'S'),
+							criteriaBuilder.gt(criteriaBuilder.prod(from.get("completedAmount"), 
+									criteriaBuilder.diff(from.get("price"), from.get("basePrice"))),
+									criteria.getProfitStart()), predicate), 
+					criteriaBuilder.and(
+							criteriaBuilder.equal(from.get("orderType"), 'B'), 
+							criteriaBuilder.gt(criteriaBuilder.prod(-1, criteriaBuilder.prod(from.get("completedAmount"), 
+							criteriaBuilder.diff(from.get("price"), from.get("basePrice")))),
+							criteria.getProfitStart()))));
 		}
 		
 		if(criteria.getReturnIdList() != null && criteria.getReturnIdList().size() > 0) {

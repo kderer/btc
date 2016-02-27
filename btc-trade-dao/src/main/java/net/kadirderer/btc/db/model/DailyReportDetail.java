@@ -8,7 +8,7 @@ import javax.persistence.SqlResultSetMapping;
 @Entity
 @SqlResultSetMapping(name = "DailyProfitReport",
 	columns = { @ColumnResult(name = "date"),
-				@ColumnResult(name = "status"),
+				@ColumnResult(name = "orderType"),
 				@ColumnResult(name = "amount"),
 				@ColumnResult(name = "profit")
 })
@@ -16,9 +16,9 @@ public class DailyReportDetail {
 	
 	@Id
 	private String date;
-	private char status;
 	private int amount;
 	private double totalProfit;
+	private char orderType;
 	
 	public String getDate() {
 		return date;
@@ -44,11 +44,12 @@ public class DailyReportDetail {
 		this.totalProfit = totalProfit;
 	}
 
-	public char getStatus() {
-		return status;
+	public char getOrderType() {
+		return orderType;
 	}
 
-	public void setStatus(char status) {
-		this.status = status;
+	public void setOrderType(char orderType) {
+		this.orderType = orderType;
 	}
+	
 }

@@ -29,7 +29,7 @@ public class UserDaoTest {
 	
 	
 	@Test
-	public void testFindByUsernamePAssword() {
+	public void testFindByUsernamePassword() {
 		User user = userDao.findUser("kadir", "123456");
 		
 		Assert.assertNotNull(user);		

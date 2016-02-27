@@ -21,10 +21,14 @@ public class ReportDaoImpl implements ReportDao {
 	@Override
 	public List<DailyReportDetail> queryDailyProfit() {
 		Query query = entityManager.createNativeQuery("select date(CREATEDATE) as date, "
-				+ "STATUS, count(*) as amount, sum((PRICE - BASEPRICE) * COMPLETEDAMOUNT) as profit "
+				+ "ORDERTYPE, count(*) as amount, "
+				+ "CASE "
+				+ "WHEN ORDERTYPE = 'B' THEN sum(-1 * (PRICE - BASEPRICE) * COMPLETEDAMOUNT) "
+				+ "WHEN ORDERTYPE = 'S' THEN sum((PRICE - BASEPRICE) * COMPLETEDAMOUNT) "
+				+ "END as profit "
 				+ "from T_USERORDER "
-				+ "where ORDERTYPE = 'S' and BASEPRICE > 0 "
-				+ "group by date(CREATEDATE), status "
+				+ "where BASEPRICE > 0 and COMPLETEDAMOUNT > 0 "
+				+ "group by date(CREATEDATE), ORDERTYPE "
 				+ "order by CREATEDATE desc", "DailyProfitReport");
 		
 		List<DailyReportDetail> resultList = new ArrayList<DailyReportDetail>();
@@ -32,7 +36,7 @@ public class ReportDaoImpl implements ReportDao {
 		for(Object[] rawData : rawList) {
 			DailyReportDetail detail = new DailyReportDetail();
 			detail.setDate(rawData[0].toString());
-			detail.setStatus((Character)rawData[1]);
+			detail.setOrderType((Character)rawData[1]);
 			detail.setAmount(Integer.parseInt(rawData[2].toString()));
 			detail.setTotalProfit(Double.parseDouble(rawData[3].toString()));
 			
