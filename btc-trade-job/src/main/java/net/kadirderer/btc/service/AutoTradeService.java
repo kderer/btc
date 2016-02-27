@@ -129,6 +129,8 @@ public abstract class AutoTradeService {
 				cancelOrder(userOrder.getUsername(), userOrder.getReturnId());
 				double price = userOrder.getPrice() - ConfigMap.sellReOrderDelta();
 				
+				Thread.sleep(2 * 1000);
+				
 				UserOrder order = new UserOrder();
 				order.setUsername(userOrder.getUsername());
 				order.setBasePrice(userOrder.getBasePrice());
@@ -148,8 +150,8 @@ public abstract class AutoTradeService {
 		if (result.getError() != null) {
 			Email email = new Email();
 			email.addToToList("kderer@hotmail.com");
-			email.setSubject("BTC Sell Order Error");
-			email.setFrom("exception@btc.kadirderer.net");
+			email.setSubject("BTC Buy Order Error");
+			email.setFrom("error@btc.kadirderer.net");
 			email.setBody(result.getError().getCode() + "\n" + result.getError().getMessage());
 			
 			sendMail(email);
@@ -161,7 +163,7 @@ public abstract class AutoTradeService {
 			Email email = new Email();
 			email.addToToList("kderer@hotmail.com");
 			email.setSubject("BTC Sell Order Error");
-			email.setFrom("exception@btc.kadirderer.net");
+			email.setFrom("error@btc.kadirderer.net");
 			email.setBody(result.getError().getCode() + "\n" + result.getError().getMessage());
 			
 			sendMail(email);
