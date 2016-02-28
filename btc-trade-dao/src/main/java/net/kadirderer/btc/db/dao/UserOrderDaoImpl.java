@@ -149,12 +149,12 @@ public class UserOrderDaoImpl implements UserOrderDao {
 							criteriaBuilder.equal(from.get("orderType"), 'S'),
 							criteriaBuilder.lt(criteriaBuilder.prod(from.get("completedAmount"), 
 									criteriaBuilder.diff(from.get("price"), from.get("basePrice"))),
-									criteria.getProfitEnd()), predicate), 
+									criteria.getProfitEnd())), 
 					criteriaBuilder.and(
 							criteriaBuilder.equal(from.get("orderType"), 'B'), 
 							criteriaBuilder.lt(criteriaBuilder.prod(-1, criteriaBuilder.prod(from.get("completedAmount"), 
 							criteriaBuilder.diff(from.get("price"), from.get("basePrice")))),
-							criteria.getProfitEnd()))));
+							criteria.getProfitEnd()))), predicate);
 		}
 		
 		if(criteria.getProfitStart() != null) {
@@ -165,12 +165,12 @@ public class UserOrderDaoImpl implements UserOrderDao {
 							criteriaBuilder.equal(from.get("orderType"), 'S'),
 							criteriaBuilder.gt(criteriaBuilder.prod(from.get("completedAmount"), 
 									criteriaBuilder.diff(from.get("price"), from.get("basePrice"))),
-									criteria.getProfitStart()), predicate), 
+									criteria.getProfitStart())), 
 					criteriaBuilder.and(
 							criteriaBuilder.equal(from.get("orderType"), 'B'), 
 							criteriaBuilder.gt(criteriaBuilder.prod(-1, criteriaBuilder.prod(from.get("completedAmount"), 
 							criteriaBuilder.diff(from.get("price"), from.get("basePrice")))),
-							criteria.getProfitStart()))));
+							criteria.getProfitStart()))), predicate);
 		}
 		
 		if(criteria.getReturnIdList() != null && criteria.getReturnIdList().size() > 0) {
