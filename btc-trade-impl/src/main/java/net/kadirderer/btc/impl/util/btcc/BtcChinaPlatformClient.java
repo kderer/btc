@@ -76,9 +76,7 @@ public class BtcChinaPlatformClient {
 		requestHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		
 		HttpEntity<String> requestEntity = new HttpEntity<String>(
-				postdata, requestHeaders);
-		
-		Thread.sleep(200);
+				postdata, requestHeaders);	
 		
 		ResponseEntity<String> response = platformClient.getRestTemplate().exchange(url,
 				HttpMethod.POST, requestEntity, String.class);
