@@ -46,9 +46,15 @@ public abstract class AutoTradeService {
 		
 		for (UserOrder pendingOrder : pendingOrderList) {
 			
+			if (pendingOrder.getReturnId() == null || pendingOrder.getReturnId().length() == 0) {
+				continue;
+			}
+			
+			char tempStatus = pendingOrder.getStatus();
+			
 			QueryOrderResult queryOrderResult = queryOrder(username, pendingOrder.getReturnId());
 			
-			if (pendingOrder.getStatus() == OrderStatus.MANUAL.getCode()) {
+			if (tempStatus == OrderStatus.MANUAL.getCode()) {
 				continue;
 			}
 			
