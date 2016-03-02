@@ -2,6 +2,7 @@
 <#import "../layout.ftl" as layout />
 <#assign title><@spring.message code="label.listorder.title"/></#assign>
 <#assign cancelUrl><@spring.url value="/order/cancelOrder.html"/></#assign>
+<#assign updateUrl><@spring.url value="/order/updateOrder.html"/></#assign>
 
 <@layout.masterTemplate title="${title}">	
 	<script language="javascript" type="text/javascript" src="<@spring.url value="/assets/datatables/jquery.dataTables.min.js"/>"></script>
@@ -64,14 +65,26 @@
 				    		var html = '<div class="btn-group" role="group" aria-label="...">' +
 					    			'<a href="${cancelUrl}?uoId=' + data.id + '" class="btn btn-default '; 
 					    	
-					    	if (data.status !== 'P' && data.status !== 'M') {
-					    		html += 'disabled';
-					    	}
+						    	if (data.status !== 'P' && data.status !== 'M') {
+						    		html += 'disabled';
+						    	}
 					    						    	
-					    	html += '" title="Cancel" ' +
+					    		html += '" title="Cance" ' +
 					    				'data-toggle="modal" data-target="#cancelOrderModal"/>' +
 										'<span class="glyphicon glyphicon-remove"></span>' +
+									'</a>' +									
+									'<a href="${updateUrl}?uoId=' + data.id + '" class="btn btn-default '; 
+					    	
+							    	if (data.status !== 'P' && data.status !== 'M') {
+							    		html += 'disabled';
+							    	}
+							    						    	
+						    	html += '" title="Update" ' +
+					    				'data-toggle="modal" data-target="#updateOrderModal"/>' +
+										'<span class="glyphicon glyphicon-pencil"></span>' +
 									'</a>' +
+									
+									
 				    			'</div>';
 				    		
 				    		return html;
@@ -90,6 +103,10 @@
 		    
 		    $('#cancelOrderModal').on('hide.bs.modal', function () {
 	   			$('#cancelOrderModal').removeData();
+			});
+			
+			$('#updateOrderModal').on('hide.bs.modal', function () {
+	   			$('#updateOrderModal').removeData();
 			});
 	   	});	   
 	</script>
@@ -116,12 +133,20 @@
 				<th><@spring.message code="label.listorder.profit"/></th>
 				<th><@spring.message code="label.listorder.status"/></th>
 				<th><@spring.message code="label.listorder.createdate"/></th>
-				<th><@spring.message code="label.listorder.cancel"/></th>		
+				<th><@spring.message code="label.listorder.edit"/></th>		
 			</tr>
 		</thead>
 	</table>
 	
 	<div class="modal fade" id="cancelOrderModal">
+		<div class="modal-dialog">
+	    	<div class="modal-content">
+	    	
+	    	</div><!-- /.modal-content -->
+	  	</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+	<div class="modal fade" id="updateOrderModal">
 		<div class="modal-dialog">
 	    	<div class="modal-content">
 	    	
