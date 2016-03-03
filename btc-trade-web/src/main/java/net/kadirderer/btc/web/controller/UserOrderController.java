@@ -161,6 +161,7 @@ public class UserOrderController {
 			} 
 		} catch (Exception e) {
 			WebUtil.addMessage(model, "message.listorder.updateorder.error", false);
+			return "order/update_order";
 		}
 		
 		WebUtil.addMessage(model, "message.listorder.updateorder.success", true);
