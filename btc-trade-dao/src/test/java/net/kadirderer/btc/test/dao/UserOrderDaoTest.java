@@ -71,5 +71,38 @@ public class UserOrderDaoTest {
 		
 		System.out.println(uoDao.findByCriteriaCount(criteria));
 	}
+	
+	@Test
+	public void testUpdatePartnerId() {
+		uoDao.updatePartnerId(121, 141);
+		
+		UserOrderCriteria criteria = new UserOrderCriteria();
+		criteria.addId(121);
+		
+		Assert.assertEquals((int)uoDao.findByCriteria(criteria).get(0).getPartnerId(), 141);
+	}
+	
+	@Test
+	public void testUpdatePartnerIdWithNewId() {
+		UserOrderCriteria userOrderCriteria = new UserOrderCriteria();
+		userOrderCriteria.addPartnerId(1250);
+		userOrderCriteria.addStatus(OrderStatus.PENDING.getCode());
+		
+		List<UserOrder> resultList = uoDao.findByCriteria(userOrderCriteria);
+		
+		UserOrder partner = resultList.get(0);
+		
+		Assert.assertEquals(375, partner.getId().intValue());
+		
+		uoDao.updatePartnerIdWithNewId(1250, 1251);
+		
+		userOrderCriteria = new UserOrderCriteria();
+		userOrderCriteria.addId(375);		
+		resultList = uoDao.findByCriteria(userOrderCriteria);
+		
+		UserOrder order = resultList.get(0);
+		
+		Assert.assertEquals(1251, order.getPartnerId().intValue());
+	}
 
 }

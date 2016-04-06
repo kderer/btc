@@ -77,6 +77,8 @@ public class BtcChinaSellOrderService implements SellOrderService, BtcChinaApiCa
 		order.setCreateDate(Calendar.getInstance().getTime());
 		
 		uoDao.save(order);
+		
+		result.setUserOrderId(order.getId());
 	}
 
 	@Override

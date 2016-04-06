@@ -7,27 +7,28 @@
 
 <@layout.masterTemplate title="${title}">
 	
-	<#list dailyProfitList as dailyProfit>
 		<table class="table table-hover">
 			<thead>
 				<tr>
-					<th colspan="3">${dailyProfit.date}</th>		
+					<th><@spring.message code="label.dailyreport.date.header"/></th>
+					<th><@spring.message code="label.dailyreport.buy.amount.header"/></th>
+					<th><@spring.message code="label.dailyreport.buy.profit.header"/></th>
+					<th><@spring.message code="label.dailyreport.sell.amount.header"/></th>
+					<th><@spring.message code="label.dailyreport.sell.profit.header"/></th>
+					<th><@spring.message code="label.dailyreport.total.profit.header"/></th>	
 				</tr>
 			</thead>
-			<tr>
-				<td><@spring.message code="label.dailyreport.orderType.header"/></td>
-				<td><@spring.message code="label.dailyreport.amount.header"/></td>
-				<td><@spring.message code="label.dailyreport.profit.header"/></td>
-			</tr>			
-			<#list dailyProfit.detailList as detail>
+			<#list dailyProfitList as detail>
 				<tr>
-					<td>${detail.orderType}</td>
-					<td>${detail.amount}</td>
+					<td>${detail.date}</td>
+					<td>${detail.buyAmount}</td>
+					<td>${detail.buyProfit}</td>
+					<td>${detail.sellAmount}</td>
+					<td>${detail.sellProfit}</td>
 					<td>${detail.totalProfit}</td>
 				</tr>
 			</#list>
 		</table>
-	</#list>
 
 </@layout.masterTemplate>
 

@@ -38,7 +38,7 @@ public class WebConfig {
 	@Bean
     public TilesConfigurer tilesConfigurer(){
         TilesConfigurer tilesConfigurer = new TilesConfigurer();
-        tilesConfigurer.setDefinitions("WEB-INF/tiles/tiles.xml");
+        tilesConfigurer.setDefinitions("WEB-INF/tiles.xml");
         tilesConfigurer.setPreparerFactoryClass(SpringBeanPreparerFactory.class);
         return tilesConfigurer;    
     }

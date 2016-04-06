@@ -77,6 +77,8 @@ public class BtcChinaBuyOrderService implements BuyOrderService, BtcChinaApiCall
 		order.setCreateDate(Calendar.getInstance().getTime());
 		
 		uoDao.save(order);
+		
+		result.setUserOrderId(order.getId());
 	}
 
 	@Override

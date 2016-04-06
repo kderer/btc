@@ -5,6 +5,8 @@ import java.util.List;
 
 import net.kadirderer.btc.db.dao.ReportDao;
 import net.kadirderer.btc.db.model.DailyReportDetail;
+import net.kadirderer.btc.db.mybatis.domain.DailyProfitDetail;
+import net.kadirderer.btc.db.mybatis.persistence.ReportMapper;
 import net.kadirderer.btc.web.dto.DailyReportDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,9 @@ public class ReportServiceImpl implements ReportService {
 	
 	@Autowired
 	private ReportDao reportDao;
+	
+	@Autowired
+	private ReportMapper reportMapper;
 	
 	@Override
 	public List<DailyReportDto> queryDailyReport() {
@@ -44,5 +49,12 @@ public class ReportServiceImpl implements ReportService {
 		
 		return dtoList;
 	}
+
+	@Override
+	public List<DailyProfitDetail> queryDailyProfit() {
+		return reportMapper.queryDailyProfit();
+	}
+	
+	
 
 }

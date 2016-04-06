@@ -4,7 +4,10 @@ import java.beans.PropertyVetoException;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -23,6 +26,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 @EnableTransactionManagement
 @ComponentScan(basePackages = {"net.kadirderer.btc.db.dao"})
 @PropertySource(value = "classpath:db-test-config.properties")
+@MapperScan("net.kadirderer.btc.db.mybatis.persistence")
 public class DatabaseTestConfig {
 	
 	@Bean
@@ -43,11 +47,11 @@ public class DatabaseTestConfig {
 		cpds.setPassword(dbPassword);
 		
 		return cpds;
-	}
+	}	
 		
 	@Bean
     public JpaTransactionManager transactionManager() throws ClassNotFoundException {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
+		JpaTransactionManager transactionManager = new JpaTransactionManager();
 
         transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
 
@@ -56,7 +60,7 @@ public class DatabaseTestConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws ClassNotFoundException {
-        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+    	LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setPackagesToScan("net.kadirderer.btc.db.model");
         entityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
         
@@ -64,6 +68,14 @@ public class DatabaseTestConfig {
 
         return entityManagerFactoryBean;
     }
+    
+    @Bean
+	public SqlSessionFactory sqlSessionFactory() throws Exception {
+    	SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+		sqlSessionFactoryBean.setDataSource(dataSource());
+		sqlSessionFactoryBean.setTypeAliasesPackage("net.kadirderer.btc.db.mybatis.domain");
+		return sqlSessionFactoryBean.getObject();
+	}
     
     @Value("${db.connection.jdbc.url}")
 	private String dbConnectionUrl;

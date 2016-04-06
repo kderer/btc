@@ -4,6 +4,7 @@ public abstract class BuyOrderResult {
 	
 	private String resultCode;
 	private String resultMessage;
+	private Integer userOrderId; 
 	
 	public String getResultCode() {
 		return resultCode;
@@ -19,6 +20,14 @@ public abstract class BuyOrderResult {
 	
 	public void setResultMessage(String resultMessage) {
 		this.resultMessage = resultMessage;
+	}
+
+	public Integer getUserOrderId() {
+		return userOrderId;
+	}
+
+	public void setUserOrderId(Integer userOrderId) {
+		this.userOrderId = userOrderId;
 	}
 	
 }

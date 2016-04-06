@@ -37,9 +37,15 @@ public abstract class AutoTradeService {
 	
 	protected abstract SellOrderResult sellOrder(UserOrder order) throws Exception;
 	
+	protected abstract void updatePartnerts(int userOrderId, int parnertUserOrderId);
+	
 	protected abstract void sendMailForException(Exception e);
 	
 	protected abstract void sendMail(Email email);
+	
+	protected abstract UserOrder findPendingPartner(int userOrderId);
+	
+	protected abstract void updatePartnerIdWithNewId(int oldUserOrderId, int newUserOrderId);
 	
 	public void autoTrade(String username) throws Exception {
 		List<UserOrder> pendingOrderList = queryPendingAutoTradeOrders(username);
@@ -58,20 +64,28 @@ public abstract class AutoTradeService {
 				continue;
 			}
 			
+			pendingOrder.setCompletedAmount(queryOrderResult.getCompletedAmount());
+			
 			double lastCompletedAmount = queryOrderResult.getLastCompletedAmount(); 
 			
 			if (lastCompletedAmount > 0) {
-				createOrderForCompletedAmount(pendingOrder, lastCompletedAmount);
+				UserOrder partner = findPendingPartner(pendingOrder.getId());
+				if (partner != null) {
+					cancelOrder(partner.getUsername(), partner.getReturnId());
+				}
+				
+				createOrdersForCompletedAmount(pendingOrder, partner, lastCompletedAmount);
 			}
 			
 			if (queryOrderResult.getStatus() == QueryOrderStatus.PENDING
 					|| queryOrderResult.getStatus() == QueryOrderStatus.OPEN) {
-				checkTimeOut(pendingOrder);
+				checkTimeOut(pendingOrder, pendingOrderList);
 			}					
 		}
 	}
 	
-	private void createOrderForCompletedAmount(UserOrder userOrder, double amount) {
+	private void createOrdersForCompletedAmount(UserOrder userOrder, UserOrder _partnerOrder,
+			double amount) throws Exception {
 		if (userOrder.getOrderType() == OrderType.BUY.getCode()) {
 			double price = userOrder.getPrice() + ConfigMap.sellOrderDelta();
 			try {
@@ -82,12 +96,23 @@ public abstract class AutoTradeService {
 				order.setPrice(price);
 				order.setAmount(amount);
 				
-				sellOrder(order);
+				SellOrderResult soResult = sellOrder(order);
+				
+				UserOrder partnerOrder = new UserOrder();
+				partnerOrder.setUsername(userOrder.getUsername());
+				partnerOrder.setPrice(userOrder.getPrice() - ConfigMap.buyOrderDelta());
+				partnerOrder.setAmount(amount);
+				
+				BuyOrderResult boResult = buyOrder(partnerOrder);
+				
+				updatePartnerts(soResult.getUserOrderId(), boResult.getUserOrderId());
+				
+				createPartnerForRemainingAmount(userOrder, _partnerOrder);				
 			} catch (Exception e) {
 				sendMailForException(e);
 			}
 		} else {
-			double price = userOrder.getPrice() - ConfigMap.buyOrderDelta();
+			double price = getLowestAsk();
 			double buyAmount = NumberUtil.format(userOrder.getPrice() * amount / price);			
 			try {				
 				UserOrder order = new UserOrder();
@@ -104,7 +129,7 @@ public abstract class AutoTradeService {
 		}
 	}
 	
-	public void checkTimeOut(UserOrder userOrder) {
+	private void checkTimeOut(UserOrder userOrder, List<UserOrder> pendingOrders) {
 		long timeInMillis = Calendar.getInstance().getTimeInMillis();
 		long elapsedTime = timeInMillis - userOrder.getCreateDate().getTime();
 		
@@ -124,9 +149,12 @@ public abstract class AutoTradeService {
 				order.setParentId(userOrder.getParentId());
 				order.setPrice(price);
 				order.setAmount(amount);
+				order.setPartnerId(userOrder.getPartnerId());
 				
 				BtcChinaBuyOrderResult result = (BtcChinaBuyOrderResult)buyOrder(order);
-				evoluateBuyOrderResult(result);				
+				updatePartnerId(pendingOrders, userOrder.getId(), result.getUserOrderId());
+				updatePartnerIdWithNewId(userOrder.getId(), result.getUserOrderId());				
+				evoluateBuyOrderResult(result);		
 			} catch (Exception e) {
 				sendMailForException(e);
 			}			
@@ -143,8 +171,11 @@ public abstract class AutoTradeService {
 				order.setParentId(userOrder.getParentId());
 				order.setPrice(price);
 				order.setAmount(userOrder.getAmount());
+				order.setPartnerId(userOrder.getPartnerId());
 				
 				BtcChinaSellOrderResult result = (BtcChinaSellOrderResult)sellOrder(order);
+				updatePartnerId(pendingOrders, userOrder.getId(), result.getUserOrderId());
+				updatePartnerIdWithNewId(userOrder.getId(), result.getUserOrderId());
 				evoluateSellOrderResult(result);
 			} catch (Exception e) {
 				sendMailForException(e);
@@ -152,7 +183,41 @@ public abstract class AutoTradeService {
 		}
 	}
 	
-	public void evoluateBuyOrderResult(BtcChinaBuyOrderResult result) {
+	private void createPartnerForRemainingAmount(UserOrder order, UserOrder partnerOrder)
+			throws Exception {
+		if (partnerOrder == null) {
+			return;
+		}
+		
+		double remainingAmount = order.getAmount() - order.getCompletedAmount();
+		
+		if (remainingAmount > 0.001) {
+			UserOrder newPartner = new UserOrder();
+			newPartner.setUsername(partnerOrder.getUsername());
+			newPartner.setBasePrice(partnerOrder.getPrice());
+			newPartner.setParentId(partnerOrder.getId());
+			newPartner.setPrice(partnerOrder.getPrice());
+			newPartner.setAmount(remainingAmount);
+			
+			SellOrderResult soResult = sellOrder(newPartner);
+			
+			updatePartnerts(order.getId(), soResult.getUserOrderId());
+		}
+	}
+	
+	private void updatePartnerId(List<UserOrder> pendingOrderList, int oldPartnerId, int newPartnerId) {
+		if (pendingOrderList == null || pendingOrderList.size() == 0) {
+			return;
+		}
+		
+		for (UserOrder order : pendingOrderList) {
+			if (order != null && order.getPartnerId() == oldPartnerId) {
+				order.setPartnerId(newPartnerId);
+			}
+		}
+	}
+	
+	private void evoluateBuyOrderResult(BtcChinaBuyOrderResult result) {
 		if (result.getError() != null) {
 			Email email = new Email();
 			email.addToToList("kderer@hotmail.com");
@@ -164,7 +229,7 @@ public abstract class AutoTradeService {
 		}
 	}
 	
-	public void evoluateSellOrderResult(BtcChinaSellOrderResult result) {
+	private void evoluateSellOrderResult(BtcChinaSellOrderResult result) {
 		if (result.getError() != null) {
 			Email email = new Email();
 			email.addToToList("kderer@hotmail.com");

@@ -17,7 +17,7 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 
 @Configuration
-@ComponentScan(basePackages = {"net.kadirderer.btc.service",})
+@ComponentScan(basePackages = {"net.kadirderer.btc.service"})
 @PropertySource(value = "classpath:job-config.properties")
 public class ApplicationConfig {	
 		

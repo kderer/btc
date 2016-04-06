@@ -17,6 +17,7 @@ import net.kadirderer.btc.db.repository.UserOrderRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserOrderDaoImpl implements UserOrderDao {
@@ -199,7 +200,23 @@ public class UserOrderDaoImpl implements UserOrderDao {
 			predicate = criteriaBuilder.and(from.get("username").in(criteria.getUsernameList()), predicate);
 		}
 		
+		if(criteria.getPartnerIdList() != null && criteria.getPartnerIdList().size() > 0) {
+			predicate = criteriaBuilder.and(from.get("partnerId").in(criteria.getPartnerIdList()), predicate);
+		}
+		
 		return predicate;
+	}
+
+	@Override
+	@Transactional
+	public void updatePartnerId(int userOrderId, int partnerUserOrderId) {
+		uoRepository.updatePartnerId(userOrderId, partnerUserOrderId);
+	}
+
+	@Override
+	@Transactional
+	public void updatePartnerIdWithNewId(int oldUserOrderId, int newUserOrderId) {
+		uoRepository.updatePartnerIdWithNewId(oldUserOrderId, newUserOrderId);
 	}
 
 }

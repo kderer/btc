@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -40,5 +41,15 @@ public interface UserOrderRepository extends JpaRepository<UserOrder, Integer> {
 			+ "uo.platformId = :platformId and uo.returnId = :orderId")
 	public UserOrder findByOrderId(@Param("username") String username, 
 			@Param("platformId") int platformId, @Param("orderId") String orderId);
+	
+	@Query("Update UserOrder set partnerId = :patnerUserOrderId where id = :userOrderId")
+	@Modifying
+	public void updatePartnerId(@Param("userOrderId") int userOrderId, 
+			@Param("patnerUserOrderId") int partnerUserOrderId);
+	
+	@Query("Update UserOrder set partnerId = :newUserOrderId where partnerId = :oldUserOrderId")
+	@Modifying
+	public void updatePartnerIdWithNewId(@Param("oldUserOrderId") int oldUserOrderId, 
+			@Param("newUserOrderId") int newUserOrderId);
 
 }

@@ -21,4 +21,8 @@ public interface UserOrderDao {
 	
 	public UserOrder findByOrderId(String username, int platformId, String orderId);
 	
+	public void updatePartnerId(int userOrderId, int partnerUserOrderId);
+	
+	public void updatePartnerIdWithNewId(int oldUserOrderId, int newUserOrderId);
+	
 }

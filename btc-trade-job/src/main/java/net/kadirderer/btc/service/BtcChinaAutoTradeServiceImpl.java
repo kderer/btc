@@ -14,12 +14,14 @@ import net.kadirderer.btc.api.queryorder.QueryOrderResult;
 import net.kadirderer.btc.api.queryorder.QueryOrderService;
 import net.kadirderer.btc.api.sellorder.SellOrderResult;
 import net.kadirderer.btc.api.sellorder.SellOrderService;
+import net.kadirderer.btc.db.criteria.UserOrderCriteria;
 import net.kadirderer.btc.db.dao.BtcPlatformDao;
 import net.kadirderer.btc.db.dao.UserOrderDao;
 import net.kadirderer.btc.db.model.BtcPlatform;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.util.email.Email;
 import net.kadirderer.btc.util.email.MailSendService;
+import net.kadirderer.btc.util.enumaration.OrderStatus;
 import net.kadirderer.btc.util.enumaration.OrderType;
 
 @Service
@@ -113,6 +115,33 @@ public class BtcChinaAutoTradeServiceImpl extends AutoTradeService {
 	@Override
 	protected void sendMail(Email email) {
 		emailService.sendMail(email);
+	}
+
+	@Override	
+	protected void updatePartnerts(int userOrderId, int partnerUserOrderId) {
+		uoDao.updatePartnerId(userOrderId, partnerUserOrderId);
+		uoDao.updatePartnerId(partnerUserOrderId, userOrderId);
+	}
+
+	@Override
+	protected UserOrder findPendingPartner(int userOrderId) {
+		UserOrderCriteria userOrderCriteria = new UserOrderCriteria();
+		userOrderCriteria.addPartnerId(userOrderId);
+		userOrderCriteria.addStatus(OrderStatus.PENDING.getCode());
+		
+		List<UserOrder> resultList = uoDao.findByCriteria(userOrderCriteria);
+		
+		if (resultList == null || resultList.size() <= 0) {
+			return null;
+		}
+		else {
+			return resultList.get(0);
+		}
+	}
+
+	@Override
+	protected void updatePartnerIdWithNewId(int oldUserOrderId, int newUserOrderId) {
+		uoDao.updatePartnerIdWithNewId(oldUserOrderId, newUserOrderId);
 	}
 
 }

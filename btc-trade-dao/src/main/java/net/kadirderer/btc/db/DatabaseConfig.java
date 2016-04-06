@@ -4,7 +4,10 @@ import java.beans.PropertyVetoException;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -21,7 +24,8 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 @Configuration
 @EnableJpaRepositories(basePackages = {"net.kadirderer.btc.db.repository"})
 @EnableTransactionManagement
-@ComponentScan(basePackages = {"net.kadirderer.btc.db"})
+@ComponentScan(basePackages = {"net.kadirderer.btc.db.dao"})
+@MapperScan("net.kadirderer.btc.db.mybatis.persistence")
 @PropertySource(value = "classpath:db-config.properties")
 public class DatabaseConfig {
 	
@@ -64,6 +68,15 @@ public class DatabaseConfig {
 
         return entityManagerFactoryBean;
     }
+    
+    // myBatis configuration
+    @Bean
+	public SqlSessionFactory sqlSessionFactory() throws Exception {
+    	SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+		sqlSessionFactoryBean.setDataSource(dataSource());
+		sqlSessionFactoryBean.setTypeAliasesPackage("net.kadirderer.btc.db.mybatis.domain");
+		return sqlSessionFactoryBean.getObject();
+	}
     
     @Value("${db.connection.jdbc.url}")
 	private String dbConnectionUrl;

@@ -52,6 +52,9 @@ public class UserOrder {
 	@Column(name = "STATUS")
 	private char status;
 	
+	@Column(name = "PARTNERID")
+	private Integer partnerId;
+	
 	@Column(name = "CREATEDATE")
 	private Date createDate;
 	
@@ -173,5 +176,13 @@ public class UserOrder {
 	public void setPlatformId(int platformId) {
 		this.platformId = platformId;
 	}
+
+	public Integer getPartnerId() {
+		return partnerId;
+	}
+
+	public void setPartnerId(Integer partnerId) {
+		this.partnerId = partnerId;
+	}	
 	
 }
