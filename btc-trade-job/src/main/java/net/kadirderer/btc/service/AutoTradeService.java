@@ -211,7 +211,8 @@ public abstract class AutoTradeService {
 		}
 		
 		for (UserOrder order : pendingOrderList) {
-			if (order != null && order.getPartnerId() == oldPartnerId) {
+			if (order != null && order.getPartnerId() != null &&
+					order.getPartnerId().intValue() == oldPartnerId) {
 				order.setPartnerId(newPartnerId);
 			}
 		}
