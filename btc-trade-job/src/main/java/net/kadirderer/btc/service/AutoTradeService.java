@@ -112,7 +112,7 @@ public abstract class AutoTradeService {
 				
 				updatePartnerts(soResult.getUserOrderId(), boResult.getUserOrderId());
 				
-				createPartnerForRemainingAmount(userOrder, _partnerOrder);				
+				//createPartnerForRemainingAmount(userOrder, _partnerOrder);				
 			} catch (Exception e) {
 				sendMailForException(e);
 			}
@@ -188,6 +188,7 @@ public abstract class AutoTradeService {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void createPartnerForRemainingAmount(UserOrder order, UserOrder partnerOrder)
 			throws Exception {
 		if (partnerOrder == null) {
