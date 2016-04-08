@@ -50,6 +50,6 @@ public interface UserOrderRepository extends JpaRepository<UserOrder, Integer> {
 	@Query("Update UserOrder set partnerId = :newUserOrderId where partnerId = :oldUserOrderId")
 	@Modifying
 	public void updatePartnerIdWithNewId(@Param("oldUserOrderId") int oldUserOrderId, 
-			@Param("newUserOrderId") int newUserOrderId);
+			@Param("newUserOrderId") Integer newUserOrderId);
 
 }

@@ -45,7 +45,7 @@ public abstract class AutoTradeService {
 	
 	protected abstract UserOrder findPendingPartner(int userOrderId);
 	
-	protected abstract void updatePartnerIdWithNewId(int oldUserOrderId, int newUserOrderId);
+	protected abstract void updatePartnerIdWithNewId(int oldUserOrderId, Integer newUserOrderId);
 	
 	public void autoTrade(String username) throws Exception {
 		List<UserOrder> pendingOrderList = queryPendingAutoTradeOrders(username);
@@ -70,8 +70,13 @@ public abstract class AutoTradeService {
 			
 			if (lastCompletedAmount > 0) {
 				UserOrder partner = findPendingPartner(pendingOrder.getId());
-				if (partner != null) {
-					cancelOrder(partner.getUsername(), partner.getReturnId());
+				if (partner != null) {					
+					if (pendingOrder.getOrderType() == OrderType.SELL.getCode()) {
+						cancelOrder(partner.getUsername(), partner.getReturnId());
+					}
+					else {
+						updatePartnerIdWithNewId(pendingOrder.getId(), null);
+					}
 				}
 				
 				createOrdersForCompletedAmount(pendingOrder, partner, lastCompletedAmount);

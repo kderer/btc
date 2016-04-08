@@ -215,7 +215,7 @@ public class UserOrderDaoImpl implements UserOrderDao {
 
 	@Override
 	@Transactional
-	public void updatePartnerIdWithNewId(int oldUserOrderId, int newUserOrderId) {
+	public void updatePartnerIdWithNewId(int oldUserOrderId, Integer newUserOrderId) {
 		uoRepository.updatePartnerIdWithNewId(oldUserOrderId, newUserOrderId);
 	}
 

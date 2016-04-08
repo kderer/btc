@@ -140,7 +140,7 @@ public class BtcChinaAutoTradeServiceImpl extends AutoTradeService {
 	}
 
 	@Override
-	protected void updatePartnerIdWithNewId(int oldUserOrderId, int newUserOrderId) {
+	protected void updatePartnerIdWithNewId(int oldUserOrderId, Integer newUserOrderId) {
 		uoDao.updatePartnerIdWithNewId(oldUserOrderId, newUserOrderId);
 	}
 
