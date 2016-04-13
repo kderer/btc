@@ -74,8 +74,9 @@ public class BtcChinaQueryOrderService implements QueryOrderService, BtcChinaApi
 		
 		UserOrder uo = uoDao.findByOrderId(username, btcChina.getId(), orderId);
 		
-		if (uo.getStatus() == OrderStatus.PENDING.getCode()
-				|| uo.getStatus() == OrderStatus.MANUAL.getCode()) {
+		if (uo.getStatus() == OrderStatus.PENDING.getCode() ||
+				uo.getStatus() == OrderStatus.MANUAL.getCode() ||
+				uo.getStatus() == OrderStatus.SINGLE.getCode()) {
 			
 			if (uo.getCompletedAmount() != result.getCompletedAmount()) {
 				result.setLastCompletedAmount(result.getCompletedAmount() - uo.getCompletedAmount());
