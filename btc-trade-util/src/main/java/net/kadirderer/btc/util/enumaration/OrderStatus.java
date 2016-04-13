@@ -8,7 +8,8 @@ public enum OrderStatus {
 	CANCELLED("label.orderstatus.cancelled", 'C'),
 	FAILED("label.orderstatus.failed", 'F'),
 	CANCEL_FAILED("label.orderstatus.cancel.failed", 'R'),
-	MANUAL("label.orderstatus.maual", 'M');
+	MANUAL("label.orderstatus.maual", 'M'),
+	SINGLE("label.orderstatus.maual", 'S');
 	
 	private char code;
 	private String i18nKey;

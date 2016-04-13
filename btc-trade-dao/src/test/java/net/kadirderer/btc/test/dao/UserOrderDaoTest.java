@@ -104,5 +104,18 @@ public class UserOrderDaoTest {
 		
 		Assert.assertEquals(1251, order.getPartnerId().intValue());
 	}
+	
+	@Test
+	public void testPendingPartnerStatus() {
+		uoDao.updatePendingPartnerStatus(123123, OrderStatus.SINGLE.getCode());
+		
+		UserOrderCriteria userOrderCriteria = new UserOrderCriteria();
+		userOrderCriteria.addPartnerId(123123);		
+		List<UserOrder> resultList = uoDao.findByCriteria(userOrderCriteria);
+		
+		UserOrder order = resultList.get(0);
+		
+		Assert.assertEquals(OrderStatus.SINGLE.getCode(), order.getStatus());
+	}
 
 }

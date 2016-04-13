@@ -47,6 +47,8 @@ public abstract class AutoTradeService {
 	
 	protected abstract void updatePartnerIdWithNewId(int oldUserOrderId, Integer newUserOrderId);
 	
+	protected abstract void updatePendingPartnerStatus(int partnerUserOrderId, char status);
+	
 	public void autoTrade(String username) throws Exception {
 		List<UserOrder> pendingOrderList = queryPendingAutoTradeOrders(username);
 		
@@ -65,10 +67,13 @@ public abstract class AutoTradeService {
 			}
 			
 			pendingOrder.setCompletedAmount(queryOrderResult.getCompletedAmount());
+			if (queryOrderResult.getUserOrder() != null) {
+				pendingOrder.setStatus(queryOrderResult.getUserOrder().getStatus());
+			}
 			
 			double lastCompletedAmount = queryOrderResult.getLastCompletedAmount(); 
 			
-			if (lastCompletedAmount > 0) {
+			if (pendingOrder.getStatus() != OrderStatus.SINGLE.getCode() && lastCompletedAmount > 0) {
 				UserOrder partner = findPendingPartner(pendingOrder.getId());
 				if (partner != null) {					
 					if (pendingOrder.getOrderType() == OrderType.SELL.getCode()) {
@@ -76,14 +81,16 @@ public abstract class AutoTradeService {
 					}
 					else {
 						updatePartnerIdWithNewId(pendingOrder.getId(), null);
+						updatePendingPartnerStatus(pendingOrder.getId(), OrderStatus.SINGLE.getCode());
 					}
 				}
 				
 				createOrdersForCompletedAmount(pendingOrder, partner, lastCompletedAmount);
 			}
 			
-			if (queryOrderResult.getStatus() == QueryOrderStatus.PENDING
-					|| queryOrderResult.getStatus() == QueryOrderStatus.OPEN) {
+			if (queryOrderResult.getStatus() == QueryOrderStatus.PENDING ||
+					queryOrderResult.getStatus() == QueryOrderStatus.OPEN ||
+					pendingOrder.getStatus() == OrderStatus.SINGLE.getCode()) {
 				checkTimeOut(pendingOrder, pendingOrderList);
 			}					
 		}
@@ -157,8 +164,10 @@ public abstract class AutoTradeService {
 				order.setPartnerId(userOrder.getPartnerId());
 				
 				BtcChinaBuyOrderResult result = (BtcChinaBuyOrderResult)buyOrder(order);
-				updatePartnerId(pendingOrders, userOrder.getId(), result.getUserOrderId());
-				updatePartnerIdWithNewId(userOrder.getId(), result.getUserOrderId());				
+				if (userOrder.getStatus() != OrderStatus.SINGLE.getCode()) {
+					updatePartnerId(pendingOrders, userOrder.getId(), result.getUserOrderId());
+					updatePartnerIdWithNewId(userOrder.getId(), result.getUserOrderId());
+				}								
 				evoluateBuyOrderResult(result);		
 			} catch (Exception e) {
 				sendMailForException(e);
@@ -179,8 +188,10 @@ public abstract class AutoTradeService {
 				order.setPartnerId(userOrder.getPartnerId());
 				
 				BtcChinaSellOrderResult result = (BtcChinaSellOrderResult)sellOrder(order);
-				updatePartnerId(pendingOrders, userOrder.getId(), result.getUserOrderId());
-				updatePartnerIdWithNewId(userOrder.getId(), result.getUserOrderId());
+				if (userOrder.getStatus() != OrderStatus.SINGLE.getCode()) {
+					updatePartnerId(pendingOrders, userOrder.getId(), result.getUserOrderId());
+					updatePartnerIdWithNewId(userOrder.getId(), result.getUserOrderId());
+				}
 				evoluateSellOrderResult(result);
 			} catch (Exception e) {
 				sendMailForException(e);

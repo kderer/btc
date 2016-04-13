@@ -219,4 +219,10 @@ public class UserOrderDaoImpl implements UserOrderDao {
 		uoRepository.updatePartnerIdWithNewId(oldUserOrderId, newUserOrderId);
 	}
 
+	@Override
+	@Transactional
+	public void updatePendingPartnerStatus(int partnerUserOrderId, char status) {
+		uoRepository.updatePendingPartnerStatus(partnerUserOrderId, status);
+	}
+
 }

@@ -30,7 +30,7 @@ public interface UserOrderRepository extends JpaRepository<UserOrder, Integer> {
 	@Query("Select uo from UserOrder uo where uo.username = :username")
 	public Page<UserOrder> findByUsername(@Param("username") String username, Pageable page);
 	
-	@Query("Select uo from UserOrder uo where uo.username = :username and uo.status in ('P', 'M') and uo.platformId = :platformId")
+	@Query("Select uo from UserOrder uo where uo.username = :username and uo.status in ('P', 'M', 'S') and uo.platformId = :platformId")
 	public List<UserOrder> findPending(@Param("username") String username, @Param("platformId") int platformId);
 	
 	@Query("Select uo from UserOrder uo where uo.username = :username and uo.status = 'P' and uo.platformId = :platformId")
@@ -47,9 +47,16 @@ public interface UserOrderRepository extends JpaRepository<UserOrder, Integer> {
 	public void updatePartnerId(@Param("userOrderId") int userOrderId, 
 			@Param("patnerUserOrderId") int partnerUserOrderId);
 	
-	@Query("Update UserOrder set partnerId = :newUserOrderId where partnerId = :oldUserOrderId")
+	@Query("Update UserOrder set partnerId = :newUserOrderId "
+			+ "where partnerId = :oldUserOrderId and status = 'P'")
 	@Modifying
 	public void updatePartnerIdWithNewId(@Param("oldUserOrderId") int oldUserOrderId, 
 			@Param("newUserOrderId") Integer newUserOrderId);
+	
+	@Query("Update UserOrder set status = :status "
+			+ "where partnerId = :partnerUserOrderId and status = 'P'")
+	@Modifying
+	public void updatePendingPartnerStatus(@Param("partnerUserOrderId") int partnerUserOrderId, 
+			@Param("status") char status);
 
 }

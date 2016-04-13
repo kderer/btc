@@ -144,4 +144,9 @@ public class BtcChinaAutoTradeServiceImpl extends AutoTradeService {
 		uoDao.updatePartnerIdWithNewId(oldUserOrderId, newUserOrderId);
 	}
 
+	@Override
+	protected void updatePendingPartnerStatus(int partnerUserOrderId, char status) {
+		uoDao.updatePendingPartnerStatus(partnerUserOrderId, status);
+	}
+	
 }
