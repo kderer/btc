@@ -132,7 +132,16 @@ public abstract class AutoTradeService {
 				order.setBasePrice(userOrder.getPrice());
 				order.setParentId(userOrder.getId());
 				order.setPrice(price);
-				order.setAmount(buyAmount);
+				order.setAmount(NumberUtil.format(buyAmount / 2));
+				
+				buyOrder(order);
+				
+				order = new UserOrder();
+				order.setUsername(userOrder.getUsername());
+				order.setBasePrice(userOrder.getPrice());
+				order.setParentId(userOrder.getId());
+				order.setPrice(userOrder.getPrice() - ConfigMap.buyOrderDelta());
+				order.setAmount(NumberUtil.format(buyAmount / 2));
 				
 				buyOrder(order);
 			} catch (Exception e) {
