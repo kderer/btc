@@ -27,13 +27,13 @@ public abstract class ConfigMap {
 		configMap.put(RECORDGROUPJOB_ENABLED, "true");
 		configMap.put(AUTOTRADE_ENABLED, "true");
 		configMap.put(SELLORDER_CHECK_PERIOD, "61");
-		configMap.put(SELLORDER_DELTA, "2");
-		configMap.put(SELLREORDER_DELTA, "0.1");
-		configMap.put(SELLORDER_TIME_LIMIT, "60");
+		configMap.put(SELLORDER_DELTA, "2.1");
+		configMap.put(SELLREORDER_DELTA, "0.2");
+		configMap.put(SELLORDER_TIME_LIMIT, "180");
 		configMap.put(BUYORDER_CHECK_PERIOD, "31");
-		configMap.put(BUYORDER_DELTA, "9.4");
-		configMap.put(BUYREORDER_DELTA, "0.5");
-		configMap.put(BUYORDER_TIME_LIMIT, "60");
+		configMap.put(BUYORDER_DELTA, "9.9");
+		configMap.put(BUYREORDER_DELTA, "1");
+		configMap.put(BUYORDER_TIME_LIMIT, "180");
 	}
 	
 	
