@@ -2,6 +2,8 @@ package net.kadirderer.btc.db.mybatis.domain;
 
 import org.apache.ibatis.type.Alias;
 
+import net.kadirderer.btc.util.NumberDisplayUtil;
+
 @Alias("DailyReportDetail")
 public class DailyProfitDetail {
 	
@@ -31,6 +33,10 @@ public class DailyProfitDetail {
 	public double getSellProfit() {
 		return sellProfit;
 	}
+	
+	public String getSellProfitStr() {
+		return NumberDisplayUtil.dailyReportFormat(sellProfit);
+	}
 
 	public void setSellProfit(double sellProfit) {
 		this.sellProfit = sellProfit;
@@ -47,6 +53,10 @@ public class DailyProfitDetail {
 	public double getBuyProfit() {
 		return buyProfit;
 	}
+	
+	public String getBuyProfitStr() {
+		return NumberDisplayUtil.dailyReportFormat(buyProfit);
+	}
 
 	public void setBuyProfit(double buyProfit) {
 		this.buyProfit = buyProfit;
@@ -54,6 +64,10 @@ public class DailyProfitDetail {
 
 	public double getTotalProfit() {
 		return totalProfit;
+	}
+	
+	public String getTotalProfitStr() {
+		return NumberDisplayUtil.dailyReportFormat(totalProfit);
 	}
 
 	public void setTotalProfit(double totalProfit) {

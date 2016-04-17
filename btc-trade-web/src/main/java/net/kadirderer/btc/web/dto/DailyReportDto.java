@@ -33,14 +33,4 @@ public class DailyReportDto {
 		
 		detailList.add(dailyDetailReport);
 	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		
-		if(!(obj instanceof DailyReportDto)) {
-			return false;
-		}
-		
-		return this.date.equals(((DailyReportDto)obj).getDate());
-	}
 }
