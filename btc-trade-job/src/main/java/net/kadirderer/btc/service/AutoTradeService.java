@@ -73,7 +73,7 @@ public abstract class AutoTradeService {
 			
 			double lastCompletedAmount = queryOrderResult.getLastCompletedAmount(); 
 			
-			if (pendingOrder.getStatus() != OrderStatus.SINGLE.getCode() && lastCompletedAmount > 0) {
+			if (pendingOrder.getStatus() != OrderStatus.SINGLE.getCode() && lastCompletedAmount > 0.05) {
 				UserOrder partner = findPendingPartner(pendingOrder.getId());
 				if (partner != null) {					
 					if (pendingOrder.getOrderType() == OrderType.SELL.getCode()) {
@@ -178,6 +178,9 @@ public abstract class AutoTradeService {
 				order.setPrice(price);
 				order.setAmount(amount);
 				order.setPartnerId(userOrder.getPartnerId());
+				if (userOrder.getStatus() == OrderStatus.SINGLE.getCode()) {
+					order.setStatus(OrderStatus.SINGLE.getCode());
+				}
 				
 				BtcChinaBuyOrderResult result = (BtcChinaBuyOrderResult)buyOrder(order);
 				if (userOrder.getStatus() != OrderStatus.SINGLE.getCode()) {
@@ -201,7 +204,10 @@ public abstract class AutoTradeService {
 				order.setParentId(userOrder.getParentId());
 				order.setPrice(price);
 				order.setAmount(userOrder.getAmount());
-				order.setPartnerId(userOrder.getPartnerId());
+				order.setPartnerId(userOrder.getPartnerId());				
+				if (userOrder.getStatus() == OrderStatus.SINGLE.getCode()) {
+					order.setStatus(OrderStatus.SINGLE.getCode());
+				}
 				
 				BtcChinaSellOrderResult result = (BtcChinaSellOrderResult)sellOrder(order);
 				if (userOrder.getStatus() != OrderStatus.SINGLE.getCode()) {
