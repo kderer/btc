@@ -10,6 +10,8 @@ import net.kadirderer.btc.api.buyorder.BuyOrderService;
 import net.kadirderer.btc.api.cancelorder.CancelOrderResult;
 import net.kadirderer.btc.api.cancelorder.CancelOrderService;
 import net.kadirderer.btc.api.orderbook.OrderbookService;
+import net.kadirderer.btc.api.queryaccountinfo.QueryAccountInfoResult;
+import net.kadirderer.btc.api.queryaccountinfo.QueryAccountInfoService;
 import net.kadirderer.btc.api.queryorder.QueryOrderResult;
 import net.kadirderer.btc.api.queryorder.QueryOrderService;
 import net.kadirderer.btc.api.sellorder.SellOrderResult;
@@ -47,6 +49,9 @@ public class BtcChinaAutoTradeServiceImpl extends AutoTradeService {
 	
 	@Autowired
 	private UserOrderDao uoDao;
+	
+	@Autowired
+	private QueryAccountInfoService queryAccountInfoService;
 	
 	@Autowired
 	private MailSendService emailService;
@@ -147,6 +152,11 @@ public class BtcChinaAutoTradeServiceImpl extends AutoTradeService {
 	@Override
 	protected void updatePendingPartnerStatus(int partnerUserOrderId, char status) {
 		uoDao.updatePendingPartnerStatus(partnerUserOrderId, status);
+	}
+
+	@Override
+	protected QueryAccountInfoResult queryAccountInfo(String username) throws Exception {
+		return queryAccountInfoService.queryAccountInfo(username);
 	}
 	
 }

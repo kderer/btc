@@ -13,6 +13,8 @@ import net.kadirderer.btc.job.AutoTradeJob;
 import net.kadirderer.btc.job.AutoTradeTask;
 import net.kadirderer.btc.job.RecordGroupJob;
 import net.kadirderer.btc.job.RecordGroupQueryTask;
+import net.kadirderer.btc.job.SweeperJob;
+import net.kadirderer.btc.job.SweeperTask;
 
 @Configuration
 public class JobConfiguration {
@@ -25,6 +27,11 @@ public class JobConfiguration {
     @Bean
 	public AutoTradeTask autoTradeTask() {
 		return new AutoTradeTask();
+	}
+    
+    @Bean
+	public SweeperTask sweeperTask() {
+		return new SweeperTask();
 	}
 	
 	@Bean
@@ -42,6 +49,16 @@ public class JobConfiguration {
 		JobDetailFactoryBean jobDetailBean = new JobDetailFactoryBean();
 		
 		jobDetailBean.setJobClass(AutoTradeJob.class);
+		jobDetailBean.setDurability(true);
+		
+		return jobDetailBean;
+	}
+	
+	@Bean
+	public JobDetailFactoryBean setupSweeperJob() {
+		JobDetailFactoryBean jobDetailBean = new JobDetailFactoryBean();
+		
+		jobDetailBean.setJobClass(SweeperJob.class);
 		jobDetailBean.setDurability(true);
 		
 		return jobDetailBean;
@@ -70,16 +87,30 @@ public class JobConfiguration {
 	}
 	
 	@Bean
+	public SimpleTriggerFactoryBean setupSweeperTrigger() {
+		SimpleTriggerFactoryBean recordGroupQueryTrigger = new SimpleTriggerFactoryBean();
+		
+		recordGroupQueryTrigger.setJobDetail(setupSweeperJob().getObject());
+		recordGroupQueryTrigger.setRepeatInterval(6 * 60 * 60 * 1000);		
+		recordGroupQueryTrigger.setStartDelay(5 * 60 * 1000);
+				
+		return recordGroupQueryTrigger;
+	}
+	
+	@Bean
 	public SchedulerFactoryBean setupSchedulerFactoryBean() {
 		SchedulerFactoryBean bean = new SchedulerFactoryBean();
 		
-		bean.setJobDetails(setupRecordGroupJob().getObject(), setupAutoTradeJob().getObject());
-		bean.setTriggers(setupRecordGroupTrigger().getObject(), setupAutoTradeTrigger().getObject());
+		bean.setJobDetails(setupRecordGroupJob().getObject(), setupAutoTradeJob().getObject(),
+				setupSweeperJob().getObject());
+		bean.setTriggers(setupRecordGroupTrigger().getObject(), setupAutoTradeTrigger().getObject(),
+				setupSweeperTrigger().getObject());
 		bean.setWaitForJobsToCompleteOnShutdown(true);
 		
 		Map<String, Object> taskMap = new HashMap<String, Object>();
 		taskMap.put("recordGroupQueryTask", recordGroupQueryTask());
 		taskMap.put("autoTradeTask", autoTradeTask());
+		taskMap.put("sweeperTask", sweeperTask());
 		
 		bean.setSchedulerContextAsMap(taskMap);
 		
