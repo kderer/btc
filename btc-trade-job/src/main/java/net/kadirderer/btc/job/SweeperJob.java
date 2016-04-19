@@ -8,8 +8,8 @@ public class SweeperJob extends QuartzJobBean {
 	
 	private SweeperTask sweeperTask;	
 	
-	public void setAutoTradeTask(SweeperTask SweeperTask) {
-		this.sweeperTask = SweeperTask;
+	public void setSweeperTask(SweeperTask sweeperTask) {
+		this.sweeperTask = sweeperTask;
 	}
 
 	@Override
