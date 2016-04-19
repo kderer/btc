@@ -6,16 +6,16 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 public class SweeperJob extends QuartzJobBean {
 	
-	private AutoTradeTask autoTradeTask;	
+	private SweeperTask sweeperTask;	
 	
-	public void setAutoTradeTask(AutoTradeTask autoTradeTask) {
-		this.autoTradeTask = autoTradeTask;
+	public void setAutoTradeTask(SweeperTask SweeperTask) {
+		this.sweeperTask = SweeperTask;
 	}
 
 	@Override
 	protected void executeInternal(JobExecutionContext context)
 			throws JobExecutionException {
-		autoTradeTask.autoTrade();
+		sweeperTask.sweep();
 	}
 
 }

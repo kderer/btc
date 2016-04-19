@@ -10,7 +10,7 @@ public class SweeperTask {
 	@Autowired
 	private AutoTradeService atService;	
 	
-	public void autoTrade() {
+	public void sweep() {
 		try {
 			if (ConfigMap.isAutoTradeEnabled()) {
 				atService.sweep("kadir");
