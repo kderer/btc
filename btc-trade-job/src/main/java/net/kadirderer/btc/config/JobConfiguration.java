@@ -91,7 +91,7 @@ public class JobConfiguration {
 		SimpleTriggerFactoryBean recordGroupQueryTrigger = new SimpleTriggerFactoryBean();
 		
 		recordGroupQueryTrigger.setJobDetail(setupSweeperJob().getObject());
-		recordGroupQueryTrigger.setRepeatInterval(6 * 60 * 60 * 1000);		
+		recordGroupQueryTrigger.setRepeatInterval(3 * 60 * 60 * 1000);		
 		recordGroupQueryTrigger.setStartDelay(5 * 60 * 1000);
 				
 		return recordGroupQueryTrigger;
