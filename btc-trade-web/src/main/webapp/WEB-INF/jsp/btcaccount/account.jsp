@@ -17,6 +17,7 @@
 					<th><spring:message
 							code="label.btcaccount.balance.header.currency" /></th>
 					<th><spring:message code="label.btcaccount.balance.header.btc" /></th>
+					<th><spring:message code="label.btcaccount.balance.header.sweep" /></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -25,6 +26,11 @@
 						<td><c:out value="${accountInfo.platformName}" /></td>
 						<td><c:out value="${accountInfo.currencyBalance}" /></td>
 						<td><c:out value="${accountInfo.btcBalance}" /></td>
+						<td>
+							<a href='<spring:url value="/btcAccount/sweep.html"></spring:url>' class="btn btn-default">
+								<span class="glyphicon glyphicon-fire"></span>
+							</a>
+						</td>
 					</tr>
 				</c:forEach>
 			</tbody>

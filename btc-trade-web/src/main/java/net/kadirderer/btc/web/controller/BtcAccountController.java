@@ -15,10 +15,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import net.kadirderer.btc.api.orderbook.OrderbookService;
 import net.kadirderer.btc.api.queryaccountinfo.QueryAccountInfoResult;
+import net.kadirderer.btc.db.dao.BtcPlatformDao;
 import net.kadirderer.btc.db.model.BtcPlatform;
 import net.kadirderer.btc.impl.buyorder.BtcChinaBuyOrderResult;
 import net.kadirderer.btc.impl.sellorder.BtcChinaSellOrderResult;
+import net.kadirderer.btc.impl.util.NumberUtil;
 import net.kadirderer.btc.service.BtcAccountService;
 import net.kadirderer.btc.service.CacheService;
 import net.kadirderer.btc.web.dto.BuyOrderDto;
@@ -34,6 +37,12 @@ public class BtcAccountController {
 	
 	@Autowired
 	private BtcAccountService btcAccountService;
+	
+	@Autowired
+	private OrderbookService btcOrderBookService;
+	
+	@Autowired
+	private BtcPlatformDao btcPlatformDao;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String btcAccount(ModelMap model) {
@@ -112,6 +121,82 @@ public class BtcAccountController {
 		
 		return "redirect:/btcAccount.html";
 	}
+	
+	@RequestMapping(value="sweep", method = RequestMethod.GET)
+	public String sweep(ModelMap model, RedirectAttributes redirectAttributes) {
+		
+		QueryAccountInfoResult queryAccountInfoResult = null;
+		double price = 0;
+		
+		BtcPlatform platform = btcPlatformDao.queryByCode("BTCCHINA"); 
+		
+		try {
+			queryAccountInfoResult = btcAccountService.queryAccountInfo(getLoggedInUsername(), "BTCCHINA");
+			price = btcOrderBookService.query(platform.getId()).getHighestAsk();
+		} catch (Exception e) {
+			WebUtil.addRedirectMessage(redirectAttributes, "message.btcaccount.sweep.exception", false);
+			return "redirect:/btcAccount.html";
+		}
+		
+		double currencyBalance = queryAccountInfoResult.getCurrencyBalance();
+		double btcBalance = queryAccountInfoResult.getBtcBalance();
+		
+		if (btcBalance > 0.5) {
+			btcBalance = 0.5;
+		}
+		
+		if (currencyBalance / price > 0.5) {
+			currencyBalance = 0.5 * price;
+		}
+		
+		if (btcBalance > 0.05) {
+			SellOrderDto order = new SellOrderDto();
+			order.setUsername(getLoggedInUsername());
+			order.setPrice(price);
+			order.setAmount(btcBalance);
+			order.setAutoTrade(true);
+			
+			try {
+				BtcChinaSellOrderResult result = (BtcChinaSellOrderResult) btcAccountService.sellOrder(order);
+				
+				if (result.getError() == null) {
+					WebUtil.addRedirectMessage(redirectAttributes, "message.btcaccount.sellorder.successful", true);
+				}
+				else {
+					WebUtil.addRedirectMessage(redirectAttributes, "message.btcaccount.sellorder.error", false);
+				}			
+			} catch (Exception e) {
+				WebUtil.addRedirectMessage(redirectAttributes, "message.btcaccount.sellorder.error.exception", false);
+			}
+		}
+		
+		if (currencyBalance / price > 0.05) {
+			BuyOrderDto order = new BuyOrderDto();
+			order.setUsername(getLoggedInUsername());
+			order.setPrice(price);
+			order.setAmount(NumberUtil.format(currencyBalance / price));
+			order.setAutoTrade(true);
+			
+			try {
+				BtcChinaBuyOrderResult result = (BtcChinaBuyOrderResult) btcAccountService.buyOrder(order);
+				
+				if (result.getError() == null) {				
+					WebUtil.addRedirectMessage(redirectAttributes, "message.btcaccount.buyorder.successful", true);
+				}
+				else {
+					WebUtil.addRedirectMessage(redirectAttributes, "message.btcaccount.buyorder.error", false);
+				}			
+			} catch (Exception e) {
+				WebUtil.addRedirectMessage(redirectAttributes, "message.btcaccount.buyorder.error.exception", false);
+			}
+		}
+		
+		WebUtil.addRedirectMessage(redirectAttributes, "message.btcaccount.sweep.successful", true);
+		
+		return "redirect:/btcAccount.html";
+	}
+	
+	
 	
 	@ModelAttribute("platformList")
 	public List<BtcPlatform> platformList() {
