@@ -26,7 +26,7 @@
         <script language="javascript" type="text/javascript" src="<@spring.url value="/assets/js/btc_compare.js"/>"></script>
 		<script language="javascript" type="text/javascript" src="<@spring.url value="/assets/js/verify.min.js"/>"></script>
 		<script language="javascript" type="text/javascript" src="<@spring.url value="/assets/js/bootbox.min.js"/>"></script>
-        <script language="javascript" type="text/javascript" src="<@spring.url value="/assets/js/bootstrap-switch.min.min.js"/>"></script>
+        <script language="javascript" type="text/javascript" src="<@spring.url value="/assets/js/bootstrap-switch.min.js"/>"></script>
         
         <title>${title}</title>
     </head>

@@ -9,8 +9,8 @@ import net.kadirderer.btc.api.marketdepth.MarketDepthService;
 import net.kadirderer.btc.api.queryorder.QueryOrderResult;
 import net.kadirderer.btc.api.queryorder.QueryOrderService;
 import net.kadirderer.btc.api.sellorder.SellOrderService;
-import net.kadirderer.btc.config.ConfigMap;
 import net.kadirderer.btc.db.model.UserOrder;
+import net.kadirderer.btc.util.configuration.ConfigurationService;
 import net.kadirderer.btc.util.email.MailSendService;
 import net.kadirderer.btc.util.enumaration.OrderStatus;
 
@@ -22,6 +22,8 @@ public class SellOrderThread implements Runnable {
 	private SellOrderService sellOrderService;
 	private MarketDepthService marketDepthService;	
 	private MailSendService emailSendService;
+	
+	private ConfigurationService cfgService;
 	
 	private String username;
 	private String orderId;
@@ -43,7 +45,7 @@ public class SellOrderThread implements Runnable {
 	@Override
 	public void run() {
 		
-		if(ConfigMap.isAutoTradeEnabled()) {
+		if(cfgService.isAutoTradeEnabled()) {
 			sellStrategyTwo();
 		}
 	}
@@ -51,13 +53,13 @@ public class SellOrderThread implements Runnable {
 	@SuppressWarnings("unused")
 	private void sellStrategyOne() {
 		try {
-			Thread.sleep(ConfigMap.sellOrderCheckPeriod() * 1000);
+			Thread.sleep(10 * 1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
 		try {
-			QueryOrderResult qor = queryOrderService.queryOrder(username, orderId);
+			QueryOrderResult qor = queryOrderService.queryOrder(username, orderId, true);
 
 			MarketDepthResult mdr = marketDepthService.getMarketDepth(username);
 
@@ -96,7 +98,7 @@ public class SellOrderThread implements Runnable {
 		
 		long startTime = Calendar.getInstance().getTimeInMillis();
 		long timeElapsed = 0;
-		long timeOut = ConfigMap.sellOrderTimeLimit() * 1000;		
+		long timeOut = cfgService.getSellOrderTimeLimit() * 1000;		
 		QueryOrderResult qor = null;
 		MarketDepthResult mdr = null;
 		
@@ -104,13 +106,13 @@ public class SellOrderThread implements Runnable {
 		
 		while (timeOut > timeElapsed ) {
 			try {
-				Thread.sleep(ConfigMap.sellOrderCheckPeriod() * 1000);
+				Thread.sleep(10 * 1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 
 			try {
-				qor = queryOrderService.queryOrder(username, orderId);
+				qor = queryOrderService.queryOrder(username, orderId, true);
 				
 				if (OrderStatus.CANCELLED.equals(qor.getStatus())) {
 					return;
@@ -149,8 +151,8 @@ public class SellOrderThread implements Runnable {
 			order.setBasePrice(qor.getUserOrder().getBasePrice());			
 			order.setAmount(qor.getAmount());
 			
-			if(qor.getPrice() - newPrice > ConfigMap.sellReOrderDelta()) {
-				order.setPrice(qor.getPrice() - ConfigMap.sellReOrderDelta());
+			if(qor.getPrice() - newPrice > cfgService.getSellReOrderDelta()) {
+				order.setPrice(qor.getPrice() - cfgService.getSellReOrderDelta());
 				sellOrderService.sellOrder(order);
 			} else {
 				order.setPrice(newPrice);

@@ -1,18 +1,21 @@
 package net.kadirderer.btc.job;
 
-import net.kadirderer.btc.config.ConfigMap;
-import net.kadirderer.btc.service.RecordGroupService;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
+import net.kadirderer.btc.service.RecordGroupService;
+import net.kadirderer.btc.util.configuration.ConfigurationService;
 
 public class RecordGroupQueryTask {
 	
 	@Autowired
 	private RecordGroupService recordGroupService;
 	
+	@Autowired
+	private ConfigurationService configService;
+	
 	public void createRecordGroup() {
 		try {
-			if (ConfigMap.isRecordGroupJobEnabled()) {
+			if (configService.isRecordGroupJobEnabled()) {
 				recordGroupService.createRecordForAllPlatforms();
 			}			
 		}

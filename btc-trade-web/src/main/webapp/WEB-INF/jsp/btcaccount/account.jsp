@@ -106,6 +106,21 @@
 					</div>
 				</div>
 			</div>
+			
+			<div class="form-group">
+				<label for="isAutoUpdateDiv" class="col-sm-2 control-label">
+					<spring:message code="label.btcaccount.buyorder.isautoupdate" />
+				</label>
+				<div id="isAutoUpdateDiv" class="col-sm-10">
+					<div class="col-sm-4">
+						<div class="checkbox">
+							<label> 
+								<input type="checkbox" name="isAutoUpdate">
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
 
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-10">
@@ -183,6 +198,21 @@
 						<div class="checkbox">
 							<label> 
 								<input type="checkbox" name="isAutoTrade">
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="sellIsAutoUpdateDiv" class="col-sm-2 control-label">
+					<spring:message code="label.btcaccount.sellorder.isautoupdate" />
+				</label>
+				<div id="sellIsAutoUpdateDiv" class="col-sm-10">
+					<div class="col-sm-4">
+						<div class="checkbox">
+							<label> 
+								<input type="checkbox" name="isAutoUpdate">
 							</label>
 						</div>
 					</div>

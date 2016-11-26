@@ -3,6 +3,7 @@ package net.kadirderer.btc.config;
 import javax.servlet.Filter;
 
 import net.kadirderer.btc.db.DatabaseConfig;
+import net.kadirderer.btc.util.config.UtilConfig;
 import net.kadirderer.exchangerate.config.ExchangeRateConfig;
 
 import org.springframework.core.annotation.Order;
@@ -16,7 +17,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
 		return new Class<?>[] { ApplicationConfig.class, DatabaseConfig.class, SecurityConfig.class,
-				ExchangeRateConfig.class, TradeApiConfig.class };
+				ExchangeRateConfig.class, TradeApiConfig.class, UtilConfig.class };
 	}
 	// {!end addToRootContext}
 

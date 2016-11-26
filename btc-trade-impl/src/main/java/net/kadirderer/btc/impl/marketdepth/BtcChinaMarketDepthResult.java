@@ -27,8 +27,7 @@ public class BtcChinaMarketDepthResult extends MarketDepthResult {
 				if(amount > tempAmount) {
 					price = Double.valueOf(depthMap.get("price").toString());
 				}
-			}
-			
+			}			
 		}
 		return price;
 	}
@@ -105,6 +104,61 @@ public class BtcChinaMarketDepthResult extends MarketDepthResult {
 	public void setResult(
 			LinkedHashMap<String, LinkedHashMap<String, Object>> result) {
 		this.result = result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public double getGeometricMeanOfBids() {
+		double product = 1.0;
+		int bidListSize = 1;
+		if(error == null) {
+			ArrayList<LinkedHashMap<String, Object>> bidList = (ArrayList<LinkedHashMap<String, Object>>) 
+					result.get("market_depth").get("bid");
+			double bid = 1.0;
+			for(LinkedHashMap<String, Object> depthMap : bidList) {
+				bid = Double.valueOf(depthMap.get("price").toString());				
+				product *= bid;
+			}
+			
+			bidListSize = bidList.size();
+		}
+		return Math.pow(product, 1.0 / bidListSize);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public double[] getMaxAndGeometricMean() {
+		double[] maxAndGMArray = new double[4];
+		double product = 1.0;
+		double price = 0;
+		
+		if(error == null) {
+			ArrayList<LinkedHashMap<String, Object>> list = (ArrayList<LinkedHashMap<String, Object>>) 
+					result.get("market_depth").get("ask");
+			
+			LinkedHashMap<String, Object> firstMap = list.get(0);
+			price = Double.valueOf(firstMap.get("price").toString());
+			
+			for(LinkedHashMap<String, Object> depthMap : list) {
+				product *= Double.valueOf(depthMap.get("price").toString());
+			}
+			
+			maxAndGMArray[0] = price;
+			maxAndGMArray[1] = Math.pow(product, 1.0 / list.size());
+			
+			list = (ArrayList<LinkedHashMap<String, Object>>)result.get("market_depth").get("bid");			
+			price = Double.valueOf(list.get(0).get("price").toString());
+			
+			product = 1.0;
+			for(LinkedHashMap<String, Object> depthMap : list) {
+				product *= Double.valueOf(depthMap.get("price").toString());
+			}
+			
+			maxAndGMArray[2] = price;
+			maxAndGMArray[3] = Math.pow(product, 1.0 / list.size());			
+		}
+		
+		return maxAndGMArray;
 	}
 	
 }

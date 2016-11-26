@@ -2,6 +2,12 @@ package net.kadirderer.btc.util.config;
 
 import java.util.Properties;
 
+import javax.sql.DataSource;
+
+import org.apache.commons.configuration2.DatabaseConfiguration;
+import org.apache.commons.configuration2.builder.BasicConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -14,12 +20,15 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import net.kadirderer.btc.util.email.EmailConfig;
 
 @Configuration
-@ComponentScan(basePackages = { "net.kadirderer.btc.util.email"})
+@ComponentScan(basePackages = {"net.kadirderer.btc.util.email", "net.kadirderer.btc.util.configuration"})
 @PropertySource(value = "classpath:util-config.properties")
 public class UtilConfig {
 	
 	@Autowired
 	private EmailConfig mailConfig;
+	
+	@Autowired
+	private DataSource dataSource;
 	
 	@Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -42,6 +51,27 @@ public class UtilConfig {
 		mailSender.setJavaMailProperties(javaMailProperties);
 		
 		return mailSender;
+	}
+	
+	@Bean
+	public org.apache.commons.configuration2.Configuration configuration() {
+		BasicConfigurationBuilder<DatabaseConfiguration> builder =
+			     new BasicConfigurationBuilder<DatabaseConfiguration>(DatabaseConfiguration.class);
+		
+		builder.configure(new Parameters().database().setDataSource(dataSource)
+		         .setTable("T_CONFIGURATION")
+		         .setKeyColumn("NAME")
+		         .setValueColumn("VALUE")
+		);
+		
+		org.apache.commons.configuration2.Configuration config = null;
+		try {
+			config = builder.getConfiguration();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+		
+		return config;
 	}
 
 }

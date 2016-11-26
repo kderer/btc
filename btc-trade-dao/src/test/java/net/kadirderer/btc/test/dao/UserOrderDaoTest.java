@@ -34,12 +34,22 @@ public class UserOrderDaoTest {
 		uo.setPlatformId(9);
 		uo.setPrice(500.67);
 		uo.setReturnId("12655");
-		uo.setStatus(OrderStatus.PENDING.getCode());
-		uo.setUsername("kadir");
+		uo.setStatus(OrderStatus.CANCELLED.getCode());
+		uo.setUsername("osman");
+		uo.setAutoTrade(false);
+		uo.setAutoUpdate(true);
 		
 		uoDao.save(uo);
 		
-		Assert.assertNotNull(uo.getId());		
+		Assert.assertNotNull(uo.getId());
+		
+		Integer id = uo.getId();
+		
+		uo.setId(null);
+		
+		uoDao.save(uo);
+		
+		Assert.assertNotEquals(id, uo.getId());
 	}
 	
 	
@@ -53,12 +63,12 @@ public class UserOrderDaoTest {
 	@Test
 	public void testFindByCriteria() {
 		UserOrderCriteria criteria = new UserOrderCriteria();
-		criteria.addPlatformId(9);
-		criteria.setProfitStart(0.0);
+		criteria.addUsername("osman");
 		
 		List<UserOrder> resultList = uoDao.findByCriteria(criteria);
 		
 		Assert.assertNotEquals(0, resultList.size());
+		Assert.assertTrue(resultList.get(0).isAutoUpdate());
 	}
 	
 	
@@ -70,52 +80,6 @@ public class UserOrderDaoTest {
 		criteria.setCreateDateEnd(calendar.getTime());
 		
 		System.out.println(uoDao.findByCriteriaCount(criteria));
-	}
-	
-	@Test
-	public void testUpdatePartnerId() {
-		uoDao.updatePartnerId(121, 141);
-		
-		UserOrderCriteria criteria = new UserOrderCriteria();
-		criteria.addId(121);
-		
-		Assert.assertEquals((int)uoDao.findByCriteria(criteria).get(0).getPartnerId(), 141);
-	}
-	
-	@Test
-	public void testUpdatePartnerIdWithNewId() {
-		UserOrderCriteria userOrderCriteria = new UserOrderCriteria();
-		userOrderCriteria.addPartnerId(1250);
-		userOrderCriteria.addStatus(OrderStatus.PENDING.getCode());
-		
-		List<UserOrder> resultList = uoDao.findByCriteria(userOrderCriteria);
-		
-		UserOrder partner = resultList.get(0);
-		
-		Assert.assertEquals(375, partner.getId().intValue());
-		
-		uoDao.updatePartnerIdWithNewId(1250, 1251);
-		
-		userOrderCriteria = new UserOrderCriteria();
-		userOrderCriteria.addId(375);		
-		resultList = uoDao.findByCriteria(userOrderCriteria);
-		
-		UserOrder order = resultList.get(0);
-		
-		Assert.assertEquals(1251, order.getPartnerId().intValue());
-	}
-	
-	@Test
-	public void testPendingPartnerStatus() {
-		uoDao.updatePendingPartnerStatus(123123, OrderStatus.SINGLE.getCode());
-		
-		UserOrderCriteria userOrderCriteria = new UserOrderCriteria();
-		userOrderCriteria.addPartnerId(123123);		
-		List<UserOrder> resultList = uoDao.findByCriteria(userOrderCriteria);
-		
-		UserOrder order = resultList.get(0);
-		
-		Assert.assertEquals(OrderStatus.SINGLE.getCode(), order.getStatus());
 	}
 
 }

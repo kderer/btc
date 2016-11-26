@@ -13,6 +13,7 @@
 		<link rel="stylesheet" type="text/css" href="<spring:url value="/assets/jquery-ui/jquery-ui.min.css"/>">
 		<link rel="stylesheet" type="text/css" href="<spring:url value="/assets/jquery-ui/jquery-ui.structure.min.css"/>">
 		<link rel="stylesheet" type="text/css" href="<spring:url value="/assets/jquery-ui/jquery-ui.theme.min.css"/>">
+		<link rel="stylesheet" type="text/css" href="<spring:url value="/assets/css/bootstrap-switch.min.css"/>">
 		
 		<script type="text/javascript" src="<spring:url value="/assets/js/jquery-1.11.2.min.js"/>"></script>
 		<script type="text/javascript" src="<spring:url value="/assets/js/moment.min.js"/>"></script>
@@ -25,6 +26,7 @@
 		<script type="text/javascript" src="<spring:url value="/assets/js/btc_compare.js"/>"></script>
 		<script type="text/javascript" src="<spring:url value="/assets/js/verify.min.js"/>"></script>
 		<script type="text/javascript" src="<spring:url value="/assets/js/bootbox.min.js"/>"></script>
+		<script type="text/javascript" src="<spring:url value="/assets/js/bootstrap-switch.min.js"/>"></script>
 	
 		<title><spring:message code="${titleKey}"/></title>
 	</head>

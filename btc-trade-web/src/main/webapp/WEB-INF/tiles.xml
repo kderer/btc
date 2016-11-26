@@ -7,4 +7,8 @@
 		<put-attribute name="titleKey" value="label.btcaccount.title"/>
 		<put-attribute name="body" value="/WEB-INF/jsp/btcaccount/account.jsp" />
 	</definition>
+	<definition name="tiles.configuration" template="/WEB-INF/jsp/layout.jsp">
+		<put-attribute name="titleKey" value="label.config.title"/>
+		<put-attribute name="body" value="/WEB-INF/jsp/config/list_config.jsp" />
+	</definition>
 </tiles-definitions>

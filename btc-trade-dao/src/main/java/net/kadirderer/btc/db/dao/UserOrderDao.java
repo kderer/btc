@@ -9,6 +9,8 @@ public interface UserOrderDao {
 	
 	public UserOrder save(UserOrder userOrder);
 	
+	public UserOrder findById(int id);
+	
 	public List<UserOrder> findByUsername(String username);
 	
 	public List<UserOrder> findPending(String username, int platformId);

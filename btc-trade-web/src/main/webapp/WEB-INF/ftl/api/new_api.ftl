@@ -22,7 +22,6 @@
 		<#if request_success_messages??>
 			<script language="javascript" type="text/javascript">
 	   			$(function() {
-	   				debugger
 	   				$('#addApiModal').on('hide.bs.modal', function () {
 			   			location.reload();
 					});

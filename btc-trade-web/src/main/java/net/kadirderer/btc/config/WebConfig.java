@@ -46,7 +46,7 @@ public class WebConfig {
 	@Bean
 	public UrlBasedViewResolver setupJspResolver() {
 		UrlBasedViewResolver resolver = new UrlBasedViewResolver();
-		resolver.setPrefix("/WEB-INF/pages/");
+		resolver.setPrefix("/WEB-INF/jsp/");
 		resolver.setSuffix(".jsp");
 		resolver.setViewClass(JstlView.class);
 		resolver.setOrder(3);

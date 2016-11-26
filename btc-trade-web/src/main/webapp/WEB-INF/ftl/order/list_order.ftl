@@ -69,7 +69,7 @@
 						    		html += 'disabled';
 						    	}
 					    						    	
-					    		html += '" title="Cance" ' +
+					    		html += '" title="Cancel" ' +
 					    				'data-toggle="modal" data-target="#cancelOrderModal"/>' +
 										'<span class="glyphicon glyphicon-remove"></span>' +
 									'</a>' +									

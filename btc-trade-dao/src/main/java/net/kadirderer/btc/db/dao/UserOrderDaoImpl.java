@@ -32,6 +32,11 @@ public class UserOrderDaoImpl implements UserOrderDao {
 	public UserOrder save(UserOrder userOrder) {
 		return uoRepository.save(userOrder);
 	}
+	
+	@Override
+	public UserOrder findById(int id) {
+		return uoRepository.findOne(id);
+	}
 
 	@Override
 	public List<UserOrder> findByUsername(String username) {
@@ -200,8 +205,12 @@ public class UserOrderDaoImpl implements UserOrderDao {
 			predicate = criteriaBuilder.and(from.get("username").in(criteria.getUsernameList()), predicate);
 		}
 		
-		if(criteria.getPartnerIdList() != null && criteria.getPartnerIdList().size() > 0) {
-			predicate = criteriaBuilder.and(from.get("partnerId").in(criteria.getPartnerIdList()), predicate);
+		if (criteria.isAutoTrade() != null) {
+			predicate = criteriaBuilder.and(criteriaBuilder.equal(from.get("autoTrade"), criteria.isAutoTrade()), predicate);
+		}
+		
+		if (criteria.isAutoUpdate() != null) {
+			predicate = criteriaBuilder.and(criteriaBuilder.equal(from.get("autoUpdate"), criteria.isAutoUpdate()), predicate);
 		}
 		
 		return predicate;

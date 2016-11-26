@@ -37,14 +37,14 @@ public class BtcChinaQueryAccountInfoResult extends QueryAccountInfoResult {
 	@SuppressWarnings("unchecked")
 	public double getBtcBalance() {		
 		String amount = (String)((LinkedHashMap<String, Object>)getBalance().get("btc")).get("amount");
-		return Double.valueOf(amount);
+		return NumberUtil.format(Double.parseDouble(amount));
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public double getCurrencyBalance() {
 		String amount = (String)((LinkedHashMap<String, Object>)getBalance().get("cny")).get("amount");
-		return NumberUtil.format(Double.valueOf(amount));
+		return NumberUtil.format(Double.parseDouble(amount));
 	}
 	
 	@SuppressWarnings("unchecked")

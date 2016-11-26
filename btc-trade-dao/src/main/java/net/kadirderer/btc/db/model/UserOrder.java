@@ -34,26 +34,44 @@ public class UserOrder {
 	@Column(name = "PARENTID")
 	private Integer parentId;
 	
+	@Column(name = "IS_AUTO_TRADE", columnDefinition = "TINYINT(1)")
+	private boolean autoTrade;
+	
+	@Column(name = "IS_AUTO_UPDATE", columnDefinition = "TINYINT(1)")
+	private boolean autoUpdate;
+	
 	@Column(name = "BASEPRICE")
 	private double basePrice;
 	
 	@Column(name = "PRICE")
 	private double price;
 	
+	@Column(name = "BEST_GMOB")
+	private Double bestGmob;
+	
+	@Column(name = "LAST_GMOB")
+	private Double lastGmob;
+	
+	@Column(name = "LAST_SECOND_GMOB")
+	private Double lastSecondGmob;
+	
+	@Column(name = "LAST_THIRD_GMOB")
+	private Double lastThirdGmob;
+	
+	@Column(name = "OBR_START_TIME")
+	private Long obrStartTime;
+	
 	@Column(name = "AMOUNT")
 	private double amount;
 	
 	@Column(name = "COMPLETEDAMOUNT")
-	private double completedAmount;	
+	private double completedAmount;
 	
 	@Column(name = "RETURNID")
 	private String returnId;
 	
 	@Column(name = "STATUS")
 	private char status;
-	
-	@Column(name = "PARTNERID")
-	private Integer partnerId;
 	
 	@Column(name = "CREATEDATE")
 	private Date createDate;
@@ -177,12 +195,60 @@ public class UserOrder {
 		this.platformId = platformId;
 	}
 
-	public Integer getPartnerId() {
-		return partnerId;
+	public boolean isAutoTrade() {
+		return autoTrade;
 	}
 
-	public void setPartnerId(Integer partnerId) {
-		this.partnerId = partnerId;
-	}	
+	public void setAutoTrade(boolean autoTrade) {
+		this.autoTrade = autoTrade;
+	}
+
+	public boolean isAutoUpdate() {
+		return autoUpdate;
+	}
+
+	public void setAutoUpdate(boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
+	}
+
+	public Double getBestGmob() {
+		return bestGmob;
+	}
+
+	public void setBestGmob(Double bestGmob) {
+		this.bestGmob = bestGmob;
+	}
+
+	public Long getObrStartTime() {
+		return obrStartTime;
+	}
+
+	public void setObrStartTime(Long obrStartTime) {
+		this.obrStartTime = obrStartTime;
+	}
+
+	public Double getLastGmob() {
+		return lastGmob;
+	}
+
+	public void setLastGmob(Double lastGmob) {
+		this.lastGmob = lastGmob;
+	}
+
+	public Double getLastSecondGmob() {
+		return lastSecondGmob;
+	}
+
+	public void setLastSecondGmob(Double lastSecondGmob) {
+		this.lastSecondGmob = lastSecondGmob;
+	}
+
+	public Double getLastThirdGmob() {
+		return lastThirdGmob;
+	}
+
+	public void setLastThirdGmob(Double lastThirdGmob) {
+		this.lastThirdGmob = lastThirdGmob;
+	}
 	
 }

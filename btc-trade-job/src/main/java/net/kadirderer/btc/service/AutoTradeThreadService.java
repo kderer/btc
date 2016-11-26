@@ -1,5 +1,8 @@
 package net.kadirderer.btc.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import net.kadirderer.btc.api.buyorder.BuyOrderService;
 import net.kadirderer.btc.api.cancelorder.CancelOrderService;
 import net.kadirderer.btc.api.marketdepth.MarketDepthResult;
@@ -9,10 +12,14 @@ import net.kadirderer.btc.api.queryaccountinfo.QueryAccountInfoResult;
 import net.kadirderer.btc.api.queryaccountinfo.QueryAccountInfoService;
 import net.kadirderer.btc.api.queryorder.QueryOrderService;
 import net.kadirderer.btc.api.sellorder.SellOrderService;
-import net.kadirderer.btc.config.ConfigMap;
 import net.kadirderer.btc.db.model.UserOrder;
+import net.kadirderer.btc.util.configuration.ConfigurationService;
 
+@Service
 public abstract class AutoTradeThreadService {
+	
+	@Autowired
+	protected ConfigurationService cfgService; 
 	
 	public abstract SellOrderService getSellOrderService();
 	
@@ -43,8 +50,8 @@ public abstract class AutoTradeThreadService {
 	public void autoTrade(String username) throws Exception {
 		
 		MarketDepthResult mdr = getMarketDepthService().getMarketDepth(username);
-		double lowestAsk = mdr.getHighestBid() + ConfigMap.sellOrderDelta();
-		double highestBid = mdr.getHighestBid() - ConfigMap.buyOrderDelta();
+		double lowestAsk = mdr.getHighestBid() + cfgService.getSellOrderDelta();
+		double highestBid = mdr.getHighestBid() - cfgService.getBuyOrderDelta();
 		
 		QueryAccountInfoResult qaiResult = getQueryAccountInfoService().queryAccountInfo(username);
 		double btcBalance = qaiResult.getBtcBalance();

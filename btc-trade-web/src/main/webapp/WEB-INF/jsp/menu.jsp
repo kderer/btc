@@ -53,9 +53,9 @@
 					</a>
 				</li>
 				<li role="presentation">
-					<a role="menuitem" class="menuanchor" tabindex="-1" href="<spring:url value="/config.html"/>">
+					<a role="menuitem" class="menuanchor" tabindex="-1" href="<spring:url value="/configuration.html"/>">
 						<span class="glyphicon glyphicon-cog menuspan"></span>
-						<spring:message code="label.menu.jobconfig"/>
+						<spring:message code="label.menu.config"/>
 					</a>
 				</li>
 				<li role="presentation">
@@ -65,7 +65,7 @@
 					</a>
 				</li>
 				<li role="presentation">
-					<a role="menuitem" class="menuanchor" tabindex="-1" href="${btcAccountUrl}">
+					<a role="menuitem" class="menuanchor" tabindex="-1" href="<spring:url value="/btcAccount.html"/>">
 						<span class="glyphicon glyphicon-briefcase menuspan"></span>
 						<spring:message code="label.menu.btcaccount"/>
 					</a>

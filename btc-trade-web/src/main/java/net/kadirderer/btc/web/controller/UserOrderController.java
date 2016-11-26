@@ -23,7 +23,6 @@ import net.kadirderer.btc.db.criteria.UserOrderCriteria;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.impl.buyorder.BtcChinaBuyOrderResult;
 import net.kadirderer.btc.impl.sellorder.BtcChinaSellOrderResult;
-import net.kadirderer.btc.impl.util.NumberUtil;
 import net.kadirderer.btc.service.CacheService;
 import net.kadirderer.btc.service.UserOrderService;
 import net.kadirderer.btc.util.enumaration.OrderStatus;
@@ -143,7 +142,7 @@ public class UserOrderController {
 			
 			if (userOrder.getOrderType() == OrderType.BUY.getCode()) {							
 				double oldCost = userOrder.getPrice() * userOrder.getAmount();				
-				double amount = NumberUtil.format(oldCost / price);
+				double amount = oldCost / price;
 				
 				order.setAmount(amount);
 				

@@ -52,10 +52,17 @@ public class BtcChinaCancelOrderService implements CancelOrderService, BtcChinaA
 		
 		if (result.getError() == null) {
 			uo.setStatus(OrderStatus.CANCELLED.getCode());
-		} else if ("-32025".equals(result.getError().getCode())) {
+		}
+		else if ("-32025".equals(result.getError().getCode())) {
 			uo.setStatus(OrderStatus.CANCELLED.getCode());
-		} else if ("-32026".equals(result.getError().getCode())) {
-			uo.setStatus(OrderStatus.DONE.getCode());
+		}
+		else if ("-32026".equals(result.getError().getCode())) {
+			// Already completed.
+			// Do nothing here, converting status to done while canceling breaks the
+			// auto trade cycle
+		}
+		else {
+			uo.setStatus(OrderStatus.CANCEL_FAILED.getCode());
 		}
 		
 		uo.setUpdateDate(Calendar.getInstance().getTime());		

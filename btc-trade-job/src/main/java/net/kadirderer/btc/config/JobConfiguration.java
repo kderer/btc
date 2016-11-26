@@ -80,7 +80,7 @@ public class JobConfiguration {
 		SimpleTriggerFactoryBean recordGroupQueryTrigger = new SimpleTriggerFactoryBean();
 		
 		recordGroupQueryTrigger.setJobDetail(setupAutoTradeJob().getObject());
-		recordGroupQueryTrigger.setRepeatInterval(1 * 60 * 1000);		
+		recordGroupQueryTrigger.setRepeatInterval(1 * 15 * 1000);		
 		recordGroupQueryTrigger.setStartDelay(1000);
 				
 		return recordGroupQueryTrigger;
@@ -101,16 +101,13 @@ public class JobConfiguration {
 	public SchedulerFactoryBean setupSchedulerFactoryBean() {
 		SchedulerFactoryBean bean = new SchedulerFactoryBean();
 		
-		bean.setJobDetails(setupRecordGroupJob().getObject(), setupAutoTradeJob().getObject(),
-				setupSweeperJob().getObject());
-		bean.setTriggers(setupRecordGroupTrigger().getObject(), setupAutoTradeTrigger().getObject(),
-				setupSweeperTrigger().getObject());
+		bean.setJobDetails(setupRecordGroupJob().getObject(), setupAutoTradeJob().getObject());
+		bean.setTriggers(setupRecordGroupTrigger().getObject(), setupAutoTradeTrigger().getObject());
 		bean.setWaitForJobsToCompleteOnShutdown(true);
 		
 		Map<String, Object> taskMap = new HashMap<String, Object>();
 		taskMap.put("recordGroupQueryTask", recordGroupQueryTask());
 		taskMap.put("autoTradeTask", autoTradeTask());
-		taskMap.put("sweeperTask", sweeperTask());
 		
 		bean.setSchedulerContextAsMap(taskMap);
 		

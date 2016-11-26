@@ -21,7 +21,6 @@ import net.kadirderer.btc.db.dao.BtcPlatformDao;
 import net.kadirderer.btc.db.model.BtcPlatform;
 import net.kadirderer.btc.impl.buyorder.BtcChinaBuyOrderResult;
 import net.kadirderer.btc.impl.sellorder.BtcChinaSellOrderResult;
-import net.kadirderer.btc.impl.util.NumberUtil;
 import net.kadirderer.btc.service.BtcAccountService;
 import net.kadirderer.btc.service.CacheService;
 import net.kadirderer.btc.web.dto.BuyOrderDto;
@@ -71,10 +70,15 @@ public class BtcAccountController {
 	@RequestMapping(value="buyOrder", method = RequestMethod.POST)
 	public String buyOrder(ModelMap model, @ModelAttribute("buyOrder") @Valid BuyOrderDto buyOrder,
 			@RequestParam(required = false, name = "isAutoTrade") String isAutoTrade,
+			@RequestParam(required = false, name = "isAutoUpdate") String isAutoUpdate,
 			RedirectAttributes redirectAttributes) {
 		
 		if (isAutoTrade != null && isAutoTrade.equals("on")) {
 			buyOrder.setAutoTrade(true);
+		}
+		
+		if (isAutoUpdate != null && isAutoUpdate.equals("on")) {
+			buyOrder.setAutoUpdate(true);
 		}
 		
 		buyOrder.setUsername(getLoggedInUsername());
@@ -97,11 +101,16 @@ public class BtcAccountController {
 	
 	@RequestMapping(value="sellOrder", method = RequestMethod.POST)
 	public String sellOrder(ModelMap model, @ModelAttribute("sellOrder") @Valid SellOrderDto sellOrder,
-			@RequestParam(required = false, name = "isAutoTrade") String isAutoTrade,			
+			@RequestParam(required = false, name = "isAutoTrade") String isAutoTrade,
+			@RequestParam(required = false, name = "isAutoUpdate") String isAutoUpdate,			
 			RedirectAttributes redirectAttributes) {
 		
 		if (isAutoTrade != null && isAutoTrade.equals("on")) {
 			sellOrder.setAutoTrade(true);
+		}
+		
+		if (isAutoUpdate != null && isAutoUpdate.equals("on")) {
+			sellOrder.setAutoUpdate(true);
 		}
 		
 		sellOrder.setUsername(getLoggedInUsername());
@@ -155,6 +164,7 @@ public class BtcAccountController {
 			order.setPrice(price);
 			order.setAmount(btcBalance);
 			order.setAutoTrade(true);
+			order.setAutoUpdate(true);
 			
 			try {
 				BtcChinaSellOrderResult result = (BtcChinaSellOrderResult) btcAccountService.sellOrder(order);
@@ -174,7 +184,8 @@ public class BtcAccountController {
 			BuyOrderDto order = new BuyOrderDto();
 			order.setUsername(getLoggedInUsername());
 			order.setPrice(price);
-			order.setAmount(NumberUtil.format(currencyBalance / price));
+			order.setAmount(currencyBalance / price);
+			order.setAutoTrade(true);
 			order.setAutoTrade(true);
 			
 			try {

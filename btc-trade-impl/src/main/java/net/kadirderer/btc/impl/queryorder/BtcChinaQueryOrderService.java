@@ -30,11 +30,11 @@ public class BtcChinaQueryOrderService implements QueryOrderService, BtcChinaApi
 	private BtcPlatformDao btcPlatformDao;
 		
 	@Autowired
-	private UserOrderDao uoDao;	
+	private UserOrderDao uoDao;
 	
 	@Override
 	@Transactional
-	public QueryOrderResult queryOrder(String username, String orderId)
+	public QueryOrderResult queryOrder(String username, String orderId, boolean updateDbStatus)
 			throws Exception {
 		
 		String jsonResult = btccClient.callApi(this, username, orderId);
@@ -43,7 +43,7 @@ public class BtcChinaQueryOrderService implements QueryOrderService, BtcChinaApi
 		BtcChinaQueryOrderResult result = om.readValue(jsonResult, BtcChinaQueryOrderResult.class);
 		
 		if (result.getError() == null) {
-			updateOrder(username, orderId, result);
+			updateOrder(username, orderId, result, updateDbStatus);
 		}
 		
 		return result;
@@ -69,33 +69,36 @@ public class BtcChinaQueryOrderService implements QueryOrderService, BtcChinaApi
 		return ApiType.QUERYORDER;
 	}
 	
-	private void updateOrder(String username, String orderId, BtcChinaQueryOrderResult result) {
+	private void updateOrder(String username, String orderId, BtcChinaQueryOrderResult result, boolean updateDbStatus) {
 		BtcPlatform btcChina = btcPlatformDao.queryByCode("BTCCHINA");
 		
 		UserOrder uo = uoDao.findByOrderId(username, btcChina.getId(), orderId);
 		
-		if (uo.getStatus() == OrderStatus.PENDING.getCode() ||
-				uo.getStatus() == OrderStatus.MANUAL.getCode() ||
-				uo.getStatus() == OrderStatus.SINGLE.getCode()) {
+		if (uo.getStatus() == OrderStatus.PENDING.getCode()) {
 			
 			if (uo.getCompletedAmount() != result.getCompletedAmount()) {
 				result.setLastCompletedAmount(result.getCompletedAmount() - uo.getCompletedAmount());
-				uo.setCompletedAmount(result.getCompletedAmount());				
+				if (updateDbStatus) {
+					uo.setCompletedAmount(result.getCompletedAmount());
+				}							
 			}
 			
-			switch (result.getStatus()) {
-				case CANCELLED:
-					uo.setStatus(OrderStatus.CANCELLED.getCode());
-					uo.setUpdateDate(Calendar.getInstance().getTime());
-				case ERROR:
-				case INSUFFICIENT_BALANCE :
-					uo.setStatus(OrderStatus.FAILED.getCode());
-					uo.setUpdateDate(Calendar.getInstance().getTime());
-				case CLOSED:
-					uo.setStatus(OrderStatus.DONE.getCode());
-					uo.setUpdateDate(Calendar.getInstance().getTime());
-				default:
-					break;
+			if (updateDbStatus) {				
+				switch (result.getStatus()) {
+					case CANCELLED:
+						uo.setStatus(OrderStatus.CANCELLED.getCode());
+						uo.setUpdateDate(Calendar.getInstance().getTime());
+					case ERROR:
+					case INSUFFICIENT_BALANCE :
+						uo.setStatus(OrderStatus.FAILED.getCode());
+						uo.setUpdateDate(Calendar.getInstance().getTime());
+					case CLOSED:
+						uo.setStatus(OrderStatus.DONE.getCode());
+						uo.setUpdateDate(Calendar.getInstance().getTime());
+						uo.setCompletedAmount(uo.getAmount());
+					default:
+						break;
+				}								
 			}
 		}
 		

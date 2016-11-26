@@ -5,7 +5,7 @@
 <#assign platformMaintanenceUrl><@spring.url value="/platform.html"/></#assign>
 <#assign orderListUrl><@spring.url value="/order.html"/></#assign>
 <#assign exchangeRatesUrl><@spring.url value="/exchangeRates.html"/></#assign>
-<#assign tradeJobSettingsUrl><@spring.url value="/config.html"/></#assign>
+<#assign configurationUrl><@spring.url value="/configuration.html"/></#assign>
 <#assign reportUrl><@spring.url value="/report/dailyprofit.html"/></#assign>
 <#assign btcAccountUrl><@spring.url value="/btcAccount.html"/></#assign>
 
@@ -57,9 +57,9 @@
 				</a>
 			</li>
 			<li role="presentation">
-				<a role="menuitem" class="menuanchor" tabindex="-1" href="${tradeJobSettingsUrl}">
+				<a role="menuitem" class="menuanchor" tabindex="-1" href="${configurationUrl}">
 					<span class="glyphicon glyphicon-cog menuspan"></span>
-					<@spring.message code="label.menu.jobconfig"/>
+					<@spring.message code="label.menu.config"/>
 				</a>
 			</li>
 			<li role="presentation">

@@ -5,6 +5,7 @@ public class BuyOrderDto {
 	private Double amount;
 	private Double price;
 	private boolean isAutoTrade;
+	private boolean isAutoUpdate;
 	private Integer platformId;
 	private String username;
 	
@@ -46,6 +47,14 @@ public class BuyOrderDto {
 	
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	
+	public boolean isAutoUpdate() {
+		return isAutoUpdate;
+	}
+
+	public void setAutoUpdate(boolean isAutoUpdate) {
+		this.isAutoUpdate = isAutoUpdate;
 	}
 
 }

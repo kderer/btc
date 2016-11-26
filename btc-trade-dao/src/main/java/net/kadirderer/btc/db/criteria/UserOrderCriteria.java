@@ -26,7 +26,8 @@ public class UserOrderCriteria {
 	private Date createDateEnd;	
 	private Date updateDateStart;
 	private Date updateDateEnd;
-	private List<Integer> partnerIdList;
+	private Boolean autoTrade;
+	private Boolean autoUpdate;
 	private int pageSize;
 	private int pageNumber;
 	
@@ -246,21 +247,21 @@ public class UserOrderCriteria {
 	public void setPageNumber(int pageNumber) {
 		this.pageNumber = pageNumber;
 	}
-	
-	public void setPartnerIdList(List<Integer> partnerIdList) {
-		this.partnerIdList = partnerIdList;
-	}
-	
-	public List<Integer> getPartnerIdList() {
-		return partnerIdList;
-	}
-	
-	public void addPartnerId(int partnerId) {
-		if (this.partnerIdList == null) {
-			this.partnerIdList = new ArrayList<Integer>();
-		}
-		
-		this.partnerIdList.add(partnerId);
+
+	public Boolean isAutoTrade() {
+		return autoTrade;
 	}
 
+	public void setAutoTrade(boolean autoTrade) {
+		this.autoTrade = autoTrade;
+	}
+
+	public Boolean isAutoUpdate() {
+		return autoUpdate;
+	}
+
+	public void setAutoUpdate(boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
+	}
+	
 }
