@@ -24,24 +24,27 @@
 					    }
 				  	}, {
 				  		"targets": 1,
-				    	"data": "platformId",
+				    	"data": "id",
 				  	}, {
 				  		"targets": 2,
-				    	"data": "orderType",
+				    	"data": "parentId",
 				  	}, {
 				  		"targets": 3,
-				    	"data": "basePrice",
+				    	"data": "orderType",
 				  	}, {
 				  		"targets": 4,
-				    	"data": "price",
+				    	"data": "basePrice",
 				  	}, {
 				  		"targets": 5,
-				    	"data": "amount",
+				    	"data": "price",
 				  	}, {
 				  		"targets": 6,
-				    	"data": "completedAmount",
+				    	"data": "amount",
 				  	}, {
 				  		"targets": 7,
+				    	"data": "completedAmount",
+				  	}, {
+				  		"targets": 8,
 				    	"data": null,
 				    	"render" : function ( data, type, row ) {				    		
 				    		if (data.basePrice > 0) {
@@ -53,13 +56,13 @@
 				    		return 0;
 				    	}
 				  	}, {
-				  		"targets": 8,
+				  		"targets": 9,
 				    	"data": "status",
 				  	}, {
-				  		"targets": 9,
+				  		"targets": 10,
 				    	"data": "createDateStr",
 				  	}, {
-				  		"targets": 10,
+				  		"targets": 11,
 				    	"data"   : null,
 				    	"render" : function ( data, type, row ) {
 				    		var html = '<div class="btn-group" role="group" aria-label="...">' +
@@ -124,7 +127,8 @@
 		<thead>
 			<tr>
 				<th>#</th>
-				<th><@spring.message code="label.listorder.platform"/></th>
+				<th><@spring.message code="label.listorder.id"/></th>
+				<th><@spring.message code="label.listorder.parent"/></th>
 				<th><@spring.message code="label.listorder.ordertype"/></th>
 				<th><@spring.message code="label.listorder.baseprice"/></th>
 				<th><@spring.message code="label.listorder.price"/></th>

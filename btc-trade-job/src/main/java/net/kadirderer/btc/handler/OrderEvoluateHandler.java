@@ -69,7 +69,11 @@ public class OrderEvoluateHandler implements Runnable {
 					updateBestGmob = true;
 				}
 				else if (isPriceIsGettingOBR(uo, gmob, basePriceHighestBidDiff)) {
-					if (basePriceHighestBidDiff > 0.0 && canOrderCounterpart(uo, highestBid)) {
+					if (uo.getOrderType() == OrderType.BUY.getCode() && canOrderCounterpart(uo, highestBid)) {
+						return;
+					}
+					else if (uo.getOrderType() == OrderType.SELL.getCode() && 
+							basePriceHighestBidDiff > 0.0 && canOrderCounterpart(uo, highestBid)) {
 						return;
 					}
 					
@@ -216,7 +220,7 @@ public class OrderEvoluateHandler implements Runnable {
 		}
 		else if (order.getOrderType() == OrderType.BUY.getCode() && 
 				(parent != null && parent.getStatus() == OrderStatus.CANCELLED.getCode())) {
-			parent.setPrice(highestBid + cfgService.getSellOrderDelta());
+			parent.setPrice(highestBid);
 			parent.setAutoTrade(true);
 			parent.setAutoUpdate(true);
 		}
