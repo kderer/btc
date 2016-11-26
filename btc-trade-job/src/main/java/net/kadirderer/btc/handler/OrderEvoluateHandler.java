@@ -68,15 +68,7 @@ public class OrderEvoluateHandler implements Runnable {
 					autoTradeService.updateOrder(uo, amount, price);
 					updateBestGmob = true;
 				}
-				else if (isPriceIsGettingOBR(uo, gmob, basePriceHighestBidDiff)) {
-					if (uo.getOrderType() == OrderType.BUY.getCode() && canOrderCounterpart(uo, highestBid)) {
-						return;
-					}
-					else if (uo.getOrderType() == OrderType.SELL.getCode() && 
-							basePriceHighestBidDiff > 0.0 && canOrderCounterpart(uo, highestBid)) {
-						return;
-					}
-					
+				else if (isThisTheTime(uo, gmob, basePriceHighestBidDiff)) {
 					double price = highestBid;
 					double amount = uo.getAmount();
 					
@@ -128,44 +120,22 @@ public class OrderEvoluateHandler implements Runnable {
 		}
 	}
 	
-	private boolean isPriceIsGettingOBR(UserOrder uo, double gmob, double basePriceHighestBidDiff) {
-		if (!isLastGmobOBR(uo, gmob)) {
-			return false;
-		}
-		
+	private boolean isThisTheTime(UserOrder uo, double gmob, double basePriceHighestBidDiff) {
 		if (uo.getLastGmob() == null || uo.getLastSecondGmob() == null || uo.getLastThirdGmob() == null) {
 			return false;
-		}		
-		
-		if (basePriceHighestBidDiff > 0.0) {
-			if (uo.getOrderType() == OrderType.SELL.getCode() && gmob > uo.getLastGmob()) {
-				return false;
-			}
-			else if (uo.getOrderType() == OrderType.BUY.getCode() && gmob < uo.getLastGmob()) {
-				return false;			
-			}
 		}		
 		
 		double product = uo.getLastGmob() * uo.getLastSecondGmob() * uo.getLastThirdGmob();
 		double gm = Math.pow(product, 1.0 / 3);
 		
-		if (uo.getOrderType() == OrderType.SELL.getCode() && gmob > gm) {
-			return false;
+		if (uo.getOrderType() == OrderType.SELL.getCode() && gmob < gm) {
+			return true;
 		}
-		else if (uo.getOrderType() == OrderType.BUY.getCode() && gmob < gm) {
-			return false;
-		}
-		
-		if (uo.getObrStartTime() == null) {
-			return false;
-		}
-		
-		double timeElapsedInObr = Calendar.getInstance().getTimeInMillis() - uo.getObrStartTime();
-		if (timeElapsedInObr < cfgService.getObrTimeLimit() * 1000) {
-			return false;
+		else if (uo.getOrderType() == OrderType.BUY.getCode() && gmob > gm) {
+			return true;
 		}				
 		
-		return true;
+		return false;
 	}
 	
 	private boolean isLastGmobOBR(UserOrder uo, double lastGmob) {
@@ -207,6 +177,7 @@ public class OrderEvoluateHandler implements Runnable {
 		return true;
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean canOrderCounterpart(UserOrder order, double highestBid) {
 		if (order.getParentId() == null) {
 			return false;
