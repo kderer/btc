@@ -123,7 +123,14 @@ public class OrderEvoluateHandler implements Runnable {
 	private boolean isThisTheTime(UserOrder uo, double gmob, double basePriceHighestBidDiff) {
 		if (uo.getLastGmob() == null || uo.getLastSecondGmob() == null || uo.getLastThirdGmob() == null) {
 			return false;
-		}		
+		}
+		
+		if (uo.getOrderType() == OrderType.SELL.getCode() && gmob > uo.getLastGmob()) {
+			return false;
+		}
+		else if (uo.getOrderType() == OrderType.BUY.getCode() && gmob < uo.getLastGmob()) {
+			return false;
+		}
 		
 		double product = uo.getLastGmob() * uo.getLastSecondGmob() * uo.getLastThirdGmob();
 		double gm = Math.pow(product, 1.0 / 3);
