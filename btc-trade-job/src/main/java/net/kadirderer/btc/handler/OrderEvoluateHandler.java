@@ -73,7 +73,7 @@ public class OrderEvoluateHandler implements Runnable {
 					double amount = uo.getAmount();
 					
 					if (uo.getOrderType() == OrderType.BUY.getCode()) {
-						price = highestBid - 0.05;
+						price = highestBid + 0.05;
 						amount = (uo.getPrice() * amount) / price;
 					}
 					 
