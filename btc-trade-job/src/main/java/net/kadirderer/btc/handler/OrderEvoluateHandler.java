@@ -123,13 +123,6 @@ public class OrderEvoluateHandler implements Runnable {
 		Double lastGmob = NumberUtil.parse(lastGmobArray[0]);		
 		if (lastGmob == null) {
 			return false;
-		}		
-		
-		if (uo.getOrderType() == OrderType.SELL.getCode() && gmob > lastGmob) {
-			return false;
-		}
-		else if (uo.getOrderType() == OrderType.BUY.getCode() && gmob < lastGmob) {
-			return false;
 		}
 		
 		int checkLastGmobCount = cfgService.getCheckLastGmobCount();
