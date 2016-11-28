@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import net.kadirderer.btc.db.util.DateUtil;
+import net.kadirderer.btc.util.StringUtil;
 import net.kadirderer.btc.util.enumaration.OrderStatus;
 import net.kadirderer.btc.util.enumaration.OrderType;
 
@@ -49,17 +50,11 @@ public class UserOrder {
 	@Column(name = "BEST_GMOB")
 	private Double bestGmob;
 	
-	@Column(name = "LAST_GMOB")
-	private Double lastGmob;
-	
-	@Column(name = "LAST_SECOND_GMOB")
-	private Double lastSecondGmob;
-	
-	@Column(name = "LAST_THIRD_GMOB")
-	private Double lastThirdGmob;
-	
 	@Column(name = "OBR_START_TIME")
 	private Long obrStartTime;
+	
+	@Column(name = "LAST_GMOB_ARRAY")
+	private String lastGmobArray;
 	
 	@Column(name = "AMOUNT")
 	private double amount;
@@ -227,28 +222,28 @@ public class UserOrder {
 		this.obrStartTime = obrStartTime;
 	}
 
-	public Double getLastGmob() {
-		return lastGmob;
+	public String getLastGmobArray() {
+		return lastGmobArray;
 	}
 
-	public void setLastGmob(Double lastGmob) {
-		this.lastGmob = lastGmob;
+	public void setLastGmobArray(String lastGmobArray) {
+		this.lastGmobArray = lastGmobArray;
 	}
-
-	public Double getLastSecondGmob() {
-		return lastSecondGmob;
-	}
-
-	public void setLastSecondGmob(Double lastSecondGmob) {
-		this.lastSecondGmob = lastSecondGmob;
-	}
-
-	public Double getLastThirdGmob() {
-		return lastThirdGmob;
-	}
-
-	public void setLastThirdGmob(Double lastThirdGmob) {
-		this.lastThirdGmob = lastThirdGmob;
+	
+	public void addGmob(double gmob, int checkLastGmobCount) {
+		String[] gmobArray = StringUtil.generateArrayFromDeliminatedString('|', lastGmobArray);
+		
+		if (gmobArray == null) {
+			gmobArray = new String[checkLastGmobCount];
+		}
+		
+		for (int i = gmobArray.length - 1; i > 0; i--) {
+			gmobArray[i] = gmobArray[i - 1];			
+		}
+		
+		gmobArray[0] = String.valueOf(gmob);
+		
+		lastGmobArray = StringUtil.generateDeliminatedString('|', gmobArray);
 	}
 	
 }

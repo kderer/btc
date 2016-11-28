@@ -11,5 +11,13 @@ public class NumberUtil {
 		df.setRoundingMode(RoundingMode.DOWN);
 		return Double.valueOf(df.format(number)).doubleValue();
 	}
+	
+	public static Double parse(String value) {
+		try {
+			return Double.parseDouble(value);
+		} catch (Exception e) {
+			return null;
+		}		
+	}
 
 }

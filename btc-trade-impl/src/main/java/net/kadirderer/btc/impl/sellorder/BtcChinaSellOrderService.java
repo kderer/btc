@@ -75,9 +75,7 @@ public class BtcChinaSellOrderService implements SellOrderService, BtcChinaApiCa
 			order.setStatus(OrderStatus.FAILED.getCode());
 		}
 		order.setCreateDate(Calendar.getInstance().getTime());
-		order.setLastGmob(null);
-		order.setLastSecondGmob(null);
-		order.setLastThirdGmob(null);
+		order.setLastGmobArray(null);
 		order.setObrStartTime(null);
 		order.setBestGmob(null);
 		

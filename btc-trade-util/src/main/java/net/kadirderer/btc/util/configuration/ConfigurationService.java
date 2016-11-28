@@ -21,6 +21,7 @@ public class ConfigurationService {
 	private static final String BEST_GMOB_CHECK_DELTA = "best_gmob_check_delta";
 	private static final String BASEPRICE_HIGHEST_BID_CHECK_DELTA = "baseprice_highest_bid_check_delta";
 	private static final String OBR_TIME_LIMIT = "obr_time_limit";
+	private static final String CHECK_LAST_GMOB_COUNT = "check_last_gmob_count";
 
 	@Autowired
 	private Configuration configuration;
@@ -95,6 +96,10 @@ public class ConfigurationService {
 	
 	public int getObrTimeLimit() {
 		return configuration.getInt(OBR_TIME_LIMIT);
+	}
+	
+	public int getCheckLastGmobCount() {
+		return configuration.getInt(CHECK_LAST_GMOB_COUNT);
 	}
 
 }

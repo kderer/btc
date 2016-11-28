@@ -8,6 +8,7 @@ import net.kadirderer.btc.impl.cancelorder.BtcChinaCancelOrderResult;
 import net.kadirderer.btc.impl.sellorder.BtcChinaSellOrderResult;
 import net.kadirderer.btc.impl.util.NumberUtil;
 import net.kadirderer.btc.service.AutoTradeService;
+import net.kadirderer.btc.util.StringUtil;
 import net.kadirderer.btc.util.configuration.ConfigurationService;
 import net.kadirderer.btc.util.email.Email;
 import net.kadirderer.btc.util.enumaration.OrderStatus;
@@ -45,7 +46,7 @@ public class OrderEvoluateHandler implements Runnable {
 				double priceHighestBidDiff = uo.getPrice() - highestBid;	
 				double basePriceHighestBidDiff = uo.getBasePrice() - highestBid;
 				double lastBidPriceCheckDelta = cfgService.getLastBidPriceCheckDelta();
-//				double lowestAsk = maxAndGeometricMeanArray[0];
+				double lowestAsk = maxAndGeometricMeanArray[0];
 				boolean updateBestGmob = false;							
 				
 				if (uo.getOrderType() == OrderType.BUY.getCode()) {
@@ -53,7 +54,18 @@ public class OrderEvoluateHandler implements Runnable {
 					basePriceHighestBidDiff = highestBid - uo.getBasePrice();
 				}
 				
-				if (lastBidPriceCheckDelta >= priceHighestBidDiff) {
+				if (isThisTheTime(uo, gmob, basePriceHighestBidDiff, highestBid, lowestAsk)) {
+					double price = highestBid + (lowestAsk - highestBid) / 2.0;
+					double amount = uo.getAmount();
+					
+					if (uo.getOrderType() == OrderType.BUY.getCode()) {
+						amount = (uo.getPrice() * amount) / price;
+					}
+					 
+					autoTradeService.updateOrder(uo, amount, price);
+					updateBestGmob = true;
+				}
+				else if (lastBidPriceCheckDelta >= priceHighestBidDiff) {
 					double price = uo.getPrice();
 					double amount = uo.getAmount();
 					
@@ -63,18 +75,6 @@ public class OrderEvoluateHandler implements Runnable {
 					}
 					else {
 						price = price + cfgService.getSellOrderDelta();
-					}
-					 
-					autoTradeService.updateOrder(uo, amount, price);
-					updateBestGmob = true;
-				}
-				else if (isThisTheTime(uo, gmob, basePriceHighestBidDiff)) {
-					double price = highestBid;
-					double amount = uo.getAmount();
-					
-					if (uo.getOrderType() == OrderType.BUY.getCode()) {
-						price = highestBid + 0.05;
-						amount = (uo.getPrice() * amount) / price;
 					}
 					 
 					autoTradeService.updateOrder(uo, amount, price);
@@ -98,15 +98,7 @@ public class OrderEvoluateHandler implements Runnable {
 					uo.setBestGmob(gmob);
 				}
 				
-				if (uo.getLastSecondGmob() != null) {
-					uo.setLastThirdGmob(uo.getLastSecondGmob());
-				}				
-				
-				if (uo.getLastGmob() != null) {
-					uo.setLastSecondGmob(uo.getLastGmob());
-				}
-				
-				uo.setLastGmob(gmob);
+				uo.addGmob(gmob, cfgService.getCheckLastGmobCount());
 				
 				autoTradeService.saveUserOrder(uo);
 			}
@@ -121,27 +113,51 @@ public class OrderEvoluateHandler implements Runnable {
 		}
 	}
 	
-	private boolean isThisTheTime(UserOrder uo, double gmob, double basePriceHighestBidDiff) {
-		if (uo.getLastGmob() == null || uo.getLastSecondGmob() == null || uo.getLastThirdGmob() == null) {
+	private boolean isThisTheTime(UserOrder uo, double gmob, double basePriceHighestBidDiff,
+			double highestBid, double lowestAsk) {
+		String[] lastGmobArray = StringUtil.generateArrayFromDeliminatedString('|', uo.getLastGmobArray());
+		if (lastGmobArray == null) {
 			return false;
 		}
 		
-		if (uo.getOrderType() == OrderType.SELL.getCode() && gmob > uo.getLastGmob()) {
+		Double lastGmob = NumberUtil.parse(lastGmobArray[0]);		
+		if (lastGmob == null) {
+			return false;
+		}		
+		
+		if (uo.getOrderType() == OrderType.SELL.getCode() && gmob > lastGmob) {
 			return false;
 		}
-		else if (uo.getOrderType() == OrderType.BUY.getCode() && gmob < uo.getLastGmob()) {
+		else if (uo.getOrderType() == OrderType.BUY.getCode() && gmob < lastGmob) {
 			return false;
 		}
 		
-		double product = uo.getLastGmob() * uo.getLastSecondGmob() * uo.getLastThirdGmob();
-		double gm = Math.pow(product, 1.0 / 3);
-		
-		if (uo.getOrderType() == OrderType.SELL.getCode() && gmob < gm) {
-			return true;
+		int checkLastGmobCount = cfgService.getCheckLastGmobCount();
+		if (lastGmobArray.length < checkLastGmobCount) {
+			checkLastGmobCount = lastGmobArray.length;
 		}
-		else if (uo.getOrderType() == OrderType.BUY.getCode() && gmob > gm) {
-			return true;
-		}				
+		
+		if (NumberUtil.parse(lastGmobArray[checkLastGmobCount - 1]) ==  null) {
+			return false;
+		}
+		
+		try {
+			double product = 1;
+			for (String value : lastGmobArray) {
+				product *= NumberUtil.parse(value);
+			}
+			
+			double gm = Math.pow(product, 1.0 / lastGmobArray.length);
+			
+			if (uo.getOrderType() == OrderType.SELL.getCode() && gmob < gm && uo.getPrice() > lowestAsk) {
+				return true;
+			}
+			else if (uo.getOrderType() == OrderType.BUY.getCode() && gmob > gm && uo.getPrice() < highestBid) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}						
 		
 		return false;
 	}
