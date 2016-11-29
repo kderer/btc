@@ -43,18 +43,16 @@ public class OrderEvoluateHandler implements Runnable {
 				double[] maxAndGeometricMeanArray = autoTradeService.getMaxAndGeometricMean(uo.getUsername());
 				double highestBid = maxAndGeometricMeanArray[2];
 				double gmob = maxAndGeometricMeanArray[3];
-				double priceHighestBidDiff = uo.getPrice() - highestBid;	
-				double basePriceHighestBidDiff = uo.getBasePrice() - highestBid;
+				double gmoa = maxAndGeometricMeanArray[1];
+				double priceHighestBidDiff = uo.getPrice() - highestBid;
 				double lastBidPriceCheckDelta = cfgService.getLastBidPriceCheckDelta();
-				double lowestAsk = maxAndGeometricMeanArray[0];
-				boolean updateBestGmob = false;							
+				double lowestAsk = maxAndGeometricMeanArray[0];						
 				
 				if (uo.getOrderType() == OrderType.BUY.getCode()) {
 					priceHighestBidDiff = highestBid - uo.getPrice();
-					basePriceHighestBidDiff = highestBid - uo.getBasePrice();
 				}
 				
-				if (isThisTheTime(uo, gmob, basePriceHighestBidDiff, highestBid, lowestAsk)) {
+				if (isThisTheTime(uo, gmob, gmoa, highestBid, lowestAsk)) {
 					double price = highestBid + (lowestAsk - highestBid) / 2.0;
 					double amount = uo.getAmount();
 					
@@ -63,7 +61,6 @@ public class OrderEvoluateHandler implements Runnable {
 					}
 					 
 					autoTradeService.updateOrder(uo, amount, price);
-					updateBestGmob = true;
 				}
 				else if (lastBidPriceCheckDelta >= priceHighestBidDiff) {
 					double price = uo.getPrice();
@@ -78,27 +75,10 @@ public class OrderEvoluateHandler implements Runnable {
 					}
 					 
 					autoTradeService.updateOrder(uo, amount, price);
-					updateBestGmob = true;
-				}
-				
-				if (updateBestGmob) {
-					uo.setBestGmob(gmob);
-					uo.setObrStartTime(null);
-				}
-				else if (!isLastGmobOBR(uo, gmob)) {
-					uo.setObrStartTime(null);
-				}
-				else if (isLastGmobOBR(uo, gmob) && uo.getObrStartTime() == null) {
-					uo.setObrStartTime(Calendar.getInstance().getTimeInMillis());
-				}
-				
-				if (uo.getBestGmob() == null ||
-						(uo.getOrderType() == OrderType.SELL.getCode() && gmob > uo.getBestGmob()) ||
-						(uo.getOrderType() == OrderType.BUY.getCode() && gmob < uo.getBestGmob())) {
-					uo.setBestGmob(gmob);
 				}
 				
 				uo.addGmob(gmob, cfgService.getCheckLastGmobCount());
+				uo.addGmoa(lowestAsk, cfgService.getCheckLastGmobCount());
 				
 				autoTradeService.saveUserOrder(uo);
 			}
@@ -113,22 +93,25 @@ public class OrderEvoluateHandler implements Runnable {
 		}
 	}
 	
-	private boolean isThisTheTime(UserOrder uo, double gmob, double basePriceHighestBidDiff,
+	private boolean isThisTheTime(UserOrder uo, double gmob, double gmoa,
 			double highestBid, double lowestAsk) {
 		String[] lastGmobArray = StringUtil.generateArrayFromDeliminatedString('|', uo.getLastGmobArray());
 		if (lastGmobArray == null) {
 			return false;
 		}
 		
+		String[] lastGmoaArray = StringUtil.generateArrayFromDeliminatedString('|', uo.getLastGmoaArray());
+		if (lastGmoaArray == null) {
+			return false;
+		}
+		
 		Double lastGmob = NumberUtil.parse(lastGmobArray[0]);		
 		if (lastGmob == null) {
 			return false;
-		}		
-		
-		if (uo.getOrderType() == OrderType.SELL.getCode() && gmob > lastGmob) {
-			return false;
 		}
-		else if (uo.getOrderType() == OrderType.BUY.getCode() && gmob < lastGmob) {
+		
+		Double lastGmoa = NumberUtil.parse(lastGmoaArray[0]);		
+		if (lastGmoa == null) {
 			return false;
 		}
 		
@@ -147,12 +130,21 @@ public class OrderEvoluateHandler implements Runnable {
 				product *= NumberUtil.parse(value);
 			}
 			
-			double gm = Math.pow(product, 1.0 / lastGmobArray.length);
+			double gmb = Math.pow(product, 1.0 / lastGmobArray.length);
 			
-			if (uo.getOrderType() == OrderType.SELL.getCode() && gmob < gm && uo.getPrice() > lowestAsk) {
+			product = 1;			
+			for (String value : lastGmoaArray) {
+				product *= NumberUtil.parse(value);
+			}		
+			
+			double gma = Math.pow(product, 1.0 / lastGmoaArray.length);
+			
+			if (uo.getOrderType() == OrderType.SELL.getCode() && gmob > gmb &&
+					gmoa > gma && uo.getPrice() > lowestAsk) {
 				return true;
 			}
-			else if (uo.getOrderType() == OrderType.BUY.getCode() && gmob > gm && uo.getPrice() < highestBid) {
+			else if (uo.getOrderType() == OrderType.BUY.getCode() && gmob < gmb &&
+					gmoa < gma && uo.getPrice() < highestBid) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -160,25 +152,7 @@ public class OrderEvoluateHandler implements Runnable {
 		}						
 		
 		return false;
-	}
-	
-	private boolean isLastGmobOBR(UserOrder uo, double lastGmob) {
-		if (uo.getBestGmob() == null) {
-			return false;
-		}
-		
-		double dif = uo.getBestGmob() - lastGmob;
-		if (uo.getOrderType() == OrderType.BUY.getCode()) {
-			dif = lastGmob - uo.getBestGmob();
-		}
-		
-		if (dif > cfgService.getBestGmobCheckDelta()) {
-			return true;
-		}
-		
-		return false;
-	}
-	
+	}	
 	
 	private boolean isTimeOut(UserOrder userOrder) {
 		long timeInMillis = Calendar.getInstance().getTimeInMillis();
@@ -339,6 +313,8 @@ public class OrderEvoluateHandler implements Runnable {
 				order.setAmount(amount);
 				order.setAutoUpdate(userOrder.isAutoUpdate());
 				order.setAutoTrade(userOrder.isAutoTrade());
+				order.setLastGmoaArray(userOrder.getLastGmoaArray());
+				order.setLastGmobArray(userOrder.getLastGmobArray());
 				
 				autoTradeService.sellOrder(order);				
 			} catch (Exception e) {
@@ -361,6 +337,8 @@ public class OrderEvoluateHandler implements Runnable {
 				order.setAmount(buyAmount);
 				order.setAutoUpdate(userOrder.isAutoUpdate());
 				order.setAutoTrade(userOrder.isAutoTrade());
+				order.setLastGmoaArray(userOrder.getLastGmoaArray());
+				order.setLastGmobArray(userOrder.getLastGmobArray());
 				
 				autoTradeService.buyOrder(order);				
 			} catch (Exception e) {

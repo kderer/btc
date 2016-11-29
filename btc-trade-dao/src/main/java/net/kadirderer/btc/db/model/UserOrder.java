@@ -45,22 +45,19 @@ public class UserOrder {
 	private double basePrice;
 	
 	@Column(name = "PRICE")
-	private double price;
-	
-	@Column(name = "BEST_GMOB")
-	private Double bestGmob;
-	
-	@Column(name = "OBR_START_TIME")
-	private Long obrStartTime;
-	
-	@Column(name = "LAST_GMOB_ARRAY")
-	private String lastGmobArray;
+	private double price;	
 	
 	@Column(name = "AMOUNT")
 	private double amount;
 	
 	@Column(name = "COMPLETEDAMOUNT")
 	private double completedAmount;
+	
+	@Column(name = "LAST_GMOB_ARRAY")
+	private String lastGmobArray;
+	
+	@Column(name = "LAST_GMOA_ARRAY")
+	private String lastGmoaArray;
 	
 	@Column(name = "RETURNID")
 	private String returnId;
@@ -205,29 +202,21 @@ public class UserOrder {
 	public void setAutoUpdate(boolean autoUpdate) {
 		this.autoUpdate = autoUpdate;
 	}
-
-	public Double getBestGmob() {
-		return bestGmob;
-	}
-
-	public void setBestGmob(Double bestGmob) {
-		this.bestGmob = bestGmob;
-	}
-
-	public Long getObrStartTime() {
-		return obrStartTime;
-	}
-
-	public void setObrStartTime(Long obrStartTime) {
-		this.obrStartTime = obrStartTime;
-	}
-
+	
 	public String getLastGmobArray() {
 		return lastGmobArray;
 	}
 
-	public void setLastGmobArray(String lastGmobArray) {
-		this.lastGmobArray = lastGmobArray;
+	public void setLastGmobArray(String lastGmoaArray) {
+		this.lastGmobArray = lastGmoaArray;
+	}
+	
+	public String getLastGmoaArray() {
+		return lastGmobArray;
+	}
+
+	public void setLastGmoaArray(String lastGmoaArray) {
+		this.lastGmoaArray = lastGmoaArray;
 	}
 	
 	public void addGmob(double gmob, int checkLastGmobCount) {
@@ -244,6 +233,22 @@ public class UserOrder {
 		gmobArray[0] = String.valueOf(gmob);
 		
 		lastGmobArray = StringUtil.generateDeliminatedString('|', gmobArray);
+	}
+	
+	public void addGmoa(double gmoa, int checkLastGmobCount) {
+		String[] gmoaArray = StringUtil.generateArrayFromDeliminatedString('|', lastGmobArray);
+		
+		if (gmoaArray == null) {
+			gmoaArray = new String[checkLastGmobCount];
+		}
+		
+		for (int i = gmoaArray.length - 1; i > 0; i--) {
+			gmoaArray[i] = gmoaArray[i - 1];			
+		}
+		
+		gmoaArray[0] = String.valueOf(gmoa);
+		
+		lastGmoaArray = StringUtil.generateDeliminatedString('|', gmoaArray);
 	}
 	
 }
