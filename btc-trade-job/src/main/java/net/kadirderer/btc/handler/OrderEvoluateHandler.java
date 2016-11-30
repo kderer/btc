@@ -144,7 +144,13 @@ public class OrderEvoluateHandler implements Runnable {
 				if (profit < 0.0 && uo.getParentId() != null) {
 					UserOrder parent = autoTradeService.findUserOrderById(uo.getParentId());				
 					if (parent != null) {
-						double parentProfit = parent.getPrice() - parent.getBasePrice();
+						double parentProfit = 0.0;
+						if (parent.getOrderType() == OrderType.BUY.getCode()) {
+							parentProfit = parent.getBasePrice() - parent.getPrice();
+						}						
+						else if (parent.getOrderType() == OrderType.SELL.getCode()) {
+							parentProfit = parent.getPrice() - parent.getBasePrice();
+						}
 						
 						if (parentProfit < 0.0) {
 							return false;
@@ -162,7 +168,13 @@ public class OrderEvoluateHandler implements Runnable {
 				if (profit < 0.0 && uo.getParentId() != null) {
 					UserOrder parent = autoTradeService.findUserOrderById(uo.getParentId());				
 					if (parent != null) {
-						double parentProfit = parent.getBasePrice() - parent.getPrice();
+						double parentProfit = 0.0;
+						if (parent.getOrderType() == OrderType.BUY.getCode()) {
+							parentProfit = parent.getBasePrice() - parent.getPrice();
+						}						
+						else if (parent.getOrderType() == OrderType.SELL.getCode()) {
+							parentProfit = parent.getPrice() - parent.getBasePrice();
+						}
 						
 						if (parentProfit < 0.0) {
 							return false;
