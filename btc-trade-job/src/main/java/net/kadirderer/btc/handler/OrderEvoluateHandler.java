@@ -78,7 +78,7 @@ public class OrderEvoluateHandler implements Runnable {
 				}
 				
 				uo.addGmob(gmob, cfgService.getCheckLastGmobCount());
-				uo.addGmoa(lowestAsk, cfgService.getCheckLastGmobCount());
+				uo.addGmoa(gmoa, cfgService.getCheckLastGmobCount());
 				
 				autoTradeService.saveUserOrder(uo);
 			}
@@ -125,26 +125,53 @@ public class OrderEvoluateHandler implements Runnable {
 		}
 		
 		try {
-			double product = 1;
-			for (String value : lastGmobArray) {
-				product *= NumberUtil.parse(value);
-			}
+			double product = 1;			
 			
-			double gmb = Math.pow(product, 1.0 / lastGmobArray.length);
-			
-			product = 1;			
 			for (String value : lastGmoaArray) {
 				product *= NumberUtil.parse(value);
-			}		
-			
+			}			
 			double gma = Math.pow(product, 1.0 / lastGmoaArray.length);
 			
-			if (uo.getOrderType() == OrderType.SELL.getCode() && gmob > gmb &&
-					gmoa > gma && uo.getPrice() > lowestAsk) {
+			product = 1;
+			for (String value : lastGmobArray) {
+				product *= NumberUtil.parse(value);
+			}			
+			double gmb = Math.pow(product, 1.0 / lastGmobArray.length);
+			
+			if (uo.getOrderType() == OrderType.SELL.getCode() && gmb > gmob && gma > gmoa && uo.getPrice() > lowestAsk) {
+				double profit = (highestBid + (lowestAsk - highestBid) / 2.0) - uo.getBasePrice();
+				
+				if (profit < 0.0 && uo.getParentId() != null) {
+					UserOrder parent = autoTradeService.findUserOrderById(uo.getParentId());				
+					if (parent != null) {
+						double parentProfit = parent.getPrice() - parent.getBasePrice();
+						
+						if (parentProfit < 0.0) {
+							return false;
+						}
+						else if (-1.0 * profit < parentProfit){
+							return true;
+						}
+					}
+				}
 				return true;
 			}
-			else if (uo.getOrderType() == OrderType.BUY.getCode() && gmob < gmb &&
-					gmoa < gma && uo.getPrice() < highestBid) {
+			else if (uo.getOrderType() == OrderType.BUY.getCode() && gmb < gmob && gma < gmoa && uo.getPrice() < highestBid) {
+				double profit = uo.getBasePrice() - (highestBid + (lowestAsk - highestBid) / 2.0);
+				
+				if (profit < 0.0 && uo.getParentId() != null) {
+					UserOrder parent = autoTradeService.findUserOrderById(uo.getParentId());				
+					if (parent != null) {
+						double parentProfit = parent.getBasePrice() - parent.getPrice();
+						
+						if (parentProfit < 0.0) {
+							return false;
+						}
+						else if (-1.0 * profit < parentProfit){
+							return true;
+						}
+					}
+				}
 				return true;
 			}
 		} catch (Exception e) {
@@ -327,7 +354,7 @@ public class OrderEvoluateHandler implements Runnable {
 				price = userOrder.getPrice() - cfgService.getNonAutoUpdateOrderDelta();
 			}
 			
-			double buyAmount = NumberUtil.format(userOrder.getPrice() * amount / price);			
+			double buyAmount = (userOrder.getPrice() * amount) / price;			
 			try {				
 				UserOrder order = new UserOrder();
 				order.setUsername(userOrder.getUsername());

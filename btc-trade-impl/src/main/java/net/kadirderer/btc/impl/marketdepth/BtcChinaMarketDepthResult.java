@@ -128,8 +128,9 @@ public class BtcChinaMarketDepthResult extends MarketDepthResult {
 	@SuppressWarnings("unchecked")
 	@Override
 	public double[] getMaxAndGeometricMean() {
-		double[] maxAndGMArray = new double[4];
+		double[] maxAndGMArray = new double[6];
 		double product = 1.0;
+		double poa = 1.0;
 		double price = 0;
 		
 		if(error == null) {
@@ -141,21 +142,25 @@ public class BtcChinaMarketDepthResult extends MarketDepthResult {
 			
 			for(LinkedHashMap<String, Object> depthMap : list) {
 				product *= Double.valueOf(depthMap.get("price").toString());
+				poa *= Double.valueOf(depthMap.get("amount").toString());
 			}
 			
 			maxAndGMArray[0] = price;
 			maxAndGMArray[1] = Math.pow(product, 1.0 / list.size());
+			maxAndGMArray[4] = Math.pow(poa, 1.0 / list.size());
 			
 			list = (ArrayList<LinkedHashMap<String, Object>>)result.get("market_depth").get("bid");			
 			price = Double.valueOf(list.get(0).get("price").toString());
 			
 			product = 1.0;
+			poa = 1.0;
 			for(LinkedHashMap<String, Object> depthMap : list) {
 				product *= Double.valueOf(depthMap.get("price").toString());
 			}
 			
 			maxAndGMArray[2] = price;
-			maxAndGMArray[3] = Math.pow(product, 1.0 / list.size());			
+			maxAndGMArray[3] = Math.pow(product, 1.0 / list.size());
+			maxAndGMArray[5] = Math.pow(poa, 1.0 / list.size());
 		}
 		
 		return maxAndGMArray;

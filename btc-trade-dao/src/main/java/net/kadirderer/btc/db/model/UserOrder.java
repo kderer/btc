@@ -236,7 +236,7 @@ public class UserOrder {
 	}
 	
 	public void addGmoa(double gmoa, int checkLastGmobCount) {
-		String[] gmoaArray = StringUtil.generateArrayFromDeliminatedString('|', lastGmobArray);
+		String[] gmoaArray = StringUtil.generateArrayFromDeliminatedString('|', lastGmoaArray);
 		
 		if (gmoaArray == null) {
 			gmoaArray = new String[checkLastGmobCount];
