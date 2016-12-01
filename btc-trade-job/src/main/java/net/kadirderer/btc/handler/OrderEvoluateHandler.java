@@ -2,10 +2,12 @@ package net.kadirderer.btc.handler;
 
 import java.util.Calendar;
 
+import net.kadirderer.btc.api.updateorder.UpdateOrderResult;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.impl.buyorder.BtcChinaBuyOrderResult;
 import net.kadirderer.btc.impl.cancelorder.BtcChinaCancelOrderResult;
 import net.kadirderer.btc.impl.sellorder.BtcChinaSellOrderResult;
+import net.kadirderer.btc.impl.updateorder.BtcChinaUpdateOrderResult;
 import net.kadirderer.btc.impl.util.NumberUtil;
 import net.kadirderer.btc.service.AutoTradeService;
 import net.kadirderer.btc.util.StringUtil;
@@ -52,6 +54,7 @@ public class OrderEvoluateHandler implements Runnable {
 					priceHighestBidDiff = highestBid - uo.getPrice();
 				}
 				
+				UpdateOrderResult result = null;
 				if (isThisTheTime(uo, gmob, gmoa, highestBid, lowestAsk)) {
 					double price = highestBid + (lowestAsk - highestBid) / 2.0;
 					double amount = uo.getAmount();
@@ -60,7 +63,7 @@ public class OrderEvoluateHandler implements Runnable {
 						amount = (uo.getPrice() * amount) / price;
 					}
 					 
-					autoTradeService.updateOrder(uo, amount, price);
+					result = autoTradeService.updateOrder(uo, amount, price);
 				}
 				else if (lastBidPriceCheckDelta >= priceHighestBidDiff) {
 					double price = uo.getPrice();
@@ -74,7 +77,11 @@ public class OrderEvoluateHandler implements Runnable {
 						price = price + cfgService.getSellOrderDelta();
 					}
 					 
-					autoTradeService.updateOrder(uo, amount, price);
+					result = autoTradeService.updateOrder(uo, amount, price);
+				}
+				
+				if (result != null) {
+					evoluateUpdateOrderResult((BtcChinaUpdateOrderResult)result, uo);
 				}
 				
 				uo.addGmob(gmob, cfgService.getCheckLastGmobCount());
@@ -420,6 +427,28 @@ public class OrderEvoluateHandler implements Runnable {
 		}
 	}
 	
-	
-
+	private void evoluateUpdateOrderResult(BtcChinaUpdateOrderResult result, UserOrder order) {
+		if (result.getError() != null) {
+			Email email = new Email();
+			email.addToToList("kderer@hotmail.com");
+			email.setSubject("BTC Buy Order Error");
+			email.setFrom("error@btc.kadirderer.net");
+			email.setBody(result.getError().getCode() + "\n" + result.getError().getMessage());
+			
+			autoTradeService.sendMail(email);
+			
+			try {
+				Thread.sleep(3 * 1000);
+				order.setId(null);
+				if (order.getOrderType() == OrderType.BUY.getCode()) {
+					autoTradeService.buyOrder(order);
+				}
+				else {
+					autoTradeService.sellOrder(order);
+				}				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
