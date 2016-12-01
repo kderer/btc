@@ -80,14 +80,14 @@ public class OrderEvoluateHandler implements Runnable {
 					result = autoTradeService.updateOrder(uo, amount, price);
 				}
 				
-				if (result != null) {
-					evoluateUpdateOrderResult((BtcChinaUpdateOrderResult)result, uo);
-				}
-				
 				uo.addGmob(gmob, cfgService.getCheckLastGmobCount());
 				uo.addGmoa(gmoa, cfgService.getCheckLastGmobCount());
 				
 				autoTradeService.saveUserOrder(uo);
+				
+				if (result != null) {
+					evoluateUpdateOrderResult((BtcChinaUpdateOrderResult)result, uo);
+				}
 			}
 			else if (uo.isAutoTrade() && uo.getStatus() == OrderStatus.DONE.getCode()) {
 				createOrderForDoneOrder(uo);
