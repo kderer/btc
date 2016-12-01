@@ -152,11 +152,8 @@ public class OrderEvoluateHandler implements Runnable {
 							parentProfit = parent.getPrice() - parent.getBasePrice();
 						}
 						
-						if (parentProfit < 0.0) {
+						if (parentProfit < 0.0 || -1.0 * profit > parentProfit) {
 							return false;
-						}
-						else if (-1.0 * profit < parentProfit){
-							return true;
 						}
 					}
 				}
@@ -176,11 +173,8 @@ public class OrderEvoluateHandler implements Runnable {
 							parentProfit = parent.getPrice() - parent.getBasePrice();
 						}
 						
-						if (parentProfit < 0.0) {
+						if (parentProfit < 0.0 || -1.0 * profit > parentProfit) {
 							return false;
-						}
-						else if (-1.0 * profit < parentProfit){
-							return true;
 						}
 					}
 				}
