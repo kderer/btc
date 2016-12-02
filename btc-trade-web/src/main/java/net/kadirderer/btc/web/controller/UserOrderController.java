@@ -193,7 +193,7 @@ public class UserOrderController {
 		try {			
 			failedOrder = userOrderService.findFailedOrder(failedOrder.getUserOrderId());			
 			if (failedOrder == null) {
-				failedOrder = new FailedOrder();				
+				failedOrder = new FailedOrder();	
 				throw new Exception();
 			}
 			
