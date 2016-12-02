@@ -1,6 +1,8 @@
 package net.kadirderer.btc.db.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import net.kadirderer.btc.db.util.DateUtil;
+import net.kadirderer.btc.util.NumberDisplayUtil;
 import net.kadirderer.btc.util.StringUtil;
 import net.kadirderer.btc.util.enumaration.OrderStatus;
 import net.kadirderer.btc.util.enumaration.OrderType;
@@ -178,6 +181,10 @@ public class UserOrder {
 	public String getCreateDateStr() {
 		return DateUtil.format(this.createDate);
 	}
+	
+	public String getUpdateDateStr() {
+		return DateUtil.format(this.updateDate);
+	}
 
 	public int getPlatformId() {
 		return platformId;
@@ -251,4 +258,41 @@ public class UserOrder {
 		lastGmoaArray = StringUtil.generateDeliminatedString('|', gmoaArray);
 	}
 	
+	public List<Double> generateLastGmoaList() {
+		List<Double> gmoaValueList = new ArrayList<>();
+		
+		if (lastGmoaArray == null) {
+			return gmoaValueList;
+		}
+		
+		String[] gmoaStringArr = StringUtil.generateArrayFromDeliminatedString('|', lastGmoaArray);
+		
+		for (String gmoa : gmoaStringArr) {
+			Double gmoaValue = NumberDisplayUtil.parse(gmoa);
+			if (gmoaValue != null) {
+				gmoaValueList.add(gmoaValue);
+			}
+		}
+		
+		return gmoaValueList;		
+	}
+	
+	public List<Double> generateLastGmobList() {
+		List<Double> gmobValueList = new ArrayList<>();
+		
+		if (lastGmobArray == null) {
+			return gmobValueList;
+		}
+		
+		String[] gmoaStringArr = StringUtil.generateArrayFromDeliminatedString('|', lastGmobArray);		
+		
+		for (String gmob : gmoaStringArr) {
+			Double gmobValue = NumberDisplayUtil.parse(gmob);
+			if (gmobValue != null) {
+				gmobValueList.add(gmobValue);
+			}
+		}
+		
+		return gmobValueList;		
+	}
 }

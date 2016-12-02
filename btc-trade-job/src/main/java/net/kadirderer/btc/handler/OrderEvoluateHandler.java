@@ -294,7 +294,7 @@ public class OrderEvoluateHandler implements Runnable {
 				
 				double amount = oldCost / price;
 				
-				Thread.sleep(2 * 1000);
+				Thread.sleep(cfgService.getWaitTimeAfterCancelBuyOrder() * 1000);
 				
 				UserOrder order = new UserOrder();
 				order.setUsername(userOrder.getUsername());
@@ -315,7 +315,7 @@ public class OrderEvoluateHandler implements Runnable {
 				autoTradeService.cancelOrder(userOrder.getUsername(), userOrder.getReturnId());
 				double price = highestBid + cfgService.getNonAutoUpdateOrderDelta();
 				
-				Thread.sleep(2 * 1000);
+				Thread.sleep(cfgService.getWaitTimeAfterCancelSellOrder() * 1000);
 				
 				UserOrder order = new UserOrder();
 				order.setUsername(userOrder.getUsername());
@@ -398,7 +398,7 @@ public class OrderEvoluateHandler implements Runnable {
 			autoTradeService.sendMail(email);
 			
 			try {
-				Thread.sleep(3 * 1000);
+				Thread.sleep(cfgService.getWaitTimeAfterCancelBuyOrder() * 1000);
 				order.setId(null);
 				autoTradeService.buyOrder(order);
 			} catch (Exception e) {
@@ -418,7 +418,7 @@ public class OrderEvoluateHandler implements Runnable {
 			autoTradeService.sendMail(email);
 			
 			try {
-				Thread.sleep(3 * 1000);
+				Thread.sleep(cfgService.getWaitTimeAfterCancelSellOrder() * 1000);
 				order.setId(null);
 				autoTradeService.sellOrder(order);
 			} catch (Exception e) {

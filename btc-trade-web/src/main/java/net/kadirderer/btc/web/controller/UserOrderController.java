@@ -1,5 +1,9 @@
 package net.kadirderer.btc.web.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -15,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import net.kadirderer.btc.api.buyorder.BuyOrderService;
 import net.kadirderer.btc.api.cancelorder.CancelOrderService;
 import net.kadirderer.btc.api.marketdepth.MarketDepthService;
@@ -26,6 +32,7 @@ import net.kadirderer.btc.impl.buyorder.BtcChinaBuyOrderResult;
 import net.kadirderer.btc.impl.sellorder.BtcChinaSellOrderResult;
 import net.kadirderer.btc.service.CacheService;
 import net.kadirderer.btc.service.UserOrderService;
+import net.kadirderer.btc.util.configuration.ConfigurationService;
 import net.kadirderer.btc.util.enumaration.OrderStatus;
 import net.kadirderer.btc.util.enumaration.OrderType;
 import net.kadirderer.btc.web.dto.DatatableAjaxResponse;
@@ -53,6 +60,9 @@ public class UserOrderController {
 	
 	@Autowired
 	private CacheService cacheService;
+	
+	@Autowired
+	private ConfigurationService cfgService;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String index(ModelMap model) {		
@@ -140,11 +150,12 @@ public class UserOrderController {
 		order.setPrice(price);
 		
 		try {
-			cancelOrderService.cancelOrder(userOrder.getUsername(), userOrder.getReturnId());
+			cancelOrderService.cancelOrder(userOrder.getUsername(), userOrder.getReturnId());			
 			
-			Thread.sleep(2 * 1000);
-			
-			if (userOrder.getOrderType() == OrderType.BUY.getCode()) {							
+			if (userOrder.getOrderType() == OrderType.BUY.getCode()) {
+				
+				Thread.sleep(cfgService.getWaitTimeAfterCancelBuyOrder() * 1000);
+				
 				double oldCost = userOrder.getPrice() * userOrder.getAmount();				
 				double amount = oldCost / price;
 				
@@ -155,7 +166,10 @@ public class UserOrderController {
 				if (result.getError() != null) {
 					throw new Exception();
 				}				
-			} else {				
+			} else {
+				
+				Thread.sleep(cfgService.getWaitTimeAfterCancelSellOrder() * 1000);
+				
 				BtcChinaSellOrderResult result = (BtcChinaSellOrderResult)sellOrderService.sellOrder(order);
 				
 				if (result.getError() != null) {
@@ -238,6 +252,31 @@ public class UserOrderController {
 		model.addAttribute("failedOrder", failedOrder);
 
 		return "order/failed_order";
+	}
+	
+	@RequestMapping(value="detail", method = RequestMethod.GET)
+	public String orderDetail(ModelMap model,
+			@RequestParam(value = "uoId") @NotNull int userOrderId) throws Exception {
+		UserOrder userOrder = userOrderService.findUserOrder(userOrderId);		
+		model.addAttribute("order", userOrder);
+		
+		HashMap<String, List<Double>> dataMap = new HashMap<>();
+		List<Double> gmoaList = userOrder.generateLastGmoaList();
+		List<Double> gmobList = userOrder.generateLastGmobList();
+		
+		List<Double> priceList = new ArrayList<>();
+		for (int i = 0; i < gmoaList.size(); i++) {
+			priceList.add(userOrder.getPrice());
+		}
+		
+		dataMap.put("GMOA", gmoaList);
+		dataMap.put("GMOB", gmobList);
+		dataMap.put("Order", priceList);
+		
+		ObjectMapper om = new ObjectMapper();
+		model.addAttribute("graphData", om.writeValueAsString(dataMap));
+
+		return "order/detail_order";
 	}
 	
 	@ModelAttribute("statusList")

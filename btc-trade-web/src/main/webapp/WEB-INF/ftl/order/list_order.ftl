@@ -4,6 +4,7 @@
 <#assign cancelUrl><@spring.url value="/order/cancelOrder.html"/></#assign>
 <#assign updateUrl><@spring.url value="/order/updateOrder.html"/></#assign>
 <#assign failedUrl><@spring.url value="/order/failedOrder.html"/></#assign>
+<#assign detailUrl><@spring.url value="/order/detail.html"/></#assign>
 
 <@layout.masterTemplate title="${title}">	
 	<script language="javascript" type="text/javascript" src="<@spring.url value="/assets/datatables/jquery.dataTables.min.js"/>"></script>
@@ -25,7 +26,14 @@
 					    }
 				  	}, {
 				  		"targets": 1,
-				    	"data": "id",
+				    	"data": null,
+				    	"render" : function ( data, type, row ) {				    		
+				    		var html = '<a href="${detailUrl}?uoId=' + data.id + '" ' +
+				    							'data-toggle="modal" data-target="#detailModal">' +
+				    							data.id +
+				    						'</a>';
+			    			return html;				    		
+				    	}
 				  	}, {
 				  		"targets": 2,
 				    	"data": "parentId",
@@ -131,6 +139,10 @@
 	   			$('#failedOrderModal').removeData();
 	   			userOrderDatatable.ajax.reload();
 			});
+			
+			$('#detailModal').on('hide.bs.modal', function () {
+	   			$('#detailModal').removeData();
+			});
 	   	});	   
 	</script>
 	
@@ -179,6 +191,14 @@
 	</div><!-- /.modal -->
 	
 	<div class="modal fade" id="failedOrderModal">
+		<div class="modal-dialog">
+	    	<div class="modal-content">
+	    	
+	    	</div><!-- /.modal-content -->
+	  	</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+	<div class="modal fade" id="detailModal">
 		<div class="modal-dialog">
 	    	<div class="modal-content">
 	    	

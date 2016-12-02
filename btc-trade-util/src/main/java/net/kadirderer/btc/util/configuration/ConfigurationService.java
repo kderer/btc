@@ -24,6 +24,8 @@ public class ConfigurationService {
 	private static final String CHECK_LAST_GMOB_COUNT = "check_last_gmob_count";
 	private static final String NON_PROFIT_BUY_ORDER_ALLOWED = "non_profit_buy_order_allowed";
 	private static final String NON_PROFIT_SELL_ORDER_ALLOWED = "non_profit_sell_order_allowed";
+	private static final String WAIT_TIME_AFTER_CANCEL_SELL_ORDER = "wait_time_after_cancel_sell_order";
+	private static final String WAIT_TIME_AFTER_CANCEL_BUY_ORDER = "wait_time_after_cancel_buy_order";
 
 	@Autowired
 	private Configuration configuration;
@@ -110,6 +112,14 @@ public class ConfigurationService {
 	
 	public boolean isNonProfitSellOrderAllowed() {
 		return configuration.getBoolean(NON_PROFIT_SELL_ORDER_ALLOWED);
+	}
+	
+	public int getWaitTimeAfterCancelSellOrder() {
+		return configuration.getInt(WAIT_TIME_AFTER_CANCEL_SELL_ORDER);
+	}
+	
+	public int getWaitTimeAfterCancelBuyOrder() {
+		return configuration.getInt(WAIT_TIME_AFTER_CANCEL_BUY_ORDER);
 	}
 
 }

@@ -105,9 +105,13 @@ function drawChartsOnIndexPage() {
     	
     	this.on('click', function() {    		
     		if (form && modalContentDiv) {
+    			var method = 'POST';
+    			if (options.method) {
+    				method = options.method;
+    			}    			
     			
     			var settings = $.extend({
-    	            requestType: "POST"
+    	            requestType: method
     	        }, options ); 
     			
     			$.ajax({
