@@ -106,7 +106,7 @@ function drawChartsOnIndexPage() {
     	this.on('click', function() {    		
     		if (form && modalContentDiv) {
     			var method = 'POST';
-    			if (options.method) {
+    			if (options && options.method) {
     				method = options.method;
     			}    			
     			
