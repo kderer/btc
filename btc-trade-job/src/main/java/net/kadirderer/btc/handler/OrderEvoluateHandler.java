@@ -147,10 +147,10 @@ public class OrderEvoluateHandler implements Runnable {
 			
 			if (uo.getOrderType() == OrderType.SELL.getCode() && gmb > gmob && gma > gmoa && uo.getPrice() > lowestAsk) {
 				double profit = (highestBid + (lowestAsk - highestBid) / 2.0) - uo.getBasePrice();
-				
+					
 				if (profit < 0.0 && uo.getParentId() != null) {
 					UserOrder parent = autoTradeService.findUserOrderById(uo.getParentId());				
-					if (parent != null) {
+					if (parent != null && !cfgService.isNonProfitSellOrderAllowed()) {
 						double parentProfit = 0.0;
 						if (parent.getOrderType() == OrderType.BUY.getCode()) {
 							parentProfit = parent.getBasePrice() - parent.getPrice();
@@ -168,10 +168,10 @@ public class OrderEvoluateHandler implements Runnable {
 			}
 			else if (uo.getOrderType() == OrderType.BUY.getCode() && gmb < gmob && gma < gmoa && uo.getPrice() < highestBid) {
 				double profit = uo.getBasePrice() - (highestBid + (lowestAsk - highestBid) / 2.0);
-				
+					
 				if (profit < 0.0 && uo.getParentId() != null) {
 					UserOrder parent = autoTradeService.findUserOrderById(uo.getParentId());				
-					if (parent != null) {
+					if (parent != null && !cfgService.isNonProfitBuyOrderAllowed()) {
 						double parentProfit = 0.0;
 						if (parent.getOrderType() == OrderType.BUY.getCode()) {
 							parentProfit = parent.getBasePrice() - parent.getPrice();
@@ -429,26 +429,7 @@ public class OrderEvoluateHandler implements Runnable {
 	
 	private void evoluateUpdateOrderResult(BtcChinaUpdateOrderResult result, UserOrder order) {
 		if (result.getError() != null) {
-			Email email = new Email();
-			email.addToToList("kderer@hotmail.com");
-			email.setSubject("BTC Buy Order Error");
-			email.setFrom("error@btc.kadirderer.net");
-			email.setBody(result.getError().getCode() + "\n" + result.getError().getMessage());
-			
-			autoTradeService.sendMail(email);
-			
-			try {
-				Thread.sleep(3 * 1000);
-				order.setId(null);
-				if (order.getOrderType() == OrderType.BUY.getCode()) {
-					autoTradeService.buyOrder(order);
-				}
-				else {
-					autoTradeService.sellOrder(order);
-				}				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+					
 		}
 	}
 }

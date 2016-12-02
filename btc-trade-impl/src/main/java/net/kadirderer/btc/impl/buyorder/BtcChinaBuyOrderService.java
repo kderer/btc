@@ -10,8 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.kadirderer.btc.api.buyorder.BuyOrderService;
 import net.kadirderer.btc.db.dao.BtcPlatformDao;
+import net.kadirderer.btc.db.dao.FailedOrderDao;
 import net.kadirderer.btc.db.dao.UserOrderDao;
 import net.kadirderer.btc.db.model.BtcPlatform;
+import net.kadirderer.btc.db.model.FailedOrder;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.impl.util.NumberUtil;
 import net.kadirderer.btc.impl.util.btcc.BtcChinaApiCallable;
@@ -32,6 +34,9 @@ public class BtcChinaBuyOrderService implements BuyOrderService, BtcChinaApiCall
 	
 	@Autowired
 	private BtcChinaPlatformClient btccClient;
+	
+	@Autowired
+	private FailedOrderDao failedOrderDao;
 	
 	@Override
 	@Transactional
@@ -58,6 +63,15 @@ public class BtcChinaBuyOrderService implements BuyOrderService, BtcChinaApiCall
 		BtcChinaBuyOrderResult result = om.readValue(jsonResult, BtcChinaBuyOrderResult.class);
 		
 		saveOrder(result, order);
+		
+		if (order.getStatus() == OrderStatus.FAILED.getCode()) {
+			FailedOrder fo = new FailedOrder();
+			fo.setMessage(result.getError().getMessage());
+			fo.setErrorCode(result.getError().getCode());
+			fo.setUserOrderId(order.getId());
+			
+			failedOrderDao.save(fo);
+		}
 
 		return result;
 	}

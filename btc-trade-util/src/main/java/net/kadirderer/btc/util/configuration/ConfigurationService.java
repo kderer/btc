@@ -22,6 +22,8 @@ public class ConfigurationService {
 	private static final String BASEPRICE_HIGHEST_BID_CHECK_DELTA = "baseprice_highest_bid_check_delta";
 	private static final String OBR_TIME_LIMIT = "obr_time_limit";
 	private static final String CHECK_LAST_GMOB_COUNT = "check_last_gmob_count";
+	private static final String NON_PROFIT_BUY_ORDER_ALLOWED = "non_profit_buy_order_allowed";
+	private static final String NON_PROFIT_SELL_ORDER_ALLOWED = "non_profit_sell_order_allowed";
 
 	@Autowired
 	private Configuration configuration;
@@ -100,6 +102,14 @@ public class ConfigurationService {
 	
 	public int getCheckLastGmobCount() {
 		return configuration.getInt(CHECK_LAST_GMOB_COUNT);
+	}
+	
+	public boolean isNonProfitBuyOrderAllowed() {
+		return configuration.getBoolean(NON_PROFIT_BUY_ORDER_ALLOWED);
+	}
+	
+	public boolean isNonProfitSellOrderAllowed() {
+		return configuration.getBoolean(NON_PROFIT_SELL_ORDER_ALLOWED);
 	}
 
 }

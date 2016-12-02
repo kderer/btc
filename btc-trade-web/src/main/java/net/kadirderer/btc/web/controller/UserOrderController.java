@@ -20,6 +20,7 @@ import net.kadirderer.btc.api.cancelorder.CancelOrderService;
 import net.kadirderer.btc.api.marketdepth.MarketDepthService;
 import net.kadirderer.btc.api.sellorder.SellOrderService;
 import net.kadirderer.btc.db.criteria.UserOrderCriteria;
+import net.kadirderer.btc.db.model.FailedOrder;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.impl.buyorder.BtcChinaBuyOrderResult;
 import net.kadirderer.btc.impl.sellorder.BtcChinaSellOrderResult;
@@ -83,20 +84,23 @@ public class UserOrderController {
 		model.addAttribute("cancelOrder", userOrderService.findUserOrder(userOrderId));
 
 		return "order/cancel_order";
-	}
+	}	
 	
 	@RequestMapping(value="cancelOrder", method = RequestMethod.POST)
 	public String cancelOrder(ModelMap model, @RequestParam(value = "id") @NotNull int userOrderId,
 			@RequestParam(value = "returnId") @NotNull String returnId, RedirectAttributes redirectAttributes) {
 		
 		try {
-			userOrderService.cancelOrder(getLoggedInUsername(), returnId);
-			WebUtil.addRedirectMessage(redirectAttributes, "message.listorder.cancelorder.successfull", true);
+			userOrderService.cancelOrder(getLoggedInUsername(), returnId);			
+			WebUtil.addMessage(model, "message.listorder.cancelorder.successfull", true);			
 		} catch(Exception e) {
-			WebUtil.addRedirectMessage(redirectAttributes, "message.listorder.cancelorder.error", false);
+			WebUtil.addMessage(model, "message.listorder.cancelorder.error", false);
 		}
 		
-		return "redirect:/order.html";
+		UserOrder cancelOrder = userOrderService.findUserOrder(userOrderId);
+		model.addAttribute("cancelOrder", cancelOrder);
+		
+		return "order/cancel_order";
 	}
 	
 	@RequestMapping(value="updateOrder", method = RequestMethod.GET)
@@ -167,6 +171,74 @@ public class UserOrderController {
 		return "order/update_order";
 	}
 	
+	@RequestMapping(value="failedOrder", method = RequestMethod.GET)
+	public String failedOrder(ModelMap model, @RequestParam(value = "uoId") @NotNull int userOrderId) {
+		
+		FailedOrder fo = userOrderService.findFailedOrder(userOrderId);
+		
+		if (fo == null) {
+			fo = new FailedOrder();
+			fo.setRetryResult('T');
+		}
+		
+		model.addAttribute("failedOrder", fo);
+
+		return "order/failed_order";
+	}
+	
+	@RequestMapping(value="retryOrder", method = RequestMethod.POST)
+	public String retry(ModelMap model,
+			@ModelAttribute("failedOrder") FailedOrder failedOrder,
+			RedirectAttributes redirectAttributes) {		
+		try {			
+			failedOrder = userOrderService.findFailedOrder(failedOrder.getUserOrderId());			
+			if (failedOrder == null) {
+				failedOrder = new FailedOrder();				
+				throw new Exception();
+			}
+			
+			UserOrder order = userOrderService.findUserOrder(failedOrder.getUserOrderId());			
+			if (order == null) {
+				throw new Exception();
+			}
+			
+			order.setId(null);
+			failedOrder.setUserOrder(order);
+			
+			if (order.getOrderType() == OrderType.BUY.getCode()) {
+				BtcChinaBuyOrderResult result = (BtcChinaBuyOrderResult) buyOrderService.buyOrder(order);
+				
+				if (result.getError() != null) {					
+					throw new Exception();					
+				}				
+			}
+			else {
+				BtcChinaSellOrderResult result = (BtcChinaSellOrderResult) sellOrderService.sellOrder(order);
+				
+				if (result.getError() != null) {
+					throw new Exception();
+				}
+			}
+		} catch (Exception e) {
+			failedOrder.setRetryResult(OrderStatus.FAILED.getCode());			
+			if (failedOrder.getId() != null) {
+				userOrderService.saveFailedOrder(failedOrder);
+			}
+			
+			WebUtil.addMessage(model, "message.listorder.failedorder.reorder.error", false);
+			model.addAttribute("failedOrder", failedOrder);
+			
+			return "order/failed_order";
+		}
+		
+		failedOrder.setRetryResult(OrderStatus.DONE.getCode());		
+		userOrderService.saveFailedOrder(failedOrder);
+		
+		WebUtil.addMessage(model, "message.listorder.failedorder.reorder.success", true);
+		model.addAttribute("failedOrder", failedOrder);
+
+		return "order/failed_order";
+	}
 	
 	@ModelAttribute("statusList")
 	public OrderStatus[] statusList() {

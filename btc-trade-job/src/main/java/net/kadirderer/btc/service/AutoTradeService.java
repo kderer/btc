@@ -20,7 +20,7 @@ import net.kadirderer.btc.util.email.Email;
 public abstract class AutoTradeService {
 	
 	@Autowired
-	public ConfigurationService cfgService; 
+	private ConfigurationService cfgService;
 	
 	public abstract double getHighestBid() throws Exception;
 	

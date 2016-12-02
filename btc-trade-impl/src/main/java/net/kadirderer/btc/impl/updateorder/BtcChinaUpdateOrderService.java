@@ -10,7 +10,9 @@ import net.kadirderer.btc.api.cancelorder.CancelOrderService;
 import net.kadirderer.btc.api.sellorder.SellOrderService;
 import net.kadirderer.btc.api.updateorder.UpdateOrderResult;
 import net.kadirderer.btc.api.updateorder.UpdateOrderService;
+import net.kadirderer.btc.db.dao.FailedOrderDao;
 import net.kadirderer.btc.db.dao.UserOrderDao;
+import net.kadirderer.btc.db.model.FailedOrder;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.impl.buyorder.BtcChinaBuyOrderResult;
 import net.kadirderer.btc.impl.cancelorder.BtcChinaCancelOrderResult;
@@ -32,6 +34,9 @@ public class BtcChinaUpdateOrderService implements UpdateOrderService {
 	
 	@Autowired
 	private UserOrderDao uoDao;
+	
+	@Autowired
+	private FailedOrderDao failedOrderDao;
 	
 	@Override
 	public UpdateOrderResult updateOrder(UserOrder order, double amount, double price)
@@ -71,6 +76,15 @@ public class BtcChinaUpdateOrderService implements UpdateOrderService {
 		}
 		
 		uoDao.save(order);
+		
+		if (order.getStatus() == OrderStatus.FAILED.getCode()) {
+			FailedOrder fo = new FailedOrder();
+			fo.setMessage(result.getError().getMessage());
+			fo.setErrorCode(result.getError().getCode());
+			fo.setUserOrderId(order.getId());
+			
+			failedOrderDao.save(fo);
+		}
 		
 		return result;
 	}

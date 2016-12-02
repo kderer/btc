@@ -3,6 +3,7 @@
 <#assign title><@spring.message code="label.listorder.title"/></#assign>
 <#assign cancelUrl><@spring.url value="/order/cancelOrder.html"/></#assign>
 <#assign updateUrl><@spring.url value="/order/updateOrder.html"/></#assign>
+<#assign failedUrl><@spring.url value="/order/failedOrder.html"/></#assign>
 
 <@layout.masterTemplate title="${title}">	
 	<script language="javascript" type="text/javascript" src="<@spring.url value="/assets/datatables/jquery.dataTables.min.js"/>"></script>
@@ -10,7 +11,7 @@
 	<link rel="stylesheet" type="text/css" href="<@spring.url value="/assets/datatables/dataTables.bootstrap.min.css"/>">	
 	
 	<script language="javascript" type="text/javascript">		
-		$(function(){
+		$(function() {
 			var userOrderDatatable = $('#userOrderListTable').DataTable({
 		        "ajax": '<@spring.url value="/order/query.request"/>',
         		"serverSide": true,
@@ -57,7 +58,19 @@
 				    	}
 				  	}, {
 				  		"targets": 9,
-				    	"data": "status",
+				    	"data": null,
+				    	"render" : function ( data, type, row ) {				    		
+				    		if (data.status == 'F') {
+				    			var html = '<a href="${failedUrl}?uoId=' + data.id + '" ' +
+				    							'data-toggle="modal" data-target="#failedOrderModal">' +
+				    							data.status +
+				    						'</a>';
+				    			return html;
+				    		}
+				    		else {
+				    			return data.status;
+				    		}
+				    	}
 				  	}, {
 				  		"targets": 10,
 				    	"data": "createDateStr",
@@ -106,10 +119,17 @@
 		    
 		    $('#cancelOrderModal').on('hide.bs.modal', function () {
 	   			$('#cancelOrderModal').removeData();
+	   			userOrderDatatable.ajax.reload();
 			});
 			
 			$('#updateOrderModal').on('hide.bs.modal', function () {
 	   			$('#updateOrderModal').removeData();
+	   			userOrderDatatable.ajax.reload();
+			});
+			
+			$('#failedOrderModal').on('hide.bs.modal', function () {
+	   			$('#failedOrderModal').removeData();
+	   			userOrderDatatable.ajax.reload();
 			});
 	   	});	   
 	</script>
@@ -151,6 +171,14 @@
 	</div><!-- /.modal -->
 	
 	<div class="modal fade" id="updateOrderModal">
+		<div class="modal-dialog">
+	    	<div class="modal-content">
+	    	
+	    	</div><!-- /.modal-content -->
+	  	</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+	<div class="modal fade" id="failedOrderModal">
 		<div class="modal-dialog">
 	    	<div class="modal-content">
 	    	

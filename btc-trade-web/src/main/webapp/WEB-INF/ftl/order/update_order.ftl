@@ -2,12 +2,6 @@
 <#assign form=JspTaglibs["http://www.springframework.org/tags/form"]>
 <#assign updateOrderAction><@spring.url value="/order/updateOrder.html"/></#assign>
 
-<script language="javascript" type="text/javascript">
-	$(function() {
-		$('#updateOrderSubmitButton').modalSubmit();	
-   	});
-</script>
-
 <@form.form modelAttribute="updateOrder" class="form-horizontal" action="${updateOrderAction}" method="post">
 	
 	<@form.hidden path="id" class="form-control"/>
@@ -102,4 +96,8 @@
 
 </@form.form>
 
-
+<script language="javascript" type="text/javascript">
+	$(function() {
+		$('#updateOrderSubmitButton').modalSubmit();	
+   	});
+</script>
