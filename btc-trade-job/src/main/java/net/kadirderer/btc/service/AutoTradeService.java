@@ -1,5 +1,6 @@
 package net.kadirderer.btc.service;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,15 +13,21 @@ import net.kadirderer.btc.api.queryorder.QueryOrderResult;
 import net.kadirderer.btc.api.sellorder.SellOrderResult;
 import net.kadirderer.btc.api.updateorder.UpdateOrderResult;
 import net.kadirderer.btc.db.model.UserOrder;
+import net.kadirderer.btc.handler.AutoUpdateHandler;
 import net.kadirderer.btc.handler.OrderEvoluateHandler;
 import net.kadirderer.btc.util.configuration.ConfigurationService;
 import net.kadirderer.btc.util.email.Email;
+import net.kadirderer.btc.util.enumaration.OrderStatus;
 
 @Service
 public abstract class AutoTradeService {
 	
 	@Autowired
 	private ConfigurationService cfgService;
+	
+	private boolean firstTime = true;
+	
+	private long lastAutoTradeCheckTime;
 	
 	public abstract double getHighestBid() throws Exception;
 	
@@ -57,16 +64,29 @@ public abstract class AutoTradeService {
 	public void autoTrade(String username) throws Exception {
 		List<UserOrder> pendingOrderList = queryPendingAutoTradeOrders(username);
 		
-		for (UserOrder pendingOrder : pendingOrderList) {
-			
-			if (pendingOrder.getReturnId() == null || pendingOrder.getReturnId().length() == 0) {
-				continue;
+		for (UserOrder pendingOrder : pendingOrderList) {			
+			if (pendingOrder.getStatus() == OrderStatus.NEW.getCode()) {
+				AutoUpdateHandler.handle(this, pendingOrder.getId(), cfgService);
 			}
-			
-			queryOrder(username, pendingOrder.getReturnId(), true);
-			
-			OrderEvoluateHandler.evoluate(this, pendingOrder.getId(), cfgService);
+			else if (firstTime && pendingOrder.isAutoUpdate()) { 
+				AutoUpdateHandler.handle(this, pendingOrder.getId(), cfgService);
+			}
+			else if (!pendingOrder.isAutoUpdate() && Calendar.getInstance().getTimeInMillis() - lastAutoTradeCheckTime >= 60000) {
+				queryOrder(pendingOrder.getUsername(), pendingOrder.getReturnId(), true);
+				
+				if (pendingOrder.isAutoTrade()) {
+					OrderEvoluateHandler.evoluate(this, pendingOrder.getId(), cfgService);
+				}
+			}
 		}
+		
+		if (firstTime) {
+			firstTime = false;
+		}
+		
+		if (Calendar.getInstance().getTimeInMillis() - lastAutoTradeCheckTime >= 60000) {
+			lastAutoTradeCheckTime = Calendar.getInstance().getTimeInMillis();
+		}		
 	}	
 	
 	public void sweep(String username) {

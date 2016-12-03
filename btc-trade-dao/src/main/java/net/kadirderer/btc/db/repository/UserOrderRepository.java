@@ -30,7 +30,7 @@ public interface UserOrderRepository extends JpaRepository<UserOrder, Integer> {
 	@Query("Select uo from UserOrder uo where uo.username = :username")
 	public Page<UserOrder> findByUsername(@Param("username") String username, Pageable page);
 	
-	@Query("Select uo from UserOrder uo where uo.username = :username and uo.status in ('P', 'M', 'S') and uo.platformId = :platformId")
+	@Query("Select uo from UserOrder uo where uo.username = :username and uo.status in ('P', 'N', 'S') and uo.platformId = :platformId")
 	public List<UserOrder> findPending(@Param("username") String username, @Param("platformId") int platformId);
 	
 	@Query("Select uo from UserOrder uo where uo.username = :username and uo.status = 'P' and uo.platformId = :platformId")

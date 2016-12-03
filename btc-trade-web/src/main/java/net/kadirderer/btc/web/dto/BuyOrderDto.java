@@ -56,5 +56,5 @@ public class BuyOrderDto {
 	public void setAutoUpdate(boolean isAutoUpdate) {
 		this.isAutoUpdate = isAutoUpdate;
 	}
-
+	
 }

@@ -14,6 +14,7 @@ import net.kadirderer.btc.db.dao.BtcPlatformDao;
 import net.kadirderer.btc.db.model.BtcPlatform;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.util.configuration.ConfigurationService;
+import net.kadirderer.btc.util.enumaration.OrderStatus;
 import net.kadirderer.btc.web.dto.BuyOrderDto;
 import net.kadirderer.btc.web.dto.SellOrderDto;
 
@@ -67,6 +68,10 @@ public class BtcAccountServiceImpl implements BtcAccountService {
 		order.setAutoUpdate(buyOrder.isAutoUpdate());
 		order.setBasePrice(highestBid);
 		
+		if (order.isAutoUpdate()) {
+			order.setStatus(OrderStatus.NEW.getCode());
+		}
+		
 		return buyOrderService.buyOrder(order);
 	}
 
@@ -89,6 +94,10 @@ public class BtcAccountServiceImpl implements BtcAccountService {
 		order.setAutoUpdate(sellOrder.isAutoUpdate());
 		order.setAutoTrade(sellOrder.isAutoTrade());
 		order.setBasePrice(highestBid);
+		
+		if (order.isAutoUpdate()) {
+			order.setStatus(OrderStatus.NEW.getCode());
+		}
 		
 		return sellOrderService.sellOrder(order);
 	}	

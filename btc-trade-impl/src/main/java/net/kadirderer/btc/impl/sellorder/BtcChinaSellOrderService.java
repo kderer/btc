@@ -83,7 +83,9 @@ public class BtcChinaSellOrderService implements SellOrderService, BtcChinaApiCa
 		order.setPlatformId(btcChina.getId());
 		order.setReturnId(result.getResult());
 		if(result.getError() == null) {
-			order.setStatus(OrderStatus.PENDING.getCode());
+			if (order.getStatus() != OrderStatus.NEW.getCode()) {
+				order.setStatus(OrderStatus.PENDING.getCode());
+			}
 		}
 		else {
 			order.setStatus(OrderStatus.FAILED.getCode());

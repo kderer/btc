@@ -21,8 +21,9 @@ public class OrderEvoluateHandler implements Runnable {
 	private AutoTradeService autoTradeService;
 	private ConfigurationService cfgService;
 	private int userOrderId;
+	private boolean processing = false;
 	
-	public static void evoluate(AutoTradeService autoTradeService, int userOrderId, ConfigurationService cfgService) {
+	public static OrderEvoluateHandler evoluate(AutoTradeService autoTradeService, int userOrderId,ConfigurationService cfgService) {
 		OrderEvoluateHandler handler = new OrderEvoluateHandler();
 		handler.autoTradeService = autoTradeService;
 		handler.userOrderId = userOrderId;
@@ -30,6 +31,8 @@ public class OrderEvoluateHandler implements Runnable {
 
 		Thread thread = new Thread(handler);
 		thread.start();
+		
+		return handler;
 	}
 	
 	private OrderEvoluateHandler() {
@@ -38,6 +41,7 @@ public class OrderEvoluateHandler implements Runnable {
 
 	@Override
 	public void run() {
+		processing = true;
 		try {
 			UserOrder uo = autoTradeService.findUserOrderById(userOrderId);
 			
@@ -98,6 +102,8 @@ public class OrderEvoluateHandler implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		processing = false;
 	}
 	
 	private boolean isThisTheTime(UserOrder uo, double gmob, double gmoa,
@@ -145,7 +151,7 @@ public class OrderEvoluateHandler implements Runnable {
 			}			
 			double gmb = Math.pow(product, 1.0 / lastGmobArray.length);
 			
-			if (uo.getOrderType() == OrderType.SELL.getCode() && gmb > gmob && gma > gmoa && uo.getPrice() > lowestAsk) {
+			if (uo.getOrderType() == OrderType.SELL.getCode() && gmb < gmob && gma < gmoa && uo.getPrice() > lowestAsk) {
 				double profit = (highestBid + (lowestAsk - highestBid) / 2.0) - uo.getBasePrice();
 					
 				if (profit < 0.0 && uo.getParentId() != null) {
@@ -166,7 +172,7 @@ public class OrderEvoluateHandler implements Runnable {
 				}
 				return true;
 			}
-			else if (uo.getOrderType() == OrderType.BUY.getCode() && gmb < gmob && gma < gmoa && uo.getPrice() < highestBid) {
+			else if (uo.getOrderType() == OrderType.BUY.getCode() && gmb > gmob && gma > gmoa && uo.getPrice() < highestBid) {
 				double profit = uo.getBasePrice() - (highestBid + (lowestAsk - highestBid) / 2.0);
 					
 				if (profit < 0.0 && uo.getParentId() != null) {
@@ -356,6 +362,10 @@ public class OrderEvoluateHandler implements Runnable {
 				order.setLastGmoaArray(userOrder.getLastGmoaArray());
 				order.setLastGmobArray(userOrder.getLastGmobArray());
 				
+				if (userOrder.isAutoUpdate()) {
+					order.setStatus(OrderStatus.NEW.getCode());
+				}
+				
 				autoTradeService.sellOrder(order);				
 			} catch (Exception e) {
 				autoTradeService.sendMailForException(e);
@@ -380,6 +390,10 @@ public class OrderEvoluateHandler implements Runnable {
 				order.setLastGmoaArray(userOrder.getLastGmoaArray());
 				order.setLastGmobArray(userOrder.getLastGmobArray());
 				
+				if (userOrder.isAutoUpdate()) {
+					order.setStatus(OrderStatus.NEW.getCode());
+				}
+				
 				autoTradeService.buyOrder(order);				
 			} catch (Exception e) {
 				autoTradeService.sendMailForException(e);
@@ -393,11 +407,10 @@ public class OrderEvoluateHandler implements Runnable {
 			email.addToToList("kderer@hotmail.com");
 			email.setSubject("BTC Buy Order Error");
 			email.setFrom("error@btc.kadirderer.net");
-			email.setBody(result.getError().getCode() + "\n" + result.getError().getMessage());
-			
-			autoTradeService.sendMail(email);
+			email.setBody(result.getError().getCode() + "\n" + result.getError().getMessage());		
 			
 			try {
+				autoTradeService.sendMail(email);
 				Thread.sleep(cfgService.getWaitTimeAfterCancelBuyOrder() * 1000);
 				order.setId(null);
 				autoTradeService.buyOrder(order);
@@ -413,11 +426,10 @@ public class OrderEvoluateHandler implements Runnable {
 			email.addToToList("kderer@hotmail.com");
 			email.setSubject("BTC Sell Order Error");
 			email.setFrom("error@btc.kadirderer.net");
-			email.setBody(result.getError().getCode() + "\n" + result.getError().getMessage());
-			
-			autoTradeService.sendMail(email);
+			email.setBody(result.getError().getCode() + "\n" + result.getError().getMessage());		
 			
 			try {
+				autoTradeService.sendMail(email);
 				Thread.sleep(cfgService.getWaitTimeAfterCancelSellOrder() * 1000);
 				order.setId(null);
 				autoTradeService.sellOrder(order);
@@ -431,5 +443,9 @@ public class OrderEvoluateHandler implements Runnable {
 		if (result.getError() != null) {
 					
 		}
+	}
+	
+	public boolean isProcessing() {
+		return processing;
 	}
 }

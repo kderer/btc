@@ -80,7 +80,7 @@ public class JobConfiguration {
 		SimpleTriggerFactoryBean recordGroupQueryTrigger = new SimpleTriggerFactoryBean();
 		
 		recordGroupQueryTrigger.setJobDetail(setupAutoTradeJob().getObject());
-		recordGroupQueryTrigger.setRepeatInterval(1 * 15 * 1000);		
+		recordGroupQueryTrigger.setRepeatInterval(1 * 5 * 1000);		
 		recordGroupQueryTrigger.setStartDelay(1000);
 				
 		return recordGroupQueryTrigger;

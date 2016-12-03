@@ -87,7 +87,7 @@
 			</div>
 		</div>
 				
-		<div class="form-group">
+		<div class="row">
 			<div id="graphDiv" style="padding: 10px">
 			
 			</div>
@@ -110,6 +110,7 @@
 			gmoaData = {},
 			gmobData = {},
 			orderData = {},
+			basePriceData = {},
 			indexArray = [];
 		
 		gmoaData.name = 'GM of Asks'
@@ -123,6 +124,10 @@
 		orderData.name = 'Order'
 		orderData.data = graphData.Order;
 		series.push(orderData);
+		
+		basePriceData.name = 'Base Price'
+		basePriceData.data = graphData.BasePrice;
+		series.push(basePriceData);
 		
 		var counter = 1;
 		for (var index in gmoaData.data) {
@@ -164,8 +169,8 @@
 				borderWidth : 0,
 				floating: true
 			},
-			cahart : {
-				margin : 10
+			chart : {
+				marginRight : 50
 			},
 			series : series
 		});

@@ -1,6 +1,7 @@
 package net.kadirderer.btc.web.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,17 +23,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.kadirderer.btc.api.buyorder.BuyOrderService;
-import net.kadirderer.btc.api.cancelorder.CancelOrderService;
 import net.kadirderer.btc.api.marketdepth.MarketDepthService;
 import net.kadirderer.btc.api.sellorder.SellOrderService;
+import net.kadirderer.btc.api.updateorder.UpdateOrderService;
 import net.kadirderer.btc.db.criteria.UserOrderCriteria;
 import net.kadirderer.btc.db.model.FailedOrder;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.impl.buyorder.BtcChinaBuyOrderResult;
 import net.kadirderer.btc.impl.sellorder.BtcChinaSellOrderResult;
+import net.kadirderer.btc.impl.updateorder.BtcChinaUpdateOrderResult;
 import net.kadirderer.btc.service.CacheService;
 import net.kadirderer.btc.service.UserOrderService;
-import net.kadirderer.btc.util.configuration.ConfigurationService;
 import net.kadirderer.btc.util.enumaration.OrderStatus;
 import net.kadirderer.btc.util.enumaration.OrderType;
 import net.kadirderer.btc.web.dto.DatatableAjaxResponse;
@@ -50,19 +51,16 @@ public class UserOrderController {
 	private MarketDepthService marketDepthService;
 	
 	@Autowired
-	private CancelOrderService cancelOrderService;
+	private BuyOrderService buyOrderService;
 	
 	@Autowired
-	private BuyOrderService buyOrderService;
+	private UpdateOrderService updateOrderService;
 	
 	@Autowired
 	private SellOrderService sellOrderService;
 	
 	@Autowired
 	private CacheService cacheService;
-	
-	@Autowired
-	private ConfigurationService cfgService;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String index(ModelMap model) {		
@@ -140,42 +138,15 @@ public class UserOrderController {
 		UserOrder userOrder = userOrderService.findUserOrder(updateOrderDto.getId());
 		
 		double price = updateOrderDto.getPrice();
-		
-		UserOrder order = new UserOrder();
-		order.setUsername(userOrder.getUsername());
-		order.setBasePrice(userOrder.getBasePrice());
-		order.setParentId(userOrder.getParentId());
-		order.setAmount(userOrder.getAmount());
-		order.setStatus(userOrder.getStatus());
-		order.setPrice(price);
+		double amount = userOrder.getAmount();
 		
 		try {
-			cancelOrderService.cancelOrder(userOrder.getUsername(), userOrder.getReturnId());			
+			BtcChinaUpdateOrderResult result = (BtcChinaUpdateOrderResult) updateOrderService.updateOrder(
+					userOrder, amount, price);
 			
-			if (userOrder.getOrderType() == OrderType.BUY.getCode()) {
-				
-				Thread.sleep(cfgService.getWaitTimeAfterCancelBuyOrder() * 1000);
-				
-				double oldCost = userOrder.getPrice() * userOrder.getAmount();				
-				double amount = oldCost / price;
-				
-				order.setAmount(amount);
-				
-				BtcChinaBuyOrderResult result = (BtcChinaBuyOrderResult)buyOrderService.buyOrder(order);
-				
-				if (result.getError() != null) {
-					throw new Exception();
-				}				
-			} else {
-				
-				Thread.sleep(cfgService.getWaitTimeAfterCancelSellOrder() * 1000);
-				
-				BtcChinaSellOrderResult result = (BtcChinaSellOrderResult)sellOrderService.sellOrder(order);
-				
-				if (result.getError() != null) {
-					throw new Exception();
-				}
-			} 
+			if (result.getError() != null) {
+				throw new Exception();
+			}			
 		} catch (Exception e) {
 			WebUtil.addMessage(model, "message.listorder.updateorder.error", false);
 			return "order/update_order";
@@ -263,15 +234,20 @@ public class UserOrderController {
 		HashMap<String, List<Double>> dataMap = new HashMap<>();
 		List<Double> gmoaList = userOrder.generateLastGmoaList();
 		List<Double> gmobList = userOrder.generateLastGmobList();
+		Collections.reverse(gmoaList);
+		Collections.reverse(gmobList);
 		
 		List<Double> priceList = new ArrayList<>();
+		List<Double> basePriceList = new ArrayList<>();
 		for (int i = 0; i < gmoaList.size(); i++) {
 			priceList.add(userOrder.getPrice());
+			basePriceList.add(userOrder.getBasePrice());
 		}
 		
 		dataMap.put("GMOA", gmoaList);
 		dataMap.put("GMOB", gmobList);
 		dataMap.put("Order", priceList);
+		dataMap.put("BasePrice", basePriceList);
 		
 		ObjectMapper om = new ObjectMapper();
 		model.addAttribute("graphData", om.writeValueAsString(dataMap));
