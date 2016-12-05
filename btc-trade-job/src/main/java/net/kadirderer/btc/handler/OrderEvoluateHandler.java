@@ -423,7 +423,7 @@ public class OrderEvoluateHandler implements Runnable {
 				autoTradeService.buyOrder(order);				
 			} catch (Exception e) {
 				e.printStackTrace();
-				Thread.sleep(cfgService.getWaitTimeAfterCancelBuyOrder() * 1000);
+				Thread.sleep(cfgService.getWaitTimeAfterCancelSellOrder() * 1000);
 				order.setId(null);
 				autoTradeService.buyOrder(order);
 			}
