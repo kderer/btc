@@ -59,7 +59,8 @@ public class OrderEvoluateHandler implements Runnable {
 				}
 				
 				UpdateOrderResult result = null;
-				if (isThisTheTime(uo, gmob, gmoa, highestBid, lowestAsk)) {
+				boolean isThisTheTime = isThisTheTime(uo, gmob, gmoa, highestBid, lowestAsk);
+				if (isThisTheTime) {
 					double price = highestBid + (lowestAsk - highestBid) / 2.0;
 					double amount = uo.getAmount();
 					
@@ -87,6 +88,11 @@ public class OrderEvoluateHandler implements Runnable {
 				uo.addGmob(gmob, cfgService.getCheckLastGmobCount());
 				uo.addGmoa(gmoa, cfgService.getCheckLastGmobCount());
 				
+				if (!isThisTheTime && uo.getSecondCpBid() != null) {
+					uo.setFirstCpBid(null);
+					uo.setSecondCpBid(null);
+				}
+				
 				autoTradeService.saveUserOrder(uo);
 				
 				if (result != null) {
@@ -107,7 +113,7 @@ public class OrderEvoluateHandler implements Runnable {
 	}
 	
 	private boolean isThisTheTime(UserOrder uo, double gmob, double gmoa,
-			double highestBid, double lowestAsk) {
+			double highestBid, double lowestAsk) {		
 		String[] lastGmobArray = StringUtil.generateArrayFromDeliminatedString('|', uo.getLastGmobArray());
 		if (lastGmobArray == null) {
 			return false;
@@ -137,6 +143,30 @@ public class OrderEvoluateHandler implements Runnable {
 			return false;
 		}
 		
+		double profit = (highestBid + (lowestAsk - highestBid) / 2.0) - uo.getBasePrice();
+		boolean nonProfitAllowed = cfgService.isNonProfitSellOrderAllowed();
+		if (uo.getOrderType() == OrderType.BUY.getCode()) {
+			profit = uo.getBasePrice() - (highestBid + (lowestAsk - highestBid) / 2.0);
+			nonProfitAllowed = cfgService.isNonProfitBuyOrderAllowed();
+		}	
+		
+		if (profit < 0.0 && uo.getParentId() != null) {
+			UserOrder parent = autoTradeService.findUserOrderById(uo.getParentId());				
+			if (parent != null && !nonProfitAllowed) {
+				double parentProfit = 0.0;
+				if (parent.getOrderType() == OrderType.BUY.getCode()) {
+					parentProfit = parent.getBasePrice() - parent.getPrice();
+				}						
+				else if (parent.getOrderType() == OrderType.SELL.getCode()) {
+					parentProfit = parent.getPrice() - parent.getBasePrice();
+				}
+				
+				if (parentProfit < 0.0 || -1.0 * profit > parentProfit) {
+					return false;
+				}
+			}
+		}
+		
 		try {
 			double product = 1;			
 			
@@ -151,48 +181,41 @@ public class OrderEvoluateHandler implements Runnable {
 			}			
 			double gmb = Math.pow(product, 1.0 / lastGmobArray.length);
 			
-			if (uo.getOrderType() == OrderType.SELL.getCode() && gmb < gmob && gma < gmoa && uo.getPrice() > lowestAsk) {
-				double profit = (highestBid + (lowestAsk - highestBid) / 2.0) - uo.getBasePrice();
-					
-				if (profit < 0.0 && uo.getParentId() != null) {
-					UserOrder parent = autoTradeService.findUserOrderById(uo.getParentId());				
-					if (parent != null && !cfgService.isNonProfitSellOrderAllowed()) {
-						double parentProfit = 0.0;
-						if (parent.getOrderType() == OrderType.BUY.getCode()) {
-							parentProfit = parent.getBasePrice() - parent.getPrice();
-						}						
-						else if (parent.getOrderType() == OrderType.SELL.getCode()) {
-							parentProfit = parent.getPrice() - parent.getBasePrice();
-						}
-						
-						if (parentProfit < 0.0 || -1.0 * profit > parentProfit) {
-							return false;
-						}
-					}
+			if (uo.getOrderType() == OrderType.SELL.getCode()) {				
+				if (uo.getFirstCpBid() == null && gmb < gmob && gma < gmoa) {
+					uo.setFirstCpBid(highestBid);
+					return false;
 				}
-				return true;
-			}
-			else if (uo.getOrderType() == OrderType.BUY.getCode() && gmb > gmob && gma > gmoa && uo.getPrice() < highestBid) {
-				double profit = uo.getBasePrice() - (highestBid + (lowestAsk - highestBid) / 2.0);
-					
-				if (profit < 0.0 && uo.getParentId() != null) {
-					UserOrder parent = autoTradeService.findUserOrderById(uo.getParentId());				
-					if (parent != null && !cfgService.isNonProfitBuyOrderAllowed()) {
-						double parentProfit = 0.0;
-						if (parent.getOrderType() == OrderType.BUY.getCode()) {
-							parentProfit = parent.getBasePrice() - parent.getPrice();
-						}						
-						else if (parent.getOrderType() == OrderType.SELL.getCode()) {
-							parentProfit = parent.getPrice() - parent.getBasePrice();
-						}
-						
-						if (parentProfit < 0.0 || -1.0 * profit > parentProfit) {
-							return false;
-						}
-					}
+				else if (uo.getFirstCpBid() == null) {
+					return false;
 				}
-				return true;
+				else if (gmb > gmob && gma > gmoa && uo.getPrice() > lowestAsk) {
+					if (uo.getSecondCpBid() == null) {
+						uo.setSecondCpBid(highestBid);
+					}					
+				}
+				else {
+					return false;
+				}
 			}
+			else if (uo.getOrderType() == OrderType.BUY.getCode()) {
+				if (uo.getFirstCpBid() == null && gmb > gmob && gma > gmoa) {
+					uo.setFirstCpBid(highestBid);
+					return false;
+				}
+				else if (uo.getFirstCpBid() == null) {
+					return false;
+				}
+				else if (gmb < gmob && gma < gmoa && uo.getPrice() > highestBid) {
+					if (uo.getSecondCpBid() == null) {
+						uo.setSecondCpBid(highestBid);
+					}					
+				}
+				else {					
+					return false;
+				}
+			}
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}						
@@ -350,8 +373,8 @@ public class OrderEvoluateHandler implements Runnable {
 				price = userOrder.getPrice() + cfgService.getNonAutoUpdateOrderDelta();
 			}
 			
-			try {
-				UserOrder order = new UserOrder();
+			UserOrder order = new UserOrder();
+			try {				
 				order.setUsername(userOrder.getUsername());
 				order.setBasePrice(userOrder.getPrice());
 				order.setParentId(userOrder.getId());
@@ -368,7 +391,10 @@ public class OrderEvoluateHandler implements Runnable {
 				
 				autoTradeService.sellOrder(order);				
 			} catch (Exception e) {
-				autoTradeService.sendMailForException(e);
+				e.printStackTrace();
+				Thread.sleep(cfgService.getWaitTimeAfterCancelBuyOrder() * 1000);
+				order.setId(null);
+				autoTradeService.buyOrder(order);
 			}
 		} else {
 			double price = userOrder.getPrice() - cfgService.getBuyOrderDelta();
@@ -378,8 +404,8 @@ public class OrderEvoluateHandler implements Runnable {
 			}
 			
 			double buyAmount = (userOrder.getPrice() * amount) / price;			
+			UserOrder order = new UserOrder();
 			try {				
-				UserOrder order = new UserOrder();
 				order.setUsername(userOrder.getUsername());
 				order.setBasePrice(userOrder.getPrice());
 				order.setParentId(userOrder.getId());
@@ -396,7 +422,10 @@ public class OrderEvoluateHandler implements Runnable {
 				
 				autoTradeService.buyOrder(order);				
 			} catch (Exception e) {
-				autoTradeService.sendMailForException(e);
+				e.printStackTrace();
+				Thread.sleep(cfgService.getWaitTimeAfterCancelBuyOrder() * 1000);
+				order.setId(null);
+				autoTradeService.buyOrder(order);
 			}
 		}
 	}

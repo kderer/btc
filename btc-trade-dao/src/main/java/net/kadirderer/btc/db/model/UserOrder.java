@@ -71,6 +71,12 @@ public class UserOrder {
 	@Column(name = "CREATEDATE")
 	private Date createDate;
 	
+	@Column(name = "FIRST_CP_BID")
+	private Double firstCpBid;
+	
+	@Column(name = "SECOND_CP_BID")
+	private Double secondCpBid;
+	
 	@Column(name = "UPDATEDATE")
 	private Date updateDate;
 
@@ -224,8 +230,24 @@ public class UserOrder {
 
 	public void setLastGmoaArray(String lastGmoaArray) {
 		this.lastGmoaArray = lastGmoaArray;
-	}
+	}	
 	
+	public Double getFirstCpBid() {
+		return firstCpBid;
+	}
+
+	public void setFirstCpBid(Double firstCpBid) {
+		this.firstCpBid = firstCpBid;
+	}
+
+	public Double getSecondCpBid() {
+		return secondCpBid;
+	}
+
+	public void setSecondCpBid(Double secondCpBid) {
+		this.secondCpBid = secondCpBid;
+	}
+
 	public void addGmob(double gmob, int checkLastGmobCount) {
 		String[] gmobArray = StringUtil.generateArrayFromDeliminatedString('|', lastGmobArray);
 		
