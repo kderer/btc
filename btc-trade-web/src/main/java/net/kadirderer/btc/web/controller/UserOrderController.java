@@ -189,6 +189,9 @@ public class UserOrderController {
 			
 			order.setId(null);
 			failedOrder.setUserOrder(order);
+			if (order.isAutoTrade() && order.isAutoUpdate()) {
+				order.setStatus(OrderStatus.NEW.getCode());
+			}
 			
 			if (order.getOrderType() == OrderType.BUY.getCode()) {
 				BtcChinaBuyOrderResult result = (BtcChinaBuyOrderResult) buyOrderService.buyOrder(order);

@@ -385,7 +385,7 @@ public class OrderEvoluateHandler implements Runnable {
 				order.setLastGmoaArray(userOrder.getLastGmoaArray());
 				order.setLastGmobArray(userOrder.getLastGmobArray());
 				
-				if (userOrder.isAutoUpdate()) {
+				if (userOrder.isAutoTrade() && userOrder.isAutoUpdate()) {
 					order.setStatus(OrderStatus.NEW.getCode());
 				}
 				
@@ -416,7 +416,7 @@ public class OrderEvoluateHandler implements Runnable {
 				order.setLastGmoaArray(userOrder.getLastGmoaArray());
 				order.setLastGmobArray(userOrder.getLastGmobArray());
 				
-				if (userOrder.isAutoUpdate()) {
+				if (userOrder.isAutoTrade() && userOrder.isAutoUpdate()) {
 					order.setStatus(OrderStatus.NEW.getCode());
 				}
 				
@@ -425,6 +425,9 @@ public class OrderEvoluateHandler implements Runnable {
 				e.printStackTrace();
 				Thread.sleep(cfgService.getWaitTimeAfterCancelSellOrder() * 1000);
 				order.setId(null);
+				if (order.isAutoTrade() && order.isAutoUpdate()) {
+					order.setStatus(OrderStatus.NEW.getCode());
+				}
 				autoTradeService.buyOrder(order);
 			}
 		}
@@ -442,6 +445,9 @@ public class OrderEvoluateHandler implements Runnable {
 				autoTradeService.sendMail(email);
 				Thread.sleep(cfgService.getWaitTimeAfterCancelBuyOrder() * 1000);
 				order.setId(null);
+				if (order.isAutoTrade() && order.isAutoUpdate()) {
+					order.setStatus(OrderStatus.NEW.getCode());
+				}
 				autoTradeService.buyOrder(order);
 			} catch (Exception e) {
 				e.printStackTrace();
