@@ -206,7 +206,7 @@ public class OrderEvoluateHandler implements Runnable {
 				else if (uo.getFirstCpBid() == null) {
 					return false;
 				}
-				else if (gmb < gmob && gma < gmoa && uo.getPrice() > highestBid) {
+				else if (gmb < gmob && gma < gmoa && uo.getPrice() < highestBid) {
 					if (uo.getSecondCpBid() == null) {
 						uo.setSecondCpBid(highestBid);
 					}					
