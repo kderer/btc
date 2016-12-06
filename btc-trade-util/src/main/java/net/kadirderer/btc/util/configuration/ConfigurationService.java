@@ -27,7 +27,9 @@ public class ConfigurationService {
 	private static final String WAIT_TIME_AFTER_CANCEL_SELL_ORDER = "wait_time_after_cancel_sell_order";
 	private static final String WAIT_TIME_AFTER_CANCEL_BUY_ORDER = "wait_time_after_cancel_buy_order";
 	private static final String AUTO_UPDATE_CHECK_INTERVAL = "auto_update_check_interval";
-	private static final String AUTO_TRADE_CHECK_INTERVAL = "auto_trade_check_interval";	
+	private static final String AUTO_TRADE_CHECK_INTERVAL = "auto_trade_check_interval";
+	private static final String NON_PROFIT_BUY_ORDER_ALLOWED_IF_PARENT_HAS_PROFIT = "non_profit_buy_order_allowed_if_parent_has_profit";
+	private static final String NON_PROFIT_SELL_ORDER_ALLOWED_IF_PARENT_HAS_PROFIT = "non_profit_sell_order_allowed_if_parent_has_profit";
 
 	@Autowired
 	private Configuration configuration;
@@ -130,5 +132,13 @@ public class ConfigurationService {
 	
 	public int getAutoTradeCheckInterval() {
 		return configuration.getInt(AUTO_TRADE_CHECK_INTERVAL);
+	}
+	
+	public boolean isNonProfitBuyOrderAllowedIfParentHasProfit() {
+		return configuration.getBoolean(NON_PROFIT_BUY_ORDER_ALLOWED_IF_PARENT_HAS_PROFIT);
+	}
+	
+	public boolean isNonProfitSellOrderAllowedIfParentHasProfit() {
+		return configuration.getBoolean(NON_PROFIT_SELL_ORDER_ALLOWED_IF_PARENT_HAS_PROFIT);
 	}
 }
