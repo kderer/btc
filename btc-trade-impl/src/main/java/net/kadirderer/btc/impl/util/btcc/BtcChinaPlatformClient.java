@@ -35,6 +35,8 @@ public class BtcChinaPlatformClient {
 	@Autowired
 	private PlatformClient platformClient;
 	
+	private Object lock = new Object();
+	
 	private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 	
 	private static Logger logger = LoggerFactory.getLogger(BtcChinaPlatformClient.class);
@@ -76,7 +78,11 @@ public class BtcChinaPlatformClient {
 		requestHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		
 		HttpEntity<String> requestEntity = new HttpEntity<String>(
-				postdata, requestHeaders);	
+				postdata, requestHeaders);		
+		
+		synchronized (lock) {
+			Thread.sleep(300);
+		}
 		
 		ResponseEntity<String> response = platformClient.getRestTemplate().exchange(url,
 				HttpMethod.POST, requestEntity, String.class);
