@@ -152,10 +152,6 @@ public class OrderEvoluateHandler implements Runnable {
 			nonProfitAllowedIfParentHasProfit = cfgService.isNonProfitBuyOrderAllowedIfParentHasProfit();
 		}	
 		
-		if (profit < 0.0 && !nonProfitAllowed) {
-			return false;
-		}
-		
 		if (profit < 0.0 && uo.getParentId() != null && nonProfitAllowedIfParentHasProfit) {
 			UserOrder parent = autoTradeService.findUserOrderById(uo.getParentId());				
 			if (parent != null) {
@@ -171,6 +167,10 @@ public class OrderEvoluateHandler implements Runnable {
 					return false;
 				}
 			}
+		}
+		
+		if (profit < 0.0 && uo.getParentId() != null && !nonProfitAllowedIfParentHasProfit && !nonProfitAllowed) {
+			return false;
 		}
 		
 		try {
