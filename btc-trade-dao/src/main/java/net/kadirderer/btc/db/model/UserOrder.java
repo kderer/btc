@@ -225,7 +225,7 @@ public class UserOrder {
 	}
 	
 	public String getLastGmoaArray() {
-		return lastGmobArray;
+		return lastGmoaArray;
 	}
 
 	public void setLastGmoaArray(String lastGmoaArray) {
@@ -254,6 +254,19 @@ public class UserOrder {
 		if (gmobArray == null) {
 			gmobArray = new String[checkLastGmobCount];
 		}
+		else if (gmobArray.length != checkLastGmobCount){
+			String[] tempArray = new String[checkLastGmobCount];
+			for (int i = 0; i < checkLastGmobCount; i++) {
+				if (i > gmobArray.length - 1) {
+					tempArray[i] = null;
+				}
+				else {
+					tempArray[i] = gmobArray[i];
+				}
+			}
+			
+			gmobArray = tempArray;
+		}
 		
 		for (int i = gmobArray.length - 1; i > 0; i--) {
 			gmobArray[i] = gmobArray[i - 1];			
@@ -269,6 +282,20 @@ public class UserOrder {
 		
 		if (gmoaArray == null) {
 			gmoaArray = new String[checkLastGmobCount];
+		}
+		else if (gmoaArray.length != checkLastGmobCount){
+			String[] tempArray = new String[checkLastGmobCount];
+			
+			for (int i = 0; i < checkLastGmobCount; i++) {
+				if (i > gmoaArray.length - 1) {
+					tempArray[i] = null;
+				}
+				else {
+					tempArray[i] = gmoaArray[i];
+				}
+			}
+			
+			gmoaArray = tempArray;
 		}
 		
 		for (int i = gmoaArray.length - 1; i > 0; i--) {

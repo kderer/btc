@@ -46,13 +46,18 @@ public class OrderEvoluateHandler implements Runnable {
 			UserOrder uo = autoTradeService.findUserOrderById(userOrderId);
 			
 			if (uo.isAutoTrade() && uo.isAutoUpdate() && (uo.getStatus() == OrderStatus.PENDING.getCode())) {
+				
+				if (uo.getCompletedAmount() > 0 && uo.getCompletedAmount() < uo.getAmount()) {
+					return;
+				}
+				
 				double[] maxAndGeometricMeanArray = autoTradeService.getMaxAndGeometricMean(uo.getUsername());
 				double highestBid = maxAndGeometricMeanArray[2];
 				double gmob = maxAndGeometricMeanArray[3];
 				double gmoa = maxAndGeometricMeanArray[1];
 				double priceHighestBidDiff = uo.getPrice() - highestBid;
 				double lastBidPriceCheckDelta = cfgService.getLastBidPriceCheckDelta();
-				double lowestAsk = maxAndGeometricMeanArray[0];						
+				double lowestAsk = maxAndGeometricMeanArray[0];				
 				
 				if (uo.getOrderType() == OrderType.BUY.getCode()) {
 					priceHighestBidDiff = highestBid - uo.getPrice();
@@ -60,14 +65,15 @@ public class OrderEvoluateHandler implements Runnable {
 				
 				UpdateOrderResult result = null;
 				boolean isThisTheTime = isThisTheTime(uo, gmob, gmoa, highestBid, lowestAsk);
+				
 				if (isThisTheTime) {
 					double price = highestBid + (lowestAsk - highestBid) / 2.0;
 					double amount = uo.getAmount();
 					
 					if (uo.getOrderType() == OrderType.BUY.getCode()) {
 						amount = (uo.getPrice() * amount) / price;
-					}
-					 
+					}					
+					
 					result = autoTradeService.updateOrder(uo, amount, price);
 				}
 				else if (lastBidPriceCheckDelta >= priceHighestBidDiff) {
