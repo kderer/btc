@@ -174,18 +174,18 @@ public class OrderEvoluateHandler implements Runnable {
 		}
 		
 		try {
-			double product = 1;			
+			double product = 1.0;			
 			
-			for (String value : lastGmoaArray) {
-				product *= NumberUtil.parse(value);
+			for (int i = 0; i < checkLastGmobCount; i++) {
+				product *= NumberUtil.parse(lastGmoaArray[i]);
 			}			
-			double gma = Math.pow(product, 1.0 / lastGmoaArray.length);
+			double gma = Math.pow(product, 1.0 / checkLastGmobCount);
 			
-			product = 1;
-			for (String value : lastGmobArray) {
-				product *= NumberUtil.parse(value);
+			product = 1.0;
+			for (int i = 0; i < checkLastGmobCount; i++) {
+				product *= NumberUtil.parse(lastGmobArray[i]);
 			}			
-			double gmb = Math.pow(product, 1.0 / lastGmobArray.length);
+			double gmb = Math.pow(product, 1.0 / checkLastGmobCount);
 			
 			if (uo.getOrderType() == OrderType.SELL.getCode()) {				
 				if (uo.getFirstCpBid() == null && gmb < gmob && gma < gmoa) {
