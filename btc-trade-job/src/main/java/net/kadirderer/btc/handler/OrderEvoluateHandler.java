@@ -179,52 +179,47 @@ public class OrderEvoluateHandler implements Runnable {
 			return false;
 		}
 		
-		try {
-			double product = 1.0;			
-			
-			for (int i = 0; i < checkLastGmobCount; i++) {
-				product *= NumberUtil.parse(lastGmoaArray[i]);
-			}			
-			double gma = Math.pow(product, 1.0 / checkLastGmobCount);
-			
-			product = 1.0;
-			for (int i = 0; i < checkLastGmobCount; i++) {
-				product *= NumberUtil.parse(lastGmobArray[i]);
-			}			
-			double gmb = Math.pow(product, 1.0 / checkLastGmobCount);
-			
+		try {						
 			if (uo.getOrderType() == OrderType.SELL.getCode()) {				
-				if (uo.getFirstCpBid() == null && gmb < gmob && gma < gmoa) {
-					uo.setFirstCpBid(highestBid);
+				if (gmoa > lastGmoa || gmob > lastGmob) {
 					return false;
 				}
-				else if (uo.getFirstCpBid() == null) {
-					return false;
+				
+				if (lastGmoaArray.length >= 2) {
+					for (int i = 0; i < lastGmoaArray.length - 2; i++) {
+						if (NumberUtil.parse(lastGmoaArray[i]) >  NumberUtil.parse(lastGmoaArray[i + 1])) {
+							return false;
+						}
+					}
 				}
-				else if (gmb > gmob && gma > gmoa && uo.getPrice() > lowestAsk) {
-					if (uo.getSecondCpBid() == null) {
-						uo.setSecondCpBid(highestBid);
-					}					
-				}
-				else {
-					return false;
+				
+				if (lastGmobArray.length >= 2) {
+					for (int i = 0; i < lastGmobArray.length - 2; i++) {
+						if (NumberUtil.parse(lastGmobArray[i]) >  NumberUtil.parse(lastGmobArray[i + 1])) {
+							return false;
+						}
+					}
 				}
 			}
 			else if (uo.getOrderType() == OrderType.BUY.getCode()) {
-				if (uo.getFirstCpBid() == null && gmb > gmob && gma > gmoa) {
-					uo.setFirstCpBid(highestBid);
+				if (gmoa < lastGmoa || gmob < lastGmob) {
 					return false;
 				}
-				else if (uo.getFirstCpBid() == null) {
-					return false;
+				
+				if (lastGmoaArray.length >= 2) {
+					for (int i = 0; i < lastGmoaArray.length - 2; i++) {
+						if (NumberUtil.parse(lastGmoaArray[i]) <  NumberUtil.parse(lastGmoaArray[i + 1])) {
+							return false;
+						}
+					}
 				}
-				else if (gmb < gmob && gma < gmoa && uo.getPrice() < highestBid) {
-					if (uo.getSecondCpBid() == null) {
-						uo.setSecondCpBid(highestBid);
-					}					
-				}
-				else {					
-					return false;
+				
+				if (lastGmobArray.length >= 2) {
+					for (int i = 0; i < lastGmobArray.length - 2; i++) {
+						if (NumberUtil.parse(lastGmobArray[i]) <  NumberUtil.parse(lastGmobArray[i + 1])) {
+							return false;
+						}
+					}
 				}
 			}
 			return true;
