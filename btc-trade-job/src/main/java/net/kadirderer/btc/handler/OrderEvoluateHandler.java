@@ -183,7 +183,7 @@ public class OrderEvoluateHandler implements Runnable {
 		
 		try {						
 			if (uo.getOrderType() == OrderType.SELL.getCode()) {				
-				if (gmoa < lastGmob) {
+				if (gmob < lastGmob) {
 					return false;
 				}
 				
