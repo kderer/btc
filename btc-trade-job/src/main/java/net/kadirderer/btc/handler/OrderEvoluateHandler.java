@@ -91,8 +91,12 @@ public class OrderEvoluateHandler implements Runnable {
 					result = autoTradeService.updateOrder(uo, amount, price);
 				}
 				
-				uo.addGmob(gmob, cfgService.getCheckLastGmobCount());
-				uo.addGmoa(gmoa, cfgService.getCheckLastGmobCount());
+				int checkLastGmobCount = cfgService.getCheckLastGmobCountBuyOrder();
+				if (uo.getOrderType() == OrderType.SELL.getCode()) {
+					checkLastGmobCount = cfgService.getCheckLastGmobCountSellOrder();
+				}
+				uo.addGmob(gmob, checkLastGmobCount);
+				uo.addGmoa(gmoa, checkLastGmobCount);
 				
 				autoTradeService.saveUserOrder(uo);
 				
@@ -135,7 +139,10 @@ public class OrderEvoluateHandler implements Runnable {
 			return false;
 		}
 		
-		int checkLastGmobCount = cfgService.getCheckLastGmobCount();
+		int checkLastGmobCount = cfgService.getCheckLastGmobCountBuyOrder();
+		if (uo.getOrderType() == OrderType.SELL.getCode()) {
+			checkLastGmobCount = cfgService.getCheckLastGmobCountSellOrder();
+		}
 		if (lastGmobArray.length < checkLastGmobCount) {
 			checkLastGmobCount = lastGmobArray.length;
 		}
@@ -176,7 +183,7 @@ public class OrderEvoluateHandler implements Runnable {
 		
 		try {						
 			if (uo.getOrderType() == OrderType.SELL.getCode()) {				
-				if (gmoa < lastGmoa || gmob < lastGmob) {
+				if (gmoa < lastGmoa) {
 					return false;
 				}
 				
@@ -186,32 +193,16 @@ public class OrderEvoluateHandler implements Runnable {
 							return false;
 						}
 					}
-				}
-				
-				if (lastGmobArray.length >= 2) {
-					for (int i = 0; i < lastGmobArray.length - 2; i++) {
-						if (NumberUtil.parse(lastGmobArray[i]) <  NumberUtil.parse(lastGmobArray[i + 1])) {
-							return false;
-						}
-					}
-				}
+				}				
 			}
 			else if (uo.getOrderType() == OrderType.BUY.getCode()) {
-				if (gmoa > lastGmoa || gmob > lastGmob) {
+				if (gmoa > lastGmoa) {
 					return false;
 				}
 				
 				if (lastGmoaArray.length >= 2) {
 					for (int i = 0; i < lastGmoaArray.length - 2; i++) {
 						if (NumberUtil.parse(lastGmoaArray[i]) >  NumberUtil.parse(lastGmoaArray[i + 1])) {
-							return false;
-						}
-					}
-				}
-				
-				if (lastGmobArray.length >= 2) {
-					for (int i = 0; i < lastGmobArray.length - 2; i++) {
-						if (NumberUtil.parse(lastGmobArray[i]) >  NumberUtil.parse(lastGmobArray[i + 1])) {
 							return false;
 						}
 					}
