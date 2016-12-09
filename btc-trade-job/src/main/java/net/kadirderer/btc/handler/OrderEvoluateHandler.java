@@ -181,27 +181,6 @@ public class OrderEvoluateHandler implements Runnable {
 		
 		try {						
 			if (uo.getOrderType() == OrderType.SELL.getCode()) {				
-				if (gmoa > lastGmoa || gmob > lastGmob) {
-					return false;
-				}
-				
-				if (lastGmoaArray.length >= 2) {
-					for (int i = 0; i < lastGmoaArray.length - 2; i++) {
-						if (NumberUtil.parse(lastGmoaArray[i]) >  NumberUtil.parse(lastGmoaArray[i + 1])) {
-							return false;
-						}
-					}
-				}
-				
-				if (lastGmobArray.length >= 2) {
-					for (int i = 0; i < lastGmobArray.length - 2; i++) {
-						if (NumberUtil.parse(lastGmobArray[i]) >  NumberUtil.parse(lastGmobArray[i + 1])) {
-							return false;
-						}
-					}
-				}
-			}
-			else if (uo.getOrderType() == OrderType.BUY.getCode()) {
 				if (gmoa < lastGmoa || gmob < lastGmob) {
 					return false;
 				}
@@ -217,6 +196,27 @@ public class OrderEvoluateHandler implements Runnable {
 				if (lastGmobArray.length >= 2) {
 					for (int i = 0; i < lastGmobArray.length - 2; i++) {
 						if (NumberUtil.parse(lastGmobArray[i]) <  NumberUtil.parse(lastGmobArray[i + 1])) {
+							return false;
+						}
+					}
+				}
+			}
+			else if (uo.getOrderType() == OrderType.BUY.getCode()) {
+				if (gmoa > lastGmoa || gmob > lastGmob) {
+					return false;
+				}
+				
+				if (lastGmoaArray.length >= 2) {
+					for (int i = 0; i < lastGmoaArray.length - 2; i++) {
+						if (NumberUtil.parse(lastGmoaArray[i]) >  NumberUtil.parse(lastGmoaArray[i + 1])) {
+							return false;
+						}
+					}
+				}
+				
+				if (lastGmobArray.length >= 2) {
+					for (int i = 0; i < lastGmobArray.length - 2; i++) {
+						if (NumberUtil.parse(lastGmobArray[i]) >  NumberUtil.parse(lastGmobArray[i + 1])) {
 							return false;
 						}
 					}

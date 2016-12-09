@@ -72,22 +72,6 @@
 				<c:out value="${order.status}"></c:out>
 			</div>
 			
-			<label for="statusDiv" class="col-sm-2 control-label"> <spring:message
-					code="label.listorder.detail.firstCpBid" />
-			</label>
-			<div id="completedDiv" class="col-sm-2 valueLabel">
-				<c:out value="${order.firstCpBid}"></c:out>
-			</div>
-				
-			<label for="createDateDiv" class="col-sm-2 control-label"> <spring:message
-					code="label.listorder.detail.secondCpBid" />
-			</label>
-			<div id="createDateDiv" class="col-sm-2 valueLabel">
-				<c:out value="${order.secondCpBid}"></c:out>
-			</div>
-		</div>
-		
-		<div class="form-group">				
 			<label for="createDateDiv" class="col-sm-2 control-label"> <spring:message
 					code="label.listorder.detail.createdate" />
 			</label>
@@ -101,10 +85,9 @@
 			<div id="updateDateDiv" class="col-sm-2 valueLabel">
 				<c:out value="${order.updateDateStr}"></c:out>
 			</div>
-		</div>
-		
+		</div>		
 				
-		<div class="row">
+		<div class="form-group">
 			<div id="graphDiv" style="padding: 10px">
 			
 			</div>
