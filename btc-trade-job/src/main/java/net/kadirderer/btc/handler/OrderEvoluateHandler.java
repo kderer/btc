@@ -94,11 +94,6 @@ public class OrderEvoluateHandler implements Runnable {
 				uo.addGmob(gmob, cfgService.getCheckLastGmobCount());
 				uo.addGmoa(gmoa, cfgService.getCheckLastGmobCount());
 				
-				if (!isThisTheTime && uo.getSecondCpBid() != null) {
-					uo.setFirstCpBid(null);
-					uo.setSecondCpBid(null);
-				}
-				
 				autoTradeService.saveUserOrder(uo);
 				
 				if (result != null) {
