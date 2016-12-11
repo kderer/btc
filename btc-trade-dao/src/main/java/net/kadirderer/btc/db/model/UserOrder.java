@@ -56,12 +56,15 @@ public class UserOrder {
 	@Column(name = "COMPLETEDAMOUNT")
 	private double completedAmount;
 	
+	@Column(name = "HIGHEST_GMOB")
+	private Double highestGmob;	
+	
 	@Column(name = "LAST_GMOB_ARRAY")
 	private String lastGmobArray;
 	
 	@Column(name = "LAST_GMOA_ARRAY")
-	private String lastGmoaArray;
-	
+	private String lastGmoaArray;	
+
 	@Column(name = "RETURNID")
 	private String returnId;
 	
@@ -224,6 +227,14 @@ public class UserOrder {
 
 	public void setLastGmoaArray(String lastGmoaArray) {
 		this.lastGmoaArray = lastGmoaArray;
+	}
+	
+	public Double getHighestGmob() {
+		return highestGmob;
+	}
+
+	public void setHighestGmob(Double highestGmob) {
+		this.highestGmob = highestGmob;
 	}
 
 	public void addGmob(double gmob, int checkLastGmobCount) {

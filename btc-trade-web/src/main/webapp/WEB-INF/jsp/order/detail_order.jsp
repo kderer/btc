@@ -111,6 +111,7 @@
 			gmobData = {},
 			orderData = {},
 			basePriceData = {},
+			hgmobData = {},
 			indexArray = [];
 		
 		gmoaData.name = 'GM of Asks'
@@ -128,6 +129,10 @@
 		basePriceData.name = 'Base Price'
 		basePriceData.data = graphData.BasePrice;
 		series.push(basePriceData);
+		
+		hgmobData.name = 'Highest GMOB'
+		hgmobData.data = graphData.HGMOB;
+		series.push(hgmobData);
 		
 		var counter = 1;
 		for (var index in gmoaData.data) {

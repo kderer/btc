@@ -98,6 +98,10 @@ public class OrderEvoluateHandler implements Runnable {
 				uo.addGmob(gmob, checkLastGmobCount);
 				uo.addGmoa(gmoa, checkLastGmobCount);
 				
+				if (uo.getHighestGmob() == null || gmob > uo.getHighestGmob()) {
+					uo.setHighestGmob(gmob);
+				}
+				
 				autoTradeService.saveUserOrder(uo);
 				
 				if (result != null) {
@@ -134,20 +138,8 @@ public class OrderEvoluateHandler implements Runnable {
 			return false;
 		}
 		
-		Double lastGmoa = NumberUtil.parse(lastGmoaArray[0]);		
-		if (lastGmoa == null) {
-			return false;
-		}
-		
-		int checkLastGmobCount = cfgService.getCheckLastGmobCountBuyOrder();
-		if (uo.getOrderType() == OrderType.SELL.getCode()) {
-			checkLastGmobCount = cfgService.getCheckLastGmobCountSellOrder();
-		}
-		if (lastGmobArray.length < checkLastGmobCount) {
-			checkLastGmobCount = lastGmobArray.length;
-		}
-		
-		if (NumberUtil.parse(lastGmobArray[checkLastGmobCount - 1]) ==  null) {
+		if (uo.getHighestGmob() != null && uo.getOrderType() == OrderType.BUY.getCode() &&
+				gmob > uo.getHighestGmob()) {
 			return false;
 		}
 		
@@ -183,29 +175,16 @@ public class OrderEvoluateHandler implements Runnable {
 		
 		try {						
 			if (uo.getOrderType() == OrderType.SELL.getCode()) {				
+				if (gmob >= lastGmob) {
+					return false;
+				}				
+			}
+			else if (uo.getOrderType() == OrderType.BUY.getCode()) {
 				if (gmob < lastGmob) {
 					return false;
 				}
-				
-				if (lastGmobArray.length >= 2) {
-					for (int i = 0; i < lastGmobArray.length - 2; i++) {
-						if (NumberUtil.parse(lastGmobArray[i]) <  NumberUtil.parse(lastGmobArray[i + 1])) {
-							return false;
-						}
-					}
-				}
-			}
-			else if (uo.getOrderType() == OrderType.BUY.getCode()) {
-				if (gmob > lastGmob) {
+				else if (uo.getHighestGmob() - lastGmob < cfgService.getBuyOrderHighestGmobLastGmobDelta()) {
 					return false;
-				}
-				
-				if (lastGmobArray.length >= 2) {
-					for (int i = 0; i < lastGmobArray.length - 2; i++) {
-						if (NumberUtil.parse(lastGmobArray[i]) >  NumberUtil.parse(lastGmobArray[i + 1])) {
-							return false;
-						}
-					}
 				}
 			}
 			return true;

@@ -242,15 +242,18 @@ public class UserOrderController {
 		
 		List<Double> priceList = new ArrayList<>();
 		List<Double> basePriceList = new ArrayList<>();
+		List<Double> hgmobList = new ArrayList<>();
 		for (int i = 0; i < gmoaList.size(); i++) {
 			priceList.add(userOrder.getPrice());
 			basePriceList.add(userOrder.getBasePrice());
+			hgmobList.add(userOrder.getHighestGmob());
 		}
 		
 		dataMap.put("GMOA", gmoaList);
 		dataMap.put("GMOB", gmobList);
 		dataMap.put("Order", priceList);
 		dataMap.put("BasePrice", basePriceList);
+		dataMap.put("HGMOB", basePriceList);
 		
 		ObjectMapper om = new ObjectMapper();
 		model.addAttribute("graphData", om.writeValueAsString(dataMap));
