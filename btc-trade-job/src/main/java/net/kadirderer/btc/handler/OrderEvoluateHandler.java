@@ -354,8 +354,6 @@ public class OrderEvoluateHandler implements Runnable {
 				order.setAmount(amount);
 				order.setAutoUpdate(userOrder.isAutoUpdate());
 				order.setAutoTrade(userOrder.isAutoTrade());
-				order.setLastGmoaArray(userOrder.getLastGmoaArray());
-				order.setLastGmobArray(userOrder.getLastGmobArray());
 				
 				if (userOrder.isAutoTrade() && userOrder.isAutoUpdate()) {
 					order.setStatus(OrderStatus.NEW.getCode());
@@ -385,8 +383,6 @@ public class OrderEvoluateHandler implements Runnable {
 				order.setAmount(buyAmount);
 				order.setAutoUpdate(userOrder.isAutoUpdate());
 				order.setAutoTrade(userOrder.isAutoTrade());
-				order.setLastGmoaArray(userOrder.getLastGmoaArray());
-				order.setLastGmobArray(userOrder.getLastGmobArray());
 				
 				if (userOrder.isAutoTrade() && userOrder.isAutoUpdate()) {
 					order.setStatus(OrderStatus.NEW.getCode());
