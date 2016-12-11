@@ -31,7 +31,8 @@ public class ConfigurationService {
 	private static final String AUTO_TRADE_CHECK_INTERVAL = "auto_trade_check_interval";
 	private static final String NON_PROFIT_BUY_ORDER_ALLOWED_IF_PARENT_HAS_PROFIT = "non_profit_buy_order_allowed_if_parent_has_profit";
 	private static final String NON_PROFIT_SELL_ORDER_ALLOWED_IF_PARENT_HAS_PROFIT = "non_profit_sell_order_allowed_if_parent_has_profit";
-	private static final String BUY_ORDER_HIGHEST_GMOB_LAST_GMOB_DELTA = "buy_order_highest_gmob_last_gmob_delta";	
+	private static final String BUY_ORDER_HIGHEST_GMOB_LAST_GMOB_DELTA = "buy_order_highest_gmob_last_gmob_delta";
+	private static final String AUTO_BUY_ORDER_CHECK_DELTA_ENABLED = "auto_buy_order_check_delta_enabled";	
 
 	@Autowired
 	private Configuration configuration;
@@ -150,5 +151,9 @@ public class ConfigurationService {
 
 	public double getBuyOrderHighestGmobLastGmobDelta() {
 		return configuration.getDouble(BUY_ORDER_HIGHEST_GMOB_LAST_GMOB_DELTA);
+	}
+
+	public boolean isAutoBuyOrderCheckDeltaEnabled() {
+		return configuration.getBoolean(AUTO_BUY_ORDER_CHECK_DELTA_ENABLED);
 	}
 }

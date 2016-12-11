@@ -179,11 +179,35 @@ public class OrderEvoluateHandler implements Runnable {
 					return false;
 				}				
 			}
-			else if (uo.getOrderType() == OrderType.BUY.getCode()) {
+			else if (uo.getOrderType() == OrderType.BUY.getCode()) {				
 				if (gmob < lastGmob) {
 					return false;
-				}
-				else if (uo.getHighestGmob() - lastGmob < cfgService.getBuyOrderHighestGmobLastGmobDelta()) {
+				}	
+				
+				double checkDelta = cfgService.getBuyOrderHighestGmobLastGmobDelta();
+				
+				if (cfgService.isAutoBuyOrderCheckDeltaEnabled()) {					
+					int counter = 0;
+					double avgDif = 0.0;
+					for (int i = 0; i < lastGmobArray.length - 3; i++) {
+						Double first = NumberUtil.parse(lastGmobArray[i]);
+						Double second = NumberUtil.parse(lastGmobArray[i + 1]);
+						Double third = NumberUtil.parse(lastGmobArray[i + 2]);						
+						
+						if ((i == 0 && third > second && second > first) ||
+								(i > 0 && NumberUtil.parse(lastGmobArray[i - 1]) > first &&
+										third > second && second > first)) {
+							counter += 1;
+							avgDif = (avgDif + (uo.getHighestGmob() - first)) / (double)counter;
+						}
+						
+						if (counter > 1) {
+							checkDelta = avgDif;
+						}
+					}
+				}				
+				
+				else if (uo.getHighestGmob() - lastGmob < checkDelta) {
 					return false;
 				}
 			}
