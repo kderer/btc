@@ -253,7 +253,7 @@ public class UserOrderController {
 		dataMap.put("GMOB", gmobList);
 		dataMap.put("Order", priceList);
 		dataMap.put("BasePrice", basePriceList);
-		dataMap.put("HGMOB", basePriceList);
+		dataMap.put("HGMOB", hgmobList);
 		
 		ObjectMapper om = new ObjectMapper();
 		model.addAttribute("graphData", om.writeValueAsString(dataMap));
