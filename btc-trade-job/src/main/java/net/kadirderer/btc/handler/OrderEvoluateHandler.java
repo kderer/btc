@@ -194,9 +194,10 @@ public class OrderEvoluateHandler implements Runnable {
 						Double second = NumberUtil.parse(lastGmobArray[i + 1]);
 						Double third = NumberUtil.parse(lastGmobArray[i + 2]);						
 						
-						if ((i == 0 && third > second && second > first) ||
-								(i > 0 && NumberUtil.parse(lastGmobArray[i - 1]) > first &&
-										third > second && second > first)) {
+						if ((first != null && second != null && third != null) &&
+								((i == 0 && third > second && second > first) ||
+										(i > 0 && NumberUtil.parse(lastGmobArray[i - 1]) > first &&
+												third > second && second > first))) {
 							counter += 1;
 							avgDif = (avgDif + (uo.getHighestGmob() - first)) / (double)counter;
 						}
