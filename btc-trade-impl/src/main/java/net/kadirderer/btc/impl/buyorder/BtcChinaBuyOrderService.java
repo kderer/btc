@@ -1,7 +1,5 @@
 package net.kadirderer.btc.impl.buyorder;
 
-import java.util.Calendar;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +15,8 @@ import net.kadirderer.btc.db.model.FailedOrder;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.impl.util.NumberUtil;
 import net.kadirderer.btc.impl.util.btcc.BtcChinaApiCallable;
-import net.kadirderer.btc.impl.util.btcc.BtcChinaPlatformClient;
 import net.kadirderer.btc.impl.util.btcc.BtcChinaErrorResult;
+import net.kadirderer.btc.impl.util.btcc.BtcChinaPlatformClient;
 import net.kadirderer.btc.util.enumaration.ApiType;
 import net.kadirderer.btc.util.enumaration.OrderStatus;
 import net.kadirderer.btc.util.enumaration.OrderType;
@@ -90,7 +88,6 @@ public class BtcChinaBuyOrderService implements BuyOrderService, BtcChinaApiCall
 		else {
 			order.setStatus(OrderStatus.FAILED.getCode());
 		}
-		order.setCreateDate(Calendar.getInstance().getTime());
 		
 		uoDao.save(order);
 		

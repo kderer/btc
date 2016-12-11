@@ -1,5 +1,6 @@
 package net.kadirderer.btc.db.dao;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +31,13 @@ public class UserOrderDaoImpl implements UserOrderDao {
 	
 	@Override
 	public UserOrder save(UserOrder userOrder) {
+		if (userOrder.getId() == null) {
+			userOrder.setCreateDate(Calendar.getInstance().getTime());
+		}
+		else {
+			userOrder.setUpdateDate(Calendar.getInstance().getTime());
+		}
+		
 		return uoRepository.save(userOrder);
 	}
 	

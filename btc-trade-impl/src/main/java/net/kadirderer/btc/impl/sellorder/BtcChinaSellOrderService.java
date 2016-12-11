@@ -1,7 +1,5 @@
 package net.kadirderer.btc.impl.sellorder;
 
-import java.util.Calendar;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,7 +88,6 @@ public class BtcChinaSellOrderService implements SellOrderService, BtcChinaApiCa
 		else {
 			order.setStatus(OrderStatus.FAILED.getCode());
 		}
-		order.setCreateDate(Calendar.getInstance().getTime());
 		
 		uoDao.save(order);
 		
