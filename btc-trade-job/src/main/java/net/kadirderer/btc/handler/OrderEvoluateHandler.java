@@ -190,15 +190,16 @@ public class OrderEvoluateHandler implements Runnable {
 				if (uo.getHighestGmob() - lastGmob < checkDelta && cfgService.isAutoBuyOrderCheckDeltaEnabled()) {					
 					int counter = 0;
 					double avgDif = 0.0;
-					for (int i = 0; i < lastGmobArray.length - 3; i++) {
+					for (int i = 0; i < lastGmobArray.length - 4; i++) {
 						Double first = NumberUtil.parse(lastGmobArray[i]);
 						Double second = NumberUtil.parse(lastGmobArray[i + 1]);
-						Double third = NumberUtil.parse(lastGmobArray[i + 2]);						
+						Double third = NumberUtil.parse(lastGmobArray[i + 2]);
+						Double fourth = NumberUtil.parse(lastGmobArray[i + 3]);
 						
 						if ((first != null && second != null && third != null) &&
-								((i == 0 && third > second && second > first) ||
+								((i == 0 && fourth > third && third > second && second > first) ||
 										(i > 0 && NumberUtil.parse(lastGmobArray[i - 1]) > first &&
-												third > second && second > first))) {
+												fourth > third && third > second && second > first))) {
 							counter += 1;
 							avgDif = (avgDif + (uo.getHighestGmob() - first)) / (double)counter;
 						}
