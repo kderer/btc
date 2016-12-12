@@ -48,6 +48,7 @@ public class OrderEvoluateHandler implements Runnable {
 			if (uo.isAutoTrade() && uo.isAutoUpdate() && (uo.getStatus() == OrderStatus.PENDING.getCode())) {
 				
 				if (uo.getCompletedAmount() > 0 && uo.getCompletedAmount() < uo.getAmount()) {
+					processing = false;
 					return;
 				}
 				
@@ -186,7 +187,7 @@ public class OrderEvoluateHandler implements Runnable {
 				
 				double checkDelta = cfgService.getBuyOrderHighestGmobLastGmobDelta();
 				
-				if (cfgService.isAutoBuyOrderCheckDeltaEnabled()) {					
+				if (uo.getHighestGmob() - lastGmob < checkDelta && cfgService.isAutoBuyOrderCheckDeltaEnabled()) {					
 					int counter = 0;
 					double avgDif = 0.0;
 					for (int i = 0; i < lastGmobArray.length - 3; i++) {
@@ -208,7 +209,7 @@ public class OrderEvoluateHandler implements Runnable {
 					}
 				}				
 				
-				else if (uo.getHighestGmob() - lastGmob < checkDelta) {
+				if (uo.getHighestGmob() - lastGmob < checkDelta) {
 					return false;
 				}
 			}
