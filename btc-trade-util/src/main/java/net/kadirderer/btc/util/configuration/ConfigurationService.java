@@ -31,7 +31,8 @@ public class ConfigurationService {
 	private static final String NON_PROFIT_SELL_ORDER_ALLOWED_IF_PARENT_HAS_PROFIT = "non_profit_sell_order_allowed_if_parent_has_profit";
 	private static final String BUY_ORDER_HIGHEST_GMOB_LAST_GMOB_DELTA = "buy_order_highest_gmob_last_gmob_delta";
 	private static final String AUTO_BUY_ORDER_CHECK_DELTA_ENABLED = "auto_buy_order_check_delta_enabled";
-	private static final String SELL_ORDER_BUFFER_LOWER_LIMIT = "sell_order_buffer_lower_limit";
+	private static final String SELL_ORDER_LOWER_BUFFER_START = "sell_order_lower_buffer_start";
+	private static final String SELL_ORDER_LOWER_BUFFER_END = "sell_order_lower_buffer_end";
 	private static final String AUTO_UPDATE_RANGE = "auto_update_range";
 
 	@Autowired
@@ -149,8 +150,12 @@ public class ConfigurationService {
 		return configuration.getBoolean(AUTO_BUY_ORDER_CHECK_DELTA_ENABLED);
 	}
 	
-	public double getSellOrderBufferLowerLimit() {
-		return configuration.getDouble(SELL_ORDER_BUFFER_LOWER_LIMIT);
+	public double getSellOrderLowerBufferStart() {
+		return configuration.getDouble(SELL_ORDER_LOWER_BUFFER_START);
+	}
+	
+	public double getSellOrderLowerBufferEnd() {
+		return configuration.getDouble(SELL_ORDER_LOWER_BUFFER_END);
 	}
 	
 	public double getAutoUpdateRange() {

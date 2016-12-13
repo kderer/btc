@@ -144,9 +144,11 @@ public class OrderEvoluateHandler implements Runnable {
 			return false;
 		}
 		
-		if (uo.getOrderType() == OrderType.SELL.getCode() && cfgService.getSellOrderBufferLowerLimit() > 0.0 &&
-				uo.getBasePrice() - lowestAsk > cfgService.getSellOrderBufferLowerLimit() && gmob < lastGmob &&
-				uo.getBasePrice() - lowestAsk < cfgService.getAutoUpdateRange()) {
+		if (uo.getOrderType() == OrderType.SELL.getCode() &&
+				cfgService.getSellOrderLowerBufferStart() > 0.0 &&
+				uo.getBasePrice() - lowestAsk > cfgService.getSellOrderLowerBufferStart() &&				
+				uo.getBasePrice() - lowestAsk < cfgService.getSellOrderLowerBufferEnd() &&
+				gmob < lastGmob) {
 			return true;
 		}
 		
