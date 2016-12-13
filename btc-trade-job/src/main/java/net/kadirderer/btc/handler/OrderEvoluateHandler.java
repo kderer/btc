@@ -191,7 +191,14 @@ public class OrderEvoluateHandler implements Runnable {
 			else if (uo.getOrderType() == OrderType.BUY.getCode()) {				
 				if (gmob < lastGmob) {
 					return false;
-				}	
+				}
+				else if (lastGmobArray.length >= 2){
+					Double first = NumberUtil.parse(lastGmobArray[1]);
+					
+					if (first == null || first > lastGmob) {
+						return false;
+					}
+				}
 				
 				double checkDelta = cfgService.getBuyOrderHighestGmobLastGmobDelta();
 				
@@ -204,7 +211,7 @@ public class OrderEvoluateHandler implements Runnable {
 						Double third = NumberUtil.parse(lastGmobArray[i + 2]);
 						Double fourth = NumberUtil.parse(lastGmobArray[i + 3]);
 						
-						if ((first != null && second != null && third != null) &&
+						if ((first != null && second != null && third != null && fourth != null) &&
 								((i == 0 && fourth > third && third > second && second > first) ||
 										(i > 0 && NumberUtil.parse(lastGmobArray[i - 1]) > first &&
 												fourth > third && third > second && second > first))) {
