@@ -149,6 +149,15 @@ public class OrderEvoluateHandler implements Runnable {
 				uo.getBasePrice() - lowestAsk > cfgService.getSellOrderLowerBufferStart() &&				
 				uo.getBasePrice() - lowestAsk < cfgService.getSellOrderLowerBufferEnd() &&
 				gmob < lastGmob) {
+			
+			if (lastGmobArray.length >= 2) {
+				Double first = NumberUtil.parse(lastGmobArray[1]);
+				
+				if (first == null || first < lastGmob) {
+					return false;
+				}
+			}
+			
 			return true;
 		}
 		
@@ -186,13 +195,20 @@ public class OrderEvoluateHandler implements Runnable {
 			if (uo.getOrderType() == OrderType.SELL.getCode()) {				
 				if (gmob >= lastGmob) {
 					return false;
-				}				
+				}
+				else if (lastGmobArray.length >= 2) {
+					Double first = NumberUtil.parse(lastGmobArray[1]);
+					
+					if (first == null || first < lastGmob) {
+						return false;
+					}
+				}
 			}
 			else if (uo.getOrderType() == OrderType.BUY.getCode()) {				
 				if (gmob < lastGmob) {
 					return false;
 				}
-				else if (lastGmobArray.length >= 2){
+				else if (lastGmobArray.length >= 2) {
 					Double first = NumberUtil.parse(lastGmobArray[1]);
 					
 					if (first == null || first > lastGmob) {
