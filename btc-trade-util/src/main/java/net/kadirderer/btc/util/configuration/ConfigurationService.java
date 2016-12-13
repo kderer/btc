@@ -18,8 +18,6 @@ public class ConfigurationService {
 	private static final String LAST_BID_PRICE_CHECK_DELTA = "last_bid_price_check_delta";
 	private static final String NON_AUTO_UPDATE_TIMELIMIT = "non_auto_update_timelimit";
 	private static final String NON_AUTO_UPDATE_ORDER_DELTA = "non_auto_update_order_delta";
-	private static final String BEST_GMOB_CHECK_DELTA = "best_gmob_check_delta";
-	private static final String BASEPRICE_HIGHEST_BID_CHECK_DELTA = "baseprice_highest_bid_check_delta";
 	private static final String OBR_TIME_LIMIT = "obr_time_limit";
 	private static final String CHECK_LAST_GMOB_COUNT_BUY_ORDER = "check_last_gmob_count_buy_order";
 	private static final String CHECK_LAST_GMOB_COUNT_SELL_ORDER = "check_last_gmob_count_sell_order";
@@ -32,7 +30,8 @@ public class ConfigurationService {
 	private static final String NON_PROFIT_BUY_ORDER_ALLOWED_IF_PARENT_HAS_PROFIT = "non_profit_buy_order_allowed_if_parent_has_profit";
 	private static final String NON_PROFIT_SELL_ORDER_ALLOWED_IF_PARENT_HAS_PROFIT = "non_profit_sell_order_allowed_if_parent_has_profit";
 	private static final String BUY_ORDER_HIGHEST_GMOB_LAST_GMOB_DELTA = "buy_order_highest_gmob_last_gmob_delta";
-	private static final String AUTO_BUY_ORDER_CHECK_DELTA_ENABLED = "auto_buy_order_check_delta_enabled";	
+	private static final String AUTO_BUY_ORDER_CHECK_DELTA_ENABLED = "auto_buy_order_check_delta_enabled";
+	private static final String SELL_ORDER_BUFFER_LOWER_LIMIT = "sell_order_buffer_lower_limit";
 
 	@Autowired
 	private Configuration configuration;
@@ -97,14 +96,6 @@ public class ConfigurationService {
 		return configuration.getDouble(NON_AUTO_UPDATE_ORDER_DELTA);
 	}
 	
-	public double getBestGmobCheckDelta() {
-		return configuration.getDouble(BEST_GMOB_CHECK_DELTA);
-	}
-	
-	public double getBasePriceHighestBidCheckDelta() {
-		return configuration.getDouble(BASEPRICE_HIGHEST_BID_CHECK_DELTA);
-	}
-	
 	public int getObrTimeLimit() {
 		return configuration.getInt(OBR_TIME_LIMIT);
 	}
@@ -155,5 +146,9 @@ public class ConfigurationService {
 
 	public boolean isAutoBuyOrderCheckDeltaEnabled() {
 		return configuration.getBoolean(AUTO_BUY_ORDER_CHECK_DELTA_ENABLED);
+	}
+	
+	public double getSellOrderBufferLowerLimit() {
+		return configuration.getDouble(SELL_ORDER_BUFFER_LOWER_LIMIT);
 	}
 }

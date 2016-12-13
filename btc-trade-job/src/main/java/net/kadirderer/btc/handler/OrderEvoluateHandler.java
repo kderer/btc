@@ -144,6 +144,11 @@ public class OrderEvoluateHandler implements Runnable {
 			return false;
 		}
 		
+		if (uo.getOrderType() == OrderType.SELL.getCode() && cfgService.getSellOrderBufferLowerLimit() > 0.0 &&
+				uo.getBasePrice() - lowestAsk > cfgService.getSellOrderBufferLowerLimit() && gmob < lastGmob) {
+			return true;
+		}
+		
 		double profit = (highestBid + (lowestAsk - highestBid) / 2.0) - uo.getBasePrice();
 		boolean nonProfitAllowed = cfgService.isNonProfitSellOrderAllowed();
 		boolean nonProfitAllowedIfParentHasProfit = cfgService.isNonProfitSellOrderAllowedIfParentHasProfit();
