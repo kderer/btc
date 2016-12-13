@@ -32,6 +32,7 @@ public class ConfigurationService {
 	private static final String BUY_ORDER_HIGHEST_GMOB_LAST_GMOB_DELTA = "buy_order_highest_gmob_last_gmob_delta";
 	private static final String AUTO_BUY_ORDER_CHECK_DELTA_ENABLED = "auto_buy_order_check_delta_enabled";
 	private static final String SELL_ORDER_BUFFER_LOWER_LIMIT = "sell_order_buffer_lower_limit";
+	private static final String AUTO_UPDATE_RANGE = "auto_update_range";
 
 	@Autowired
 	private Configuration configuration;
@@ -150,5 +151,9 @@ public class ConfigurationService {
 	
 	public double getSellOrderBufferLowerLimit() {
 		return configuration.getDouble(SELL_ORDER_BUFFER_LOWER_LIMIT);
+	}
+	
+	public double getAutoUpdateRange() {
+		return configuration.getDouble(AUTO_UPDATE_RANGE);
 	}
 }

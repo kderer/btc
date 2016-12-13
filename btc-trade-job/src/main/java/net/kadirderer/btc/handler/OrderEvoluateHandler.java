@@ -145,7 +145,8 @@ public class OrderEvoluateHandler implements Runnable {
 		}
 		
 		if (uo.getOrderType() == OrderType.SELL.getCode() && cfgService.getSellOrderBufferLowerLimit() > 0.0 &&
-				uo.getBasePrice() - lowestAsk > cfgService.getSellOrderBufferLowerLimit() && gmob < lastGmob) {
+				uo.getBasePrice() - lowestAsk > cfgService.getSellOrderBufferLowerLimit() && gmob < lastGmob &&
+				uo.getBasePrice() - lowestAsk < cfgService.getAutoUpdateRange()) {
 			return true;
 		}
 		
@@ -216,6 +217,10 @@ public class OrderEvoluateHandler implements Runnable {
 				}				
 				
 				if (uo.getHighestGmob() - lastGmob < checkDelta) {
+					return false;
+				}
+				
+				if (highestBid - uo.getBasePrice() > cfgService.getAutoUpdateRange()) {
 					return false;
 				}
 			}
