@@ -217,6 +217,9 @@ public class OrderEvoluateHandler implements Runnable {
 				}
 				
 				double checkDelta = cfgService.getBuyOrderHighestGmobLastGmobDelta();
+				if (uo.getHighestGmob() - uo.getBasePrice() > 0.0) {
+					checkDelta += (uo.getHighestGmob() - uo.getBasePrice()) / 4.0; 
+				}
 				
 				if (uo.getHighestGmob() - lastGmob < checkDelta && cfgService.isAutoBuyOrderCheckDeltaEnabled()) {					
 					int counter = 0;
