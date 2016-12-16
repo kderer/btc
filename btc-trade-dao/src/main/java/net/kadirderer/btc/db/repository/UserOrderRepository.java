@@ -58,5 +58,10 @@ public interface UserOrderRepository extends JpaRepository<UserOrder, Integer> {
 	@Modifying
 	public void updatePendingPartnerStatus(@Param("partnerUserOrderId") int partnerUserOrderId, 
 			@Param("status") char status);
+	
+	@Query("Select sum(amount) from UserOrder uo where uo.username = :username and "
+			+ "uo.platformId = :platformId and uo.status in ('P', 'N')")
+	public Double queryTotalPendingOrderAmount(@Param("username") String username, 
+			@Param("platformId") int platformId);
 
 }

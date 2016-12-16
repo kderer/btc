@@ -4,18 +4,18 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
-public class SweeperJob extends QuartzJobBean {
+public class BidCheckerJob extends QuartzJobBean {
 	
-	private SweeperTask sweeperTask;	
+	private BidCheckerTask bidCheckerTask;	
 	
-	public void setSweeperTask(SweeperTask sweeperTask) {
-		this.sweeperTask = sweeperTask;
+	public void setBidCheckerTask(BidCheckerTask bidCheckerTask) {
+		this.bidCheckerTask = bidCheckerTask;
 	}
 
 	@Override
 	protected void executeInternal(JobExecutionContext context)
 			throws JobExecutionException {
-		sweeperTask.sweep();
+		bidCheckerTask.sweep();
 	}
 
 }

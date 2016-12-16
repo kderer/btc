@@ -196,7 +196,7 @@ public class OrderEvoluateHandler implements Runnable {
 				if (gmob >= lastGmob) {
 					return false;
 				}
-				else if (lastGmobArray.length >= 2) {
+				else if (lastGmobArray.length >= 2 && profit > cfgService.getAutoTradeSellOrderDecreaseBuffer()) {
 					Double first = NumberUtil.parse(lastGmobArray[1]);
 					
 					if (first == null || first < lastGmob) {
@@ -206,45 +206,6 @@ public class OrderEvoluateHandler implements Runnable {
 			}
 			else if (uo.getOrderType() == OrderType.BUY.getCode()) {				
 				if (gmob < lastGmob) {
-					return false;
-				}
-				else if (lastGmobArray.length >= 2) {
-					Double first = NumberUtil.parse(lastGmobArray[1]);
-					
-					if (first == null || first > lastGmob) {
-						return false;
-					}
-				}
-				
-				double checkDelta = cfgService.getBuyOrderHighestGmobLastGmobDelta();
-				if (uo.getHighestGmob() - uo.getBasePrice() > 0.0) {
-					checkDelta += (uo.getHighestGmob() - uo.getBasePrice()) / 4.0; 
-				}
-				
-				if (uo.getHighestGmob() - lastGmob < checkDelta && cfgService.isAutoBuyOrderCheckDeltaEnabled()) {					
-					int counter = 0;
-					double avgDif = 0.0;
-					for (int i = 0; i < lastGmobArray.length - 4; i++) {
-						Double first = NumberUtil.parse(lastGmobArray[i]);
-						Double second = NumberUtil.parse(lastGmobArray[i + 1]);
-						Double third = NumberUtil.parse(lastGmobArray[i + 2]);
-						Double fourth = NumberUtil.parse(lastGmobArray[i + 3]);
-						
-						if ((first != null && second != null && third != null && fourth != null) &&
-								((i == 0 && fourth > third && third > second && second > first) ||
-										(i > 0 && NumberUtil.parse(lastGmobArray[i - 1]) > first &&
-												fourth > third && third > second && second > first))) {
-							counter += 1;
-							avgDif = (avgDif + (uo.getHighestGmob() - first)) / (double)counter;
-						}
-						
-						if (counter > 1) {
-							checkDelta = avgDif;
-						}
-					}
-				}				
-				
-				if (uo.getHighestGmob() - lastGmob < checkDelta) {
 					return false;
 				}
 				
@@ -265,10 +226,6 @@ public class OrderEvoluateHandler implements Runnable {
 		long elapsedTime = timeInMillis - userOrder.getCreateDate().getTime();
 		
 		int timelimit = cfgService.getBuyOrderTimeLimit() * 1000;
-		
-		if (userOrder.getOrderType() == OrderType.SELL.getCode()) {
-			timelimit = cfgService.getSellOrderTimeLimit() * 1000;
-		}
 		
 		if (!userOrder.isAutoUpdate()) {
 			timelimit = cfgService.getNonAutoUpdateTimeLimit() * 1000;
@@ -429,38 +386,6 @@ public class OrderEvoluateHandler implements Runnable {
 				e.printStackTrace();
 				Thread.sleep(cfgService.getWaitTimeAfterCancelBuyOrder() * 1000);
 				order.setId(null);
-				autoTradeService.buyOrder(order);
-			}
-		} else {
-			double price = userOrder.getPrice() - cfgService.getBuyOrderDelta();
-			
-			if (!userOrder.isAutoUpdate()) {
-				price = userOrder.getPrice() - cfgService.getNonAutoUpdateOrderDelta();
-			}
-			
-			double buyAmount = (userOrder.getPrice() * amount) / price;			
-			UserOrder order = new UserOrder();
-			try {				
-				order.setUsername(userOrder.getUsername());
-				order.setBasePrice(userOrder.getPrice());
-				order.setParentId(userOrder.getId());
-				order.setPrice(price);
-				order.setAmount(buyAmount);
-				order.setAutoUpdate(userOrder.isAutoUpdate());
-				order.setAutoTrade(userOrder.isAutoTrade());
-				
-				if (userOrder.isAutoTrade() && userOrder.isAutoUpdate()) {
-					order.setStatus(OrderStatus.NEW.getCode());
-				}
-				
-				autoTradeService.buyOrder(order);				
-			} catch (Exception e) {
-				e.printStackTrace();
-				Thread.sleep(cfgService.getWaitTimeAfterCancelSellOrder() * 1000);
-				order.setId(null);
-				if (order.isAutoTrade() && order.isAutoUpdate()) {
-					order.setStatus(OrderStatus.NEW.getCode());
-				}
 				autoTradeService.buyOrder(order);
 			}
 		}

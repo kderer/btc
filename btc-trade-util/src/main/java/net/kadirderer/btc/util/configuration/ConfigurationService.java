@@ -10,10 +10,10 @@ public class ConfigurationService {
 	private static final String RECORDGROUPJOB_ENABLED = "recordgroupjob_enabled";
 	private static final String AUTOTRADE_ENABLED = "autotrade_enabled";
 	private static final String SELLORDER_DELTA = "sellorder_delta";
-	private static final String SELLREORDER_DELTA = "sellreorder_delta";
-	private static final String SELLORDER_TIME_LIMIT = "sellorder_time_limit";
+	private static final String AUTO_TRADE_BUY_ORDER_AMOUNT = "auto_trade_buy_order_amount";
+	private static final String AUTO_TRADE_TOTAL_AMOUNT = "auto_trade_total_amount";
 	private static final String BUYORDER_DELTA = "buyorder_delta";
-	private static final String BUYREORDER_DELTA = "buyreorder_delta";
+	private static final String AUTO_TRADE_SELL_ORDER_DECREASE_BUFFER = "auto_trade_sell_order_decrease_buffer";
 	private static final String BUYORDER_TIME_LIMIT = "buyorder_time_limit";
 	private static final String LAST_BID_PRICE_CHECK_DELTA = "last_bid_price_check_delta";
 	private static final String NON_AUTO_UPDATE_TIMELIMIT = "non_auto_update_timelimit";
@@ -66,12 +66,12 @@ public class ConfigurationService {
 		return configuration.getDouble(SELLORDER_DELTA);
 	}
 	
-	public int getSellOrderTimeLimit() {
-		return configuration.getInt(SELLORDER_TIME_LIMIT);
+	public double getAutoTradeTotalAmount() {
+		return configuration.getDouble(AUTO_TRADE_TOTAL_AMOUNT);
 	}
 	
-	public double getSellReOrderDelta() {
-		return configuration.getDouble(SELLREORDER_DELTA);
+	public double getAutoTradeBuyOrderAmount() {
+		return configuration.getDouble(AUTO_TRADE_BUY_ORDER_AMOUNT);
 	}
 	
 	public double getBuyOrderDelta() {
@@ -82,8 +82,8 @@ public class ConfigurationService {
 		return configuration.getInt(BUYORDER_TIME_LIMIT);
 	}
 	
-	public double getBuyReOrderDelta() {
-		return configuration.getDouble(BUYREORDER_DELTA);
+	public double getAutoTradeSellOrderDecreaseBuffer() {
+		return configuration.getDouble(AUTO_TRADE_SELL_ORDER_DECREASE_BUFFER);
 	}
 	
 	public double getLastBidPriceCheckDelta() {

@@ -90,52 +90,6 @@ public abstract class AutoTradeService {
 	}	
 	
 	public void sweep(String username) {
-		QueryAccountInfoResult queryAccountInfoResult = null;
-		double price = 0;
-		
-		try {
-			queryAccountInfoResult = queryAccountInfo(username);
-			price = getLowestAsk();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-		
-		double currencyBalance = queryAccountInfoResult.getCurrencyBalance();
-		double btcBalance = queryAccountInfoResult.getBtcBalance();
-		
-		if (btcBalance > 0.5) {
-			btcBalance = 0.5;
-		}
-		
-		if (currencyBalance / price > 0.5) {
-			currencyBalance = 0.5 * price;
-		}
-		
-		if (btcBalance > 0.05) {
-			UserOrder order = new UserOrder();
-			order.setUsername(username);
-			order.setPrice(price);
-			order.setAmount(btcBalance);
 			
-			try {
-				sellOrder(order);
-			} catch (Exception e) {
-				sendMailForException(e);
-			}
-		}
-		
-		if (currencyBalance / price > 0.05) {
-			UserOrder order = new UserOrder();
-			order.setUsername(username);
-			order.setPrice(price);
-			order.setAmount(currencyBalance / price);
-			
-			try {
-				buyOrder(order);
-			} catch (Exception e) {
-				sendMailForException(e);
-			}
-		}		
 	}
 }

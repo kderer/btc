@@ -152,7 +152,7 @@ public class BuyOrderThread implements Runnable {
 			
 			if (qor.getAmount() > 0) {
 				double balance = qor.getAmount() * qor.getPrice();
-				double price = qor.getPrice() + cfgService.getBuyReOrderDelta();
+				double price = qor.getPrice() + 0.6;
 				
 				if (mdr.getHighestBid() < price) {
 					price = mdr.getHighestBid();

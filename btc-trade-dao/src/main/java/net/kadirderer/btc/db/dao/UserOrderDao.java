@@ -28,5 +28,7 @@ public interface UserOrderDao {
 	public void updatePartnerIdWithNewId(int oldUserOrderId, Integer newUserOrderId);
 	
 	public void updatePendingPartnerStatus(int partnerUserOrderId, char status);
+
+	public Double queryTotalPendingOrderAmount(String username, int platformId);
 	
 }

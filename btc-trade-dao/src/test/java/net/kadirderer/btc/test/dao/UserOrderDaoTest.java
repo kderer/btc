@@ -81,5 +81,13 @@ public class UserOrderDaoTest {
 		
 		System.out.println(uoDao.findByCriteriaCount(criteria));
 	}
+	
+	@Test
+	public void testQueryTotalPendingAmount() {
+		Double amount = uoDao.queryTotalPendingOrderAmount("kadir", 9);
+		
+		Assert.assertNotNull(amount);
+		
+	}
 
 }

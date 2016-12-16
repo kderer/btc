@@ -98,7 +98,7 @@ public class SellOrderThread implements Runnable {
 		
 		long startTime = Calendar.getInstance().getTimeInMillis();
 		long timeElapsed = 0;
-		long timeOut = cfgService.getSellOrderTimeLimit() * 1000;		
+		long timeOut = cfgService.getBuyOrderTimeLimit() * 1000;		
 		QueryOrderResult qor = null;
 		MarketDepthResult mdr = null;
 		
@@ -151,8 +151,8 @@ public class SellOrderThread implements Runnable {
 			order.setBasePrice(qor.getUserOrder().getBasePrice());			
 			order.setAmount(qor.getAmount());
 			
-			if(qor.getPrice() - newPrice > cfgService.getSellReOrderDelta()) {
-				order.setPrice(qor.getPrice() - cfgService.getSellReOrderDelta());
+			if(qor.getPrice() - newPrice > cfgService.getAutoTradeBuyOrderAmount()) {
+				order.setPrice(qor.getPrice() - cfgService.getAutoTradeBuyOrderAmount());
 				sellOrderService.sellOrder(order);
 			} else {
 				order.setPrice(newPrice);

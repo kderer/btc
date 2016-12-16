@@ -2,13 +2,13 @@ package net.kadirderer.btc.job;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.kadirderer.btc.service.AutoTradeService;
+import net.kadirderer.btc.service.BidCheckerService;
 import net.kadirderer.btc.util.configuration.ConfigurationService;
 
-public class SweeperTask {
+public class BidCheckerTask {
 	
 	@Autowired
-	private AutoTradeService atService;
+	private BidCheckerService bidCheckerService;
 	
 	@Autowired
 	private ConfigurationService cfgService;
@@ -16,7 +16,7 @@ public class SweeperTask {
 	public void sweep() {
 		try {
 			if (cfgService.isAutoTradeEnabled()) {
-				atService.sweep("kadir");
+				bidCheckerService.checkGMOB("kadir");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -242,4 +242,9 @@ public class UserOrderDaoImpl implements UserOrderDao {
 		uoRepository.updatePendingPartnerStatus(partnerUserOrderId, status);
 	}
 
+	@Override
+	public Double queryTotalPendingOrderAmount(String username, int platformId) {
+		return uoRepository.queryTotalPendingOrderAmount(username, platformId);
+	}
+
 }
