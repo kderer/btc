@@ -33,8 +33,6 @@ public class BidCheckerService {
 	
 	private Double highestGMOB;
 	private Double lastHighestGMOB;
-	private Double lastGMOB;
-	private Double lastSecondGMOB;
 		
 	public synchronized void checkGMOB(String username) throws Exception {
 		MarketDepthResult result = marketDepthService.getMarketDepth(username);
@@ -60,8 +58,18 @@ public class BidCheckerService {
 			checkDelta += (highestGMOB - lastHighestGMOB) / 4.0;
 		}
 		
-		if (highestGMOB - price >= checkDelta &&
-				lastGMOB != null && lastSecondGMOB != null && gmob > lastGMOB && lastGMOB > lastSecondGMOB) {
+		Statistics statistics = new Statistics();
+		statistics.setGmoa(gmoa);
+		statistics.setGmob(gmob);
+		statistics.setHighestBid(highestBid);
+		statistics.setHighestGmob(highestGMOB);
+		statistics.setLastHighestGmob(lastHighestGMOB);
+		statistics.setLowestAsk(lowestAsk);
+		statistics.setCheckDelta(checkDelta);
+		statistics.setHighestGmobPriceDiff(highestGMOB - price);
+		statistics.setHighestLastGmobDiff(highestGMOB - lastHighestGMOB);
+		
+		if (highestGMOB - price > checkDelta) {
 			Double pendingAmount = userOrderDao.queryTotalPendingOrderAmount(username, 9);
 			
 			if (pendingAmount == null ||
@@ -84,20 +92,6 @@ public class BidCheckerService {
 				highestGMOB = gmob;
 			}
 		}
-		
-		lastSecondGMOB = lastGMOB;
-		lastGMOB = gmob;
-		
-		Statistics statistics = new Statistics();
-		statistics.setGmoa(gmoa);
-		statistics.setGmob(gmob);
-		statistics.setHighestBid(highestBid);
-		statistics.setHighestGmob(highestGMOB);
-		statistics.setLastHighestGmob(lastHighestGMOB);
-		statistics.setLowestAsk(lowestAsk);
-		statistics.setCheckDelta(checkDelta);
-		statistics.setHighestGmobPriceDiff(highestGMOB - price);
-		statistics.setHighestLastGmobDiff(highestGMOB - lastHighestGMOB);
 		
 		statisticsDao.save(statistics);
 	}
