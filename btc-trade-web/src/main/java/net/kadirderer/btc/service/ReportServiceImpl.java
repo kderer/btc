@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.kadirderer.btc.db.dao.ReportDao;
+import net.kadirderer.btc.db.dao.StatisticsDao;
 import net.kadirderer.btc.db.model.DailyReportDetail;
+import net.kadirderer.btc.db.model.Statistics;
 import net.kadirderer.btc.db.mybatis.domain.DailyProfitDetail;
 import net.kadirderer.btc.db.mybatis.persistence.ReportMapper;
 import net.kadirderer.btc.web.dto.DailyReportDto;
@@ -17,6 +19,9 @@ public class ReportServiceImpl implements ReportService {
 	
 	@Autowired
 	private ReportDao reportDao;
+	
+	@Autowired
+	private StatisticsDao statisticsDao;
 	
 	@Autowired
 	private ReportMapper reportMapper;
@@ -53,6 +58,11 @@ public class ReportServiceImpl implements ReportService {
 	@Override
 	public List<DailyProfitDetail> queryDailyProfit() {
 		return reportMapper.queryDailyProfit();
+	}
+
+	@Override
+	public List<Statistics> findLatestNStatistics(int n) {
+		return statisticsDao.findLatestNStatistics(n);
 	}
 	
 	

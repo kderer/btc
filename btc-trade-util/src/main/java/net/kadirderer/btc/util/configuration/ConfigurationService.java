@@ -34,6 +34,7 @@ public class ConfigurationService {
 	private static final String SELL_ORDER_LOWER_BUFFER_START = "sell_order_lower_buffer_start";
 	private static final String SELL_ORDER_LOWER_BUFFER_END = "sell_order_lower_buffer_end";
 	private static final String AUTO_UPDATE_RANGE = "auto_update_range";
+	private static final String BID_CHECKER_TASK_WAIT_DURATION = "bid_checker_task_wait_duration";	
 
 	@Autowired
 	private Configuration configuration;
@@ -160,5 +161,9 @@ public class ConfigurationService {
 	
 	public double getAutoUpdateRange() {
 		return configuration.getDouble(AUTO_UPDATE_RANGE);
+	}
+	
+	public int getBidCheckerTaskWaitDuration() {
+		return configuration.getInt(BID_CHECKER_TASK_WAIT_DURATION);
 	}
 }

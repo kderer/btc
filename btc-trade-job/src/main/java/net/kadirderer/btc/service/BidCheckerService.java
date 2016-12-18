@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import net.kadirderer.btc.api.buyorder.BuyOrderService;
 import net.kadirderer.btc.api.marketdepth.MarketDepthResult;
 import net.kadirderer.btc.api.marketdepth.MarketDepthService;
+import net.kadirderer.btc.db.dao.StatisticsDao;
 import net.kadirderer.btc.db.dao.UserOrderDao;
+import net.kadirderer.btc.db.model.Statistics;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.util.configuration.ConfigurationService;
 import net.kadirderer.btc.util.enumaration.OrderStatus;
@@ -26,13 +28,16 @@ public class BidCheckerService {
 	@Autowired
 	private ConfigurationService cfgService;
 	
+	@Autowired
+	private StatisticsDao statisticsDao;
+	
 	private Double highestGMOB;
 	private Double lastHighestGMOB;
 	private Double lastGMOB;
 	private Double lastSecondGMOB;
-	
+		
 	public synchronized void checkGMOB(String username) throws Exception {
-		MarketDepthResult result = marketDepthService.getMarketDepth(username);		
+		MarketDepthResult result = marketDepthService.getMarketDepth(username);
 		
 		double[] maxAndGeometricMeanArray = result.getMaxAndGeometricMean();
 		double lowestAsk = maxAndGeometricMeanArray[0];
@@ -81,6 +86,19 @@ public class BidCheckerService {
 		}
 		
 		lastSecondGMOB = lastGMOB;
-		lastGMOB = gmob;		
-	}	
+		lastGMOB = gmob;
+		
+		Statistics statistics = new Statistics();
+		statistics.setGmoa(gmoa);
+		statistics.setGmob(gmob);
+		statistics.setHighestBid(highestBid);
+		statistics.setHighestGmob(highestGMOB);
+		statistics.setLastHighestGmob(lastHighestGMOB);
+		statistics.setLowestAsk(lowestAsk);
+		statistics.setCheckDelta(checkDelta);
+		statistics.setHighestGmobPriceDiff(highestGMOB - price);
+		statistics.setHighestLastGmobDiff(highestGMOB - lastHighestGMOB);
+		
+		statisticsDao.save(statistics);
+	}
 }

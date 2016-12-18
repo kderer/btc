@@ -11,4 +11,8 @@
 		<put-attribute name="titleKey" value="label.config.title"/>
 		<put-attribute name="body" value="/WEB-INF/jsp/config/list_config.jsp" />
 	</definition>
+	<definition name="tiles.statistics" template="/WEB-INF/jsp/layout.jsp">
+		<put-attribute name="titleKey" value="label.statistics.title"/>
+		<put-attribute name="body" value="/WEB-INF/jsp/report/statistics.jsp" />
+	</definition>
 </tiles-definitions>

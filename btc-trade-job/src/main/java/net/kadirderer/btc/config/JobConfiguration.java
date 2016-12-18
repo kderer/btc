@@ -91,7 +91,7 @@ public class JobConfiguration {
 		SimpleTriggerFactoryBean recordGroupQueryTrigger = new SimpleTriggerFactoryBean();
 		
 		recordGroupQueryTrigger.setJobDetail(setupBidCheckerJob().getObject());
-		recordGroupQueryTrigger.setRepeatInterval(10 * 1000);		
+		recordGroupQueryTrigger.setRepeatInterval(15 * 1000);		
 		recordGroupQueryTrigger.setStartDelay(30 * 1000);
 				
 		return recordGroupQueryTrigger;
