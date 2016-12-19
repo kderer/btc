@@ -147,6 +147,10 @@
 						verticalAlign : 'middle',
 						borderWidth : 0
 					},
+					chart : {
+						marginRight : 175,
+						marginLeft : 100
+					},
 					series : statisticSeries
 				});
 	
@@ -183,6 +187,10 @@
 						verticalAlign : 'middle',
 						borderWidth : 0
 					},
+					chart : {
+						marginRight : 175,
+						marginLeft : 100
+					},
 					series : bosSeries
 				});				
 			});
@@ -191,6 +199,6 @@
 		$('#statisticsRefreshButtonTop').on('click', drawStatisticsCharts);
 		$('#statisticsRefreshButtonBottom').on('click', drawStatisticsCharts);
 		
-		drawStatisticsCharts();		
+		drawStatisticsCharts();
    	});  
 </script>
