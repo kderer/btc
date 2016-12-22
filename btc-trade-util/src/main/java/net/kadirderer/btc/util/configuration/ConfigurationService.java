@@ -34,7 +34,9 @@ public class ConfigurationService {
 	private static final String SELL_ORDER_LOWER_BUFFER_START = "sell_order_lower_buffer_start";
 	private static final String SELL_ORDER_LOWER_BUFFER_END = "sell_order_lower_buffer_end";
 	private static final String AUTO_UPDATE_RANGE = "auto_update_range";
-	private static final String BID_CHECKER_TASK_WAIT_DURATION = "bid_checker_task_wait_duration";	
+	private static final String BID_CHECKER_TASK_WAIT_DURATION = "bid_checker_task_wait_duration";
+	private static final String NON_AUTO_UPDATE_TOTAL_AMOUNT = "non_auto_update_total_amount";
+	private static final String NON_AUTO_UPDATE_BUY_ORDER_AMOUNT = "non_auto_update_buy_order_amount";	
 
 	@Autowired
 	private Configuration configuration;
@@ -165,5 +167,13 @@ public class ConfigurationService {
 	
 	public int getBidCheckerTaskWaitDuration() {
 		return configuration.getInt(BID_CHECKER_TASK_WAIT_DURATION);
+	}
+	
+	public double getNonAutoUpdateTotalAmount() {
+		return configuration.getDouble(NON_AUTO_UPDATE_TOTAL_AMOUNT);
+	}
+	
+	public double getNonAutoUpdateBuyOrderAmount() {
+		return configuration.getDouble(NON_AUTO_UPDATE_BUY_ORDER_AMOUNT);
 	}
 }

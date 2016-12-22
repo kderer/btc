@@ -63,5 +63,12 @@ public interface UserOrderRepository extends JpaRepository<UserOrder, Integer> {
 			+ "uo.platformId = :platformId and uo.status in ('P', 'N')")
 	public Double queryTotalPendingOrderAmount(@Param("username") String username, 
 			@Param("platformId") int platformId);
+	
+	@Query("Select sum(amount) "
+			+ "from UserOrder uo "
+			+ "where uo.username = :username and uo.platformId = :platformId "
+				+ "and uo.status in ('P') and uo.autoTrade = 1 and uo.autoUpdate = 0")
+	public Double queryTotalPendingNonUpdateOrderAmount(@Param("username") String username, 
+			@Param("platformId") int platformId);
 
 }

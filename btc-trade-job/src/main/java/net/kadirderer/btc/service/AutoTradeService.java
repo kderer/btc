@@ -29,6 +29,8 @@ public abstract class AutoTradeService {
 	
 	private long lastAutoTradeCheckTime;
 	
+	private long lastNonAutoUpdateCheckTime;
+	
 	public abstract double getHighestBid() throws Exception;
 	
 	public abstract double getLowestAsk() throws Exception;
@@ -72,7 +74,7 @@ public abstract class AutoTradeService {
 				AutoUpdateHandler.handle(this, pendingOrder.getId(), cfgService);
 			}
 			else if (!pendingOrder.isAutoUpdate() && pendingOrder.isAutoTrade() && 
-					Calendar.getInstance().getTimeInMillis() - lastAutoTradeCheckTime >= 600000) {
+					Calendar.getInstance().getTimeInMillis() - lastNonAutoUpdateCheckTime >= 600000) {
 				queryOrder(pendingOrder.getUsername(), pendingOrder.getReturnId(), true);
 				
 				if (pendingOrder.isAutoTrade()) {
@@ -91,7 +93,11 @@ public abstract class AutoTradeService {
 		
 		if (Calendar.getInstance().getTimeInMillis() - lastAutoTradeCheckTime >= 60000) {
 			lastAutoTradeCheckTime = Calendar.getInstance().getTimeInMillis();
-		}		
+		}
+		
+		if (Calendar.getInstance().getTimeInMillis() - lastNonAutoUpdateCheckTime >= 600000) {
+			lastNonAutoUpdateCheckTime = Calendar.getInstance().getTimeInMillis();
+		}
 	}	
 	
 	public void sweep(String username) {

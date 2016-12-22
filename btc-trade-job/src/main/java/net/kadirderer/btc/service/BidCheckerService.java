@@ -1,7 +1,6 @@
 package net.kadirderer.btc.service;
 
 import java.util.Calendar;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Service;
 import net.kadirderer.btc.api.buyorder.BuyOrderService;
 import net.kadirderer.btc.api.marketdepth.MarketDepthResult;
 import net.kadirderer.btc.api.marketdepth.MarketDepthService;
-import net.kadirderer.btc.db.criteria.UserOrderCriteria;
 import net.kadirderer.btc.db.dao.StatisticsDao;
 import net.kadirderer.btc.db.dao.UserOrderDao;
 import net.kadirderer.btc.db.model.Statistics;
@@ -101,21 +99,16 @@ public class BidCheckerService {
 		statisticsDao.save(statistics);
 		
 		if (Calendar.getInstance().getTimeInMillis() - lastRunTime >= 600000) {
-			checkOnlyAutoTradeOrder(username, highestBid);
-		}
-		
-		lastRunTime = Calendar.getInstance().getTimeInMillis();
+			lastRunTime = Calendar.getInstance().getTimeInMillis();
+			checkOnlyAutoTradeOrder(username, highestBid);			
+		}		
 	}
 	
 	private void checkOnlyAutoTradeOrder(String username, double highestBid) throws Exception {
-		UserOrderCriteria criteria = new UserOrderCriteria();
-		criteria.addStatus(OrderStatus.PENDING.getCode());
-		criteria.setAutoTrade(true);
-		criteria.setAutoUpdate(false);
+		Double pendingAmount = userOrderDao.queryTotalPendingNonUpdateOrderAmount(username, 9);
 		
-		List<UserOrder> uoOrderList = userOrderDao.findByCriteria(criteria);
-		
-		if (uoOrderList != null && uoOrderList.size() > 0) {
+		if (pendingAmount != null &&
+				cfgService.getNonAutoUpdateTotalAmount() - pendingAmount < cfgService.getNonAutoUpdateBuyOrderAmount()) {
 			return;
 		}
 		
@@ -123,7 +116,7 @@ public class BidCheckerService {
 		order.setUsername(username);
 		order.setBasePrice(highestBid);
 		order.setPrice(highestBid - cfgService.getNonAutoUpdateOrderDelta());
-		order.setAmount(cfgService.getAutoTradeBuyOrderAmount());
+		order.setAmount(cfgService.getNonAutoUpdateBuyOrderAmount());
 		order.setHighestGmob(highestGMOB);
 		order.setAutoUpdate(false);
 		order.setAutoTrade(true);		

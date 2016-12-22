@@ -31,4 +31,6 @@ public interface UserOrderDao {
 
 	public Double queryTotalPendingOrderAmount(String username, int platformId);
 	
+	public Double queryTotalPendingNonUpdateOrderAmount(String username, int platformId);
+	
 }
