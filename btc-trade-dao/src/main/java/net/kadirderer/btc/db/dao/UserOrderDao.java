@@ -29,7 +29,7 @@ public interface UserOrderDao {
 	
 	public void updatePendingPartnerStatus(int partnerUserOrderId, char status);
 
-	public Double queryTotalPendingOrderAmount(String username, int platformId);
+	public Double queryTotalPendingAutoUpdateOrderAmount(String username, int platformId);
 	
 	public Double queryTotalPendingNonUpdateOrderAmount(String username, int platformId);
 	

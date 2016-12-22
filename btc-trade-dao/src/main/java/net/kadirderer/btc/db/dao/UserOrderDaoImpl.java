@@ -243,8 +243,8 @@ public class UserOrderDaoImpl implements UserOrderDao {
 	}
 
 	@Override
-	public Double queryTotalPendingOrderAmount(String username, int platformId) {
-		return uoRepository.queryTotalPendingOrderAmount(username, platformId);
+	public Double queryTotalPendingAutoUpdateOrderAmount(String username, int platformId) {
+		return uoRepository.queryTotalPendingAutoUpdateOrderAmount(username, platformId);
 	}
 
 	@Override

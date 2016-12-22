@@ -84,7 +84,7 @@ public class UserOrderDaoTest {
 	
 	@Test
 	public void testQueryTotalPendingAmount() {
-		Double amount = uoDao.queryTotalPendingOrderAmount("kadir", 9);
+		Double amount = uoDao.queryTotalPendingAutoUpdateOrderAmount("kadir", 9);
 		
 		Assert.assertNotNull(amount);
 		

@@ -73,7 +73,7 @@ public class BidCheckerService {
 		statistics.setHighestLastGmobDiff(highestGMOB - lastHighestGMOB);
 		
 		if (highestGMOB - price > checkDelta) {
-			Double pendingAmount = userOrderDao.queryTotalPendingOrderAmount(username, 9);
+			Double pendingAmount = userOrderDao.queryTotalPendingAutoUpdateOrderAmount(username, 9);
 			
 			if (pendingAmount == null ||
 					cfgService.getAutoTradeTotalAmount() - pendingAmount >= cfgService.getAutoTradeBuyOrderAmount()) {
