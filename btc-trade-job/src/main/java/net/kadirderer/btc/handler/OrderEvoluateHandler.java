@@ -363,7 +363,7 @@ public class OrderEvoluateHandler implements Runnable {
 			double price = userOrder.getPrice() + cfgService.getSellOrderDelta();
 			
 			if (!userOrder.isAutoUpdate()) {
-				price = userOrder.getPrice() + cfgService.getNonAutoUpdateOrderDelta();
+				price = userOrder.getPrice() + (cfgService.getNonAutoUpdateOrderDelta() / 2.0);
 			}
 			
 			UserOrder order = new UserOrder();
