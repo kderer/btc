@@ -1,11 +1,15 @@
 package net.kadirderer.btc.service;
 
+import java.util.Calendar;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.kadirderer.btc.api.buyorder.BuyOrderService;
 import net.kadirderer.btc.api.marketdepth.MarketDepthResult;
 import net.kadirderer.btc.api.marketdepth.MarketDepthService;
+import net.kadirderer.btc.db.criteria.UserOrderCriteria;
 import net.kadirderer.btc.db.dao.StatisticsDao;
 import net.kadirderer.btc.db.dao.UserOrderDao;
 import net.kadirderer.btc.db.model.Statistics;
@@ -33,6 +37,7 @@ public class BidCheckerService {
 	
 	private Double highestGMOB;
 	private Double lastHighestGMOB;
+	private long lastRunTime;
 		
 	public synchronized void checkGMOB(String username) throws Exception {
 		MarketDepthResult result = marketDepthService.getMarketDepth(username);
@@ -94,5 +99,36 @@ public class BidCheckerService {
 		}
 		
 		statisticsDao.save(statistics);
+		
+		if (Calendar.getInstance().getTimeInMillis() - lastRunTime >= 600000) {
+			checkOnlyAutoTradeOrder(username, highestBid);
+		}
+		
+		lastRunTime = Calendar.getInstance().getTimeInMillis();
+	}
+	
+	private void checkOnlyAutoTradeOrder(String username, double highestBid) throws Exception {
+		UserOrderCriteria criteria = new UserOrderCriteria();
+		criteria.addStatus(OrderStatus.PENDING.getCode());
+		criteria.setAutoTrade(true);
+		criteria.setAutoUpdate(false);
+		
+		List<UserOrder> uoOrderList = userOrderDao.findByCriteria(criteria);
+		
+		if (uoOrderList != null && uoOrderList.size() > 0) {
+			return;
+		}
+		
+		UserOrder order = new UserOrder();
+		order.setUsername(username);
+		order.setBasePrice(highestBid);
+		order.setPrice(highestBid - cfgService.getNonAutoUpdateOrderDelta());
+		order.setAmount(cfgService.getAutoTradeBuyOrderAmount());
+		order.setHighestGmob(highestGMOB);
+		order.setAutoUpdate(false);
+		order.setAutoTrade(true);		
+		
+		buyOrderService.buyOrder(order);
+		
 	}
 }

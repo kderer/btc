@@ -112,9 +112,6 @@ public class OrderEvoluateHandler implements Runnable {
 			else if (uo.isAutoTrade() && uo.getStatus() == OrderStatus.DONE.getCode()) {
 				createOrderForDoneOrder(uo);
 			}
-			else if (uo.isAutoTrade() && !uo.isAutoUpdate() && uo.getStatus() == OrderStatus.PENDING.getCode() && isTimeOut(uo)) {
-				createOrderForNonAutoUpdateTimeOut(uo);
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -221,6 +218,7 @@ public class OrderEvoluateHandler implements Runnable {
 		return false;
 	}	
 	
+	@SuppressWarnings("unused")
 	private boolean isTimeOut(UserOrder userOrder) {
 		long timeInMillis = Calendar.getInstance().getTimeInMillis();
 		long elapsedTime = timeInMillis - userOrder.getCreateDate().getTime();
@@ -304,6 +302,7 @@ public class OrderEvoluateHandler implements Runnable {
 		return true;		
 	}
 	
+	@SuppressWarnings("unused")
 	private void createOrderForNonAutoUpdateTimeOut(UserOrder userOrder) throws Exception {		
 		double highestBid = autoTradeService.getHighestBid();
 		double lowestAsk = autoTradeService.getLowestAsk();

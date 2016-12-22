@@ -71,12 +71,17 @@ public abstract class AutoTradeService {
 			else if (firstTime && pendingOrder.isAutoUpdate()) { 
 				AutoUpdateHandler.handle(this, pendingOrder.getId(), cfgService);
 			}
-			else if (!pendingOrder.isAutoUpdate() && Calendar.getInstance().getTimeInMillis() - lastAutoTradeCheckTime >= 60000) {
+			else if (!pendingOrder.isAutoUpdate() && pendingOrder.isAutoTrade() && 
+					Calendar.getInstance().getTimeInMillis() - lastAutoTradeCheckTime >= 600000) {
 				queryOrder(pendingOrder.getUsername(), pendingOrder.getReturnId(), true);
 				
 				if (pendingOrder.isAutoTrade()) {
 					OrderEvoluateHandler.evoluate(this, pendingOrder.getId(), cfgService);
 				}
+			}
+			else if (!pendingOrder.isAutoUpdate() && !pendingOrder.isAutoTrade() && 
+					Calendar.getInstance().getTimeInMillis() - lastAutoTradeCheckTime >= 60000) {
+				queryOrder(pendingOrder.getUsername(), pendingOrder.getReturnId(), true);				
 			}
 		}
 		
