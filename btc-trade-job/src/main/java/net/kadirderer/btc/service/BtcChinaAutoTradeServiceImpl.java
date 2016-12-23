@@ -17,6 +17,7 @@ import net.kadirderer.btc.api.queryorder.QueryOrderResult;
 import net.kadirderer.btc.api.queryorder.QueryOrderService;
 import net.kadirderer.btc.api.sellorder.SellOrderResult;
 import net.kadirderer.btc.api.sellorder.SellOrderService;
+import net.kadirderer.btc.api.ticker.TickerService;
 import net.kadirderer.btc.api.updateorder.UpdateOrderResult;
 import net.kadirderer.btc.api.updateorder.UpdateOrderService;
 import net.kadirderer.btc.db.dao.BtcPlatformDao;
@@ -62,6 +63,9 @@ public class BtcChinaAutoTradeServiceImpl extends AutoTradeService {
 	
 	@Autowired
 	private MarketDepthService marketDepthService;
+	
+	@Autowired
+	private TickerService tickerService;
 
 	@Override
 	public double getHighestBid() throws Exception {
@@ -152,6 +156,11 @@ public class BtcChinaAutoTradeServiceImpl extends AutoTradeService {
 	@Override
 	public double[] getMaxAndGeometricMean(String username) throws Exception {
 		return marketDepthService.getMarketDepth(username).getMaxAndGeometricMean();
+	}
+
+	@Override
+	public double get24HoursHigh() throws Exception {
+		return tickerService.getTicker(9).get24HoursHigh();
 	}
 	
 }

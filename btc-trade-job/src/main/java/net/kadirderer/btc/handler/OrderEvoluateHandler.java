@@ -58,14 +58,16 @@ public class OrderEvoluateHandler implements Runnable {
 				double gmoa = maxAndGeometricMeanArray[1];
 				double priceHighestBidDiff = uo.getPrice() - highestBid;
 				double lastBidPriceCheckDelta = cfgService.getLastBidPriceCheckDelta();
-				double lowestAsk = maxAndGeometricMeanArray[0];				
+				double lowestAsk = maxAndGeometricMeanArray[0];
+				
+				double dailyHigh = autoTradeService.get24HoursHigh();
 				
 				if (uo.getOrderType() == OrderType.BUY.getCode()) {
 					priceHighestBidDiff = highestBid - uo.getPrice();
 				}
 				
 				UpdateOrderResult result = null;
-				boolean isThisTheTime = isThisTheTime(uo, gmob, gmoa, highestBid, lowestAsk);
+				boolean isThisTheTime = isThisTheTime(uo, gmob, gmoa, highestBid, lowestAsk, dailyHigh);
 				
 				if (isThisTheTime) {
 					double price = highestBid + (lowestAsk - highestBid) / 2.0;
@@ -120,7 +122,7 @@ public class OrderEvoluateHandler implements Runnable {
 	}
 	
 	private boolean isThisTheTime(UserOrder uo, double gmob, double gmoa,
-			double highestBid, double lowestAsk) {		
+			double highestBid, double lowestAsk, double dailyHigh) {		
 		String[] lastGmobArray = StringUtil.generateArrayFromDeliminatedString('|', uo.getLastGmobArray());
 		if (lastGmobArray == null) {
 			return false;
@@ -206,7 +208,7 @@ public class OrderEvoluateHandler implements Runnable {
 					return false;
 				}
 				
-				if (highestBid - uo.getBasePrice() > cfgService.getAutoUpdateRange()) {
+				if ((highestBid + (lowestAsk - highestBid) / 2.0) >= dailyHigh - cfgService.getAutoUpdateRange()) {
 					return false;
 				}
 			}

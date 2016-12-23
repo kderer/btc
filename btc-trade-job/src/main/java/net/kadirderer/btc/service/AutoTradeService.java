@@ -63,6 +63,8 @@ public abstract class AutoTradeService {
 	
 	public abstract double[] getMaxAndGeometricMean(String username) throws Exception;
 	
+	public abstract double get24HoursHigh() throws Exception;
+	
 	public void autoTrade(String username) throws Exception {
 		List<UserOrder> pendingOrderList = queryPendingAutoTradeOrders(username);
 		
