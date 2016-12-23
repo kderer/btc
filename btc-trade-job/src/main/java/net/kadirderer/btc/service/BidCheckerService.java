@@ -80,7 +80,7 @@ public class BidCheckerService {
 		statistics.setHighestGmobPriceDiff(highestGMOB - price);
 		statistics.setHighestLastGmobDiff(highestGMOB - lastHighestGMOB);
 		
-		if (gmob < dailyHigh - cfgService.getAutoUpdateRange() && highestGMOB - price > checkDelta) {
+		if (highestBid < dailyHigh - cfgService.getAutoUpdateRange() && highestGMOB - price > checkDelta) {
 			Double pendingAmount = userOrderDao.queryTotalPendingAutoUpdateOrderAmount(username, 9);
 			
 			if (pendingAmount == null ||
@@ -107,7 +107,7 @@ public class BidCheckerService {
 		statisticsDao.save(statistics);
 		
 		if (Calendar.getInstance().getTimeInMillis() - lastRunTime >= 600000 &&
-				gmob < dailyHigh - cfgService.getAutoUpdateRange()) {
+				highestBid < dailyHigh - cfgService.getAutoUpdateRange()) {
 			lastRunTime = Calendar.getInstance().getTimeInMillis();
 			checkOnlyAutoTradeOrder(username, highestBid);			
 		}		
