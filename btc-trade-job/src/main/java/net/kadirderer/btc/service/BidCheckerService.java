@@ -106,7 +106,8 @@ public class BidCheckerService {
 		
 		statisticsDao.save(statistics);
 		
-		if (Calendar.getInstance().getTimeInMillis() - lastRunTime >= 600000) {
+		if (Calendar.getInstance().getTimeInMillis() - lastRunTime >= 600000 &&
+				highestGMOB < dailyHigh - cfgService.getAutoUpdateRange()) {
 			lastRunTime = Calendar.getInstance().getTimeInMillis();
 			checkOnlyAutoTradeOrder(username, highestBid);			
 		}		
