@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import net.kadirderer.btc.api.buyorder.BuyOrderService;
 import net.kadirderer.btc.api.marketdepth.MarketDepthResult;
 import net.kadirderer.btc.api.marketdepth.MarketDepthService;
+import net.kadirderer.btc.api.ticker.TickerResult;
+import net.kadirderer.btc.api.ticker.TickerService;
 import net.kadirderer.btc.db.dao.StatisticsDao;
 import net.kadirderer.btc.db.dao.UserOrderDao;
 import net.kadirderer.btc.db.model.Statistics;
@@ -33,18 +35,24 @@ public class BidCheckerService {
 	@Autowired
 	private StatisticsDao statisticsDao;
 	
+	@Autowired
+	private TickerService tickerService;
+	
 	private Double highestGMOB;
 	private Double lastHighestGMOB;
 	private long lastRunTime;
 		
 	public synchronized void checkGMOB(String username) throws Exception {
 		MarketDepthResult result = marketDepthService.getMarketDepth(username);
+		TickerResult tickerResult = tickerService.getTicker(9);
 		
 		double[] maxAndGeometricMeanArray = result.getMaxAndGeometricMean();
 		double lowestAsk = maxAndGeometricMeanArray[0];
 		double gmoa = maxAndGeometricMeanArray[1];
 		double highestBid = maxAndGeometricMeanArray[2];
 		double gmob = maxAndGeometricMeanArray[3];
+		
+		double dailyHigh = tickerResult.get24HoursHigh();
 		
 		if (highestGMOB == null || highestGMOB < gmob) {
 			highestGMOB = gmob;
@@ -72,7 +80,7 @@ public class BidCheckerService {
 		statistics.setHighestGmobPriceDiff(highestGMOB - price);
 		statistics.setHighestLastGmobDiff(highestGMOB - lastHighestGMOB);
 		
-		if (highestGMOB - price > checkDelta) {
+		if (highestGMOB < dailyHigh - cfgService.getAutoUpdateRange() && highestGMOB - price > checkDelta) {
 			Double pendingAmount = userOrderDao.queryTotalPendingAutoUpdateOrderAmount(username, 9);
 			
 			if (pendingAmount == null ||
