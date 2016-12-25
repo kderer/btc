@@ -12,6 +12,7 @@ import net.kadirderer.btc.api.queryaccountinfo.QueryAccountInfoResult;
 import net.kadirderer.btc.api.queryorder.QueryOrderResult;
 import net.kadirderer.btc.api.sellorder.SellOrderResult;
 import net.kadirderer.btc.api.updateorder.UpdateOrderResult;
+import net.kadirderer.btc.db.model.Statistics;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.handler.AutoUpdateHandler;
 import net.kadirderer.btc.handler.OrderEvoluateHandler;
@@ -64,6 +65,8 @@ public abstract class AutoTradeService {
 	public abstract double[] getMaxAndGeometricMean(String username) throws Exception;
 	
 	public abstract double get24HoursHigh() throws Exception;
+	
+	public abstract List<Statistics> findLastStatistics(int count);
 	
 	public void autoTrade(String username) throws Exception {
 		List<UserOrder> pendingOrderList = queryPendingAutoTradeOrders(username);

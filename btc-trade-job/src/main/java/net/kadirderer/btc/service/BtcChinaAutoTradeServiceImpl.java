@@ -21,8 +21,10 @@ import net.kadirderer.btc.api.ticker.TickerService;
 import net.kadirderer.btc.api.updateorder.UpdateOrderResult;
 import net.kadirderer.btc.api.updateorder.UpdateOrderService;
 import net.kadirderer.btc.db.dao.BtcPlatformDao;
+import net.kadirderer.btc.db.dao.StatisticsDao;
 import net.kadirderer.btc.db.dao.UserOrderDao;
 import net.kadirderer.btc.db.model.BtcPlatform;
+import net.kadirderer.btc.db.model.Statistics;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.util.email.Email;
 import net.kadirderer.btc.util.email.MailSendService;
@@ -66,6 +68,9 @@ public class BtcChinaAutoTradeServiceImpl extends AutoTradeService {
 	
 	@Autowired
 	private TickerService tickerService;
+	
+	@Autowired
+	private StatisticsDao statisticsDao;
 
 	@Override
 	public double getHighestBid() throws Exception {
@@ -161,6 +166,11 @@ public class BtcChinaAutoTradeServiceImpl extends AutoTradeService {
 	@Override
 	public double get24HoursHigh() throws Exception {
 		return tickerService.getTicker(9).get24HoursHigh();
+	}
+
+	@Override
+	public List<Statistics> findLastStatistics(int count) {
+		return statisticsDao.findLatestNStatistics(count);
 	}
 	
 }

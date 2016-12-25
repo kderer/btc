@@ -1,14 +1,17 @@
 package net.kadirderer.btc.handler;
 
 import java.util.Calendar;
+import java.util.List;
 
 import net.kadirderer.btc.api.updateorder.UpdateOrderResult;
+import net.kadirderer.btc.db.model.Statistics;
 import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.impl.buyorder.BtcChinaBuyOrderResult;
 import net.kadirderer.btc.impl.cancelorder.BtcChinaCancelOrderResult;
 import net.kadirderer.btc.impl.sellorder.BtcChinaSellOrderResult;
 import net.kadirderer.btc.impl.updateorder.BtcChinaUpdateOrderResult;
 import net.kadirderer.btc.impl.util.NumberUtil;
+import net.kadirderer.btc.impl.util.PriceAnalyzer;
 import net.kadirderer.btc.service.AutoTradeService;
 import net.kadirderer.btc.util.StringUtil;
 import net.kadirderer.btc.util.configuration.ConfigurationService;
@@ -114,8 +117,14 @@ public class OrderEvoluateHandler implements Runnable {
 			else if (uo.isAutoTrade() && uo.getStatus() == OrderStatus.DONE.getCode()) {
 				createOrderForDoneOrder(uo, highestBid);
 			}
-			else if (uo.isAutoTrade() && !uo.isAutoUpdate() && isTimeOut(uo) && uo.getOrderType() == OrderType.BUY.getCode()) {
-				autoTradeService.cancelOrder(uo.getUsername(), uo.getReturnId());
+			else if (uo.isAutoTrade() && !uo.isAutoUpdate() && isTimeOut(uo) && 
+					uo.getOrderType() == OrderType.BUY.getCode()) {
+				List<Statistics> statisticsList = autoTradeService.findLastStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
+				PriceAnalyzer pa = new PriceAnalyzer(statisticsList, 33);
+				
+				if (pa.isPriceIncreasing()) {
+					autoTradeService.cancelOrder(uo.getUsername(), uo.getReturnId());
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

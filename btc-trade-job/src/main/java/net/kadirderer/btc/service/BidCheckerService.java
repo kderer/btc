@@ -15,6 +15,7 @@ import net.kadirderer.btc.db.dao.StatisticsDao;
 import net.kadirderer.btc.db.dao.UserOrderDao;
 import net.kadirderer.btc.db.model.Statistics;
 import net.kadirderer.btc.db.model.UserOrder;
+import net.kadirderer.btc.impl.util.PriceAnalyzer;
 import net.kadirderer.btc.util.configuration.ConfigurationService;
 import net.kadirderer.btc.util.enumaration.OrderStatus;
 
@@ -123,28 +124,16 @@ public class BidCheckerService {
 		}
 		
 		List<Statistics> latestStatistics = statisticsDao.findLatestNStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
-		Double price = null;
-		if (latestStatistics != null && latestStatistics.size() > 0) {
-			double product = 1.0;
-			double count = 0;
-			for (Statistics statistics : latestStatistics) {
-				product *= statistics.getGmob();
-				count += 1;
-			}
-			double gmogmob = Math.pow(product, 1.0 / count);
-			
-			if (gmob > gmogmob) {
-				price = gmogmob;
-			}
-			else {
-				return;
-			}
-		}		
+		PriceAnalyzer pa = new PriceAnalyzer(latestStatistics, 33);
+		
+		if (!pa.isPriceIncreasing()) {
+			return;
+		}
 		
 		UserOrder order = new UserOrder();
 		order.setUsername(username);
 		order.setBasePrice(highestBid);
-		order.setPrice(price);
+		order.setPrice(pa.getPreviosGmob());
 		order.setAmount(cfgService.getNonAutoUpdateBuyOrderAmount());
 		order.setHighestGmob(highestGMOB);
 		order.setAutoUpdate(false);
