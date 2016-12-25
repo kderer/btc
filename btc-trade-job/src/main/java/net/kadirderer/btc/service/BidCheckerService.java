@@ -133,7 +133,7 @@ public class BidCheckerService {
 		UserOrder order = new UserOrder();
 		order.setUsername(username);
 		order.setBasePrice(highestBid);
-		order.setPrice(pa.getPreviosGmob());
+		order.setPrice(highestBid > pa.getPreviosGmob() ? pa.getPreviosGmob() : highestBid);
 		order.setAmount(cfgService.getNonAutoUpdateBuyOrderAmount());
 		order.setHighestGmob(highestGMOB);
 		order.setAutoUpdate(false);

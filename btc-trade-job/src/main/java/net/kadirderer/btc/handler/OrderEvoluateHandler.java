@@ -376,11 +376,16 @@ public class OrderEvoluateHandler implements Runnable {
 			double price = userOrder.getPrice() + cfgService.getSellOrderDelta();
 			
 			if (!userOrder.isAutoUpdate()) {
-				price = userOrder.getPrice() + ((userOrder.getBasePrice() - userOrder.getPrice()) / 2.0);
-				
-				if (highestBid > price) {
-					price = highestBid;
-				}						
+				if (userOrder.getBasePrice() > userOrder.getPrice()) {
+					price = userOrder.getPrice() + ((userOrder.getBasePrice() - userOrder.getPrice()) / 2.0);
+					
+					if (highestBid > price) {
+						price = highestBid;
+					}
+				}
+				else {
+					userOrder.setAutoUpdate(true);
+				}
 			}
 			
 			UserOrder order = new UserOrder();
