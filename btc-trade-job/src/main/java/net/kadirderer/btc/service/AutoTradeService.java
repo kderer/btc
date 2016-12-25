@@ -76,7 +76,7 @@ public abstract class AutoTradeService {
 				AutoUpdateHandler.handle(this, pendingOrder.getId(), cfgService);
 			}
 			else if (!pendingOrder.isAutoUpdate() && pendingOrder.isAutoTrade() && 
-					Calendar.getInstance().getTimeInMillis() - lastNonAutoUpdateCheckTime >= 600000) {
+					Calendar.getInstance().getTimeInMillis() - lastNonAutoUpdateCheckTime >= cfgService.getNonAutoUpdateOrderCheckInterval() * 1000) {
 				queryOrder(pendingOrder.getUsername(), pendingOrder.getReturnId(), true);
 				
 				if (pendingOrder.isAutoTrade()) {

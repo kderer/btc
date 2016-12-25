@@ -1,6 +1,7 @@
 package net.kadirderer.btc.service;
 
 import java.util.Calendar;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -106,14 +107,14 @@ public class BidCheckerService {
 		
 		statisticsDao.save(statistics);
 		
-		if (Calendar.getInstance().getTimeInMillis() - lastRunTime >= 600000 &&
+		if (Calendar.getInstance().getTimeInMillis() - lastRunTime >= cfgService.getNonAutoUpdateOrderCheckInterval() * 1000 &&
 				highestBid < dailyHigh - cfgService.getAutoUpdateRange()) {
 			lastRunTime = Calendar.getInstance().getTimeInMillis();
-			checkOnlyAutoTradeOrder(username, highestBid);			
+			checkOnlyAutoTradeOrder(username, highestBid, gmob);			
 		}		
 	}
 	
-	private void checkOnlyAutoTradeOrder(String username, double highestBid) throws Exception {
+	private void checkOnlyAutoTradeOrder(String username, double highestBid, double gmob) throws Exception {
 		Double pendingAmount = userOrderDao.queryTotalPendingNonUpdateOrderAmount(username, 9);
 		
 		if (pendingAmount != null &&
@@ -121,16 +122,34 @@ public class BidCheckerService {
 			return;
 		}
 		
+		List<Statistics> latestStatistics = statisticsDao.findLatestNStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
+		Double price = null;
+		if (latestStatistics != null && latestStatistics.size() > 0) {
+			double product = 1.0;
+			double count = 0;
+			for (Statistics statistics : latestStatistics) {
+				product *= statistics.getGmob();
+				count += 1;
+			}
+			double gmogmob = Math.pow(product, 1.0 / count);
+			
+			if (gmob > gmogmob) {
+				price = gmogmob;
+			}
+			else {
+				return;
+			}
+		}		
+		
 		UserOrder order = new UserOrder();
 		order.setUsername(username);
 		order.setBasePrice(highestBid);
-		order.setPrice(highestBid - cfgService.getNonAutoUpdateOrderDelta());
+		order.setPrice(price);
 		order.setAmount(cfgService.getNonAutoUpdateBuyOrderAmount());
 		order.setHighestGmob(highestGMOB);
 		order.setAutoUpdate(false);
 		order.setAutoTrade(true);		
 		
-		buyOrderService.buyOrder(order);
-		
+		buyOrderService.buyOrder(order);		
 	}
 }

@@ -45,20 +45,20 @@ public class OrderEvoluateHandler implements Runnable {
 		try {
 			UserOrder uo = autoTradeService.findUserOrderById(userOrderId);
 			
-			if (uo.isAutoTrade() && uo.isAutoUpdate() && (uo.getStatus() == OrderStatus.PENDING.getCode())) {
-				
-				if (uo.getCompletedAmount() > 0 && uo.getCompletedAmount() < uo.getAmount()) {
-					processing = false;
-					return;
-				}
-				
-				double[] maxAndGeometricMeanArray = autoTradeService.getMaxAndGeometricMean(uo.getUsername());
-				double highestBid = maxAndGeometricMeanArray[2];
-				double gmob = maxAndGeometricMeanArray[3];
-				double gmoa = maxAndGeometricMeanArray[1];
+			if (uo.getCompletedAmount() > 0 && uo.getCompletedAmount() < uo.getAmount()) {
+				processing = false;
+				return;
+			}
+			
+			double[] maxAndGeometricMeanArray = autoTradeService.getMaxAndGeometricMean(uo.getUsername());
+			double highestBid = maxAndGeometricMeanArray[2];
+			double gmob = maxAndGeometricMeanArray[3];
+			double gmoa = maxAndGeometricMeanArray[1];
+			double lowestAsk = maxAndGeometricMeanArray[0];
+			
+			if (uo.isAutoTrade() && uo.isAutoUpdate() && (uo.getStatus() == OrderStatus.PENDING.getCode())) {				
 				double priceHighestBidDiff = uo.getPrice() - highestBid;
-				double lastBidPriceCheckDelta = cfgService.getLastBidPriceCheckDelta();
-				double lowestAsk = maxAndGeometricMeanArray[0];
+				double lastBidPriceCheckDelta = cfgService.getLastBidPriceCheckDelta();				
 				
 				double dailyHigh = autoTradeService.get24HoursHigh();
 				
@@ -112,7 +112,10 @@ public class OrderEvoluateHandler implements Runnable {
 				}
 			}
 			else if (uo.isAutoTrade() && uo.getStatus() == OrderStatus.DONE.getCode()) {
-				createOrderForDoneOrder(uo);
+				createOrderForDoneOrder(uo, highestBid);
+			}
+			else if (uo.isAutoTrade() && !uo.isAutoUpdate() && isTimeOut(uo)) {
+				autoTradeService.cancelOrder(uo.getUsername(), uo.getReturnId());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -220,7 +223,6 @@ public class OrderEvoluateHandler implements Runnable {
 		return false;
 	}	
 	
-	@SuppressWarnings("unused")
 	private boolean isTimeOut(UserOrder userOrder) {
 		long timeInMillis = Calendar.getInstance().getTimeInMillis();
 		long elapsedTime = timeInMillis - userOrder.getCreateDate().getTime();
@@ -358,14 +360,18 @@ public class OrderEvoluateHandler implements Runnable {
 		}
 	}
 	
-	private void createOrderForDoneOrder(UserOrder userOrder) throws Exception {
+	private void createOrderForDoneOrder(UserOrder userOrder, double highestBid) throws Exception {
 		double amount = userOrder.getAmount();
 		
 		if (userOrder.getOrderType() == OrderType.BUY.getCode()) {
 			double price = userOrder.getPrice() + cfgService.getSellOrderDelta();
 			
 			if (!userOrder.isAutoUpdate()) {
-				price = userOrder.getPrice() + (cfgService.getNonAutoUpdateOrderDelta() / 2.0);
+				price = userOrder.getPrice() + ((userOrder.getBasePrice() - userOrder.getPrice()) / 2.0);
+				
+				if (highestBid > price) {
+					price = highestBid;
+				}						
 			}
 			
 			UserOrder order = new UserOrder();

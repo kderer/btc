@@ -36,7 +36,9 @@ public class ConfigurationService {
 	private static final String AUTO_UPDATE_RANGE = "auto_update_range";
 	private static final String BID_CHECKER_TASK_WAIT_DURATION = "bid_checker_task_wait_duration";
 	private static final String NON_AUTO_UPDATE_TOTAL_AMOUNT = "non_auto_update_total_amount";
-	private static final String NON_AUTO_UPDATE_BUY_ORDER_AMOUNT = "non_auto_update_buy_order_amount";	
+	private static final String NON_AUTO_UPDATE_BUY_ORDER_AMOUNT = "non_auto_update_buy_order_amount";
+	private static final String BID_CHECKER_BUY_ORDER_CHECK_LAST_STATISTICS_COUNT = "bid_checker_buy_order_check_last_statistics_count";
+	private static final String NON_AUTO_UPDATE_ORDER_CHECK_INTERVAL = "non_auto_update_order_check_interval";
 
 	@Autowired
 	private Configuration configuration;
@@ -167,6 +169,14 @@ public class ConfigurationService {
 	
 	public int getBidCheckerTaskWaitDuration() {
 		return configuration.getInt(BID_CHECKER_TASK_WAIT_DURATION);
+	}
+	
+	public int getBidCheckerBuyOrderCheckLastStatisticsCount() {
+		return configuration.getInt(BID_CHECKER_BUY_ORDER_CHECK_LAST_STATISTICS_COUNT);
+	}
+	
+	public int getNonAutoUpdateOrderCheckInterval() {
+		return configuration.getInt(NON_AUTO_UPDATE_ORDER_CHECK_INTERVAL);
 	}
 	
 	public double getNonAutoUpdateTotalAmount() {
