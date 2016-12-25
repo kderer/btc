@@ -114,7 +114,7 @@ public class OrderEvoluateHandler implements Runnable {
 			else if (uo.isAutoTrade() && uo.getStatus() == OrderStatus.DONE.getCode()) {
 				createOrderForDoneOrder(uo, highestBid);
 			}
-			else if (uo.isAutoTrade() && !uo.isAutoUpdate() && isTimeOut(uo)) {
+			else if (uo.isAutoTrade() && !uo.isAutoUpdate() && isTimeOut(uo) && uo.getOrderType() == OrderType.BUY.getCode()) {
 				autoTradeService.cancelOrder(uo.getUsername(), uo.getReturnId());
 			}
 		} catch (Exception e) {
