@@ -61,7 +61,7 @@
 					gmoaData.data.push(data[index].gmoa);
 					highestBidData.data.push(data[index].highestBid);
 					gmobData.data.push(data[index].gmob);
-					dailyHighData.data.push(data[index].highestGmob);
+					dailyHighData.data.push(data[index].dailyHigh);
 					createTimes.push(data[index].formattedTime);
 				}
 				
