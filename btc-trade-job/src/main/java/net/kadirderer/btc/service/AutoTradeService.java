@@ -100,7 +100,7 @@ public abstract class AutoTradeService {
 			lastAutoTradeCheckTime = Calendar.getInstance().getTimeInMillis();
 		}
 		
-		if (Calendar.getInstance().getTimeInMillis() - lastNonAutoUpdateCheckTime >= 600000) {
+		if (Calendar.getInstance().getTimeInMillis() - lastNonAutoUpdateCheckTime >= cfgService.getNonAutoUpdateOrderCheckInterval() * 1000) {
 			lastNonAutoUpdateCheckTime = Calendar.getInstance().getTimeInMillis();
 		}
 	}	

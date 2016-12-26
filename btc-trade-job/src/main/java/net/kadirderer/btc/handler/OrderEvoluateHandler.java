@@ -59,15 +59,13 @@ public class OrderEvoluateHandler implements Runnable {
 			double gmoa = maxAndGeometricMeanArray[1];
 			double lowestAsk = maxAndGeometricMeanArray[0];
 			
-			if (uo.isAutoTrade() && uo.isAutoUpdate() && (uo.getStatus() == OrderStatus.PENDING.getCode())) {				
+			if (uo.isAutoTrade() && uo.isAutoUpdate() &&
+					uo.getStatus() == OrderStatus.PENDING.getCode() &&
+					uo.getOrderType() == OrderType.SELL.getCode()) {				
 				double priceHighestBidDiff = uo.getPrice() - highestBid;
 				double lastBidPriceCheckDelta = cfgService.getLastBidPriceCheckDelta();				
 				
 				double dailyHigh = autoTradeService.get24HoursHigh();
-				
-				if (uo.getOrderType() == OrderType.BUY.getCode()) {
-					priceHighestBidDiff = highestBid - uo.getPrice();
-				}
 				
 				UpdateOrderResult result = null;
 				boolean isThisTheTime = isThisTheTime(uo, gmob, gmoa, highestBid, lowestAsk, dailyHigh);
@@ -117,7 +115,7 @@ public class OrderEvoluateHandler implements Runnable {
 			else if (uo.isAutoTrade() && uo.getStatus() == OrderStatus.DONE.getCode()) {
 				createOrderForDoneOrder(uo, highestBid);
 			}
-			else if (uo.isAutoTrade() && !uo.isAutoUpdate() && isTimeOut(uo) && 
+			else if (uo.isAutoTrade() && isTimeOut(uo) && 
 					uo.getOrderType() == OrderType.BUY.getCode()) {
 				List<Statistics> statisticsList = autoTradeService.findLastStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
 				PriceAnalyzer pa = new PriceAnalyzer(statisticsList, 33);
@@ -376,15 +374,10 @@ public class OrderEvoluateHandler implements Runnable {
 			double price = userOrder.getPrice() + cfgService.getSellOrderDelta();
 			
 			if (!userOrder.isAutoUpdate()) {
-				if (userOrder.getBasePrice() > userOrder.getPrice()) {
-					price = userOrder.getPrice() + ((userOrder.getBasePrice() - userOrder.getPrice()) / 2.0);
+				price = userOrder.getPrice() + ((userOrder.getBasePrice() - userOrder.getPrice()) / 2.0);
 					
-					if (highestBid > price) {
-						price = highestBid;
-					}
-				}
-				else {
-					userOrder.setAutoUpdate(true);
+				if (highestBid > price) {
+					price = highestBid;
 				}
 			}
 			

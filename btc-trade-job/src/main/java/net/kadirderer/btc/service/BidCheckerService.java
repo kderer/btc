@@ -40,8 +40,6 @@ public class BidCheckerService {
 	@Autowired
 	private TickerService tickerService;
 	
-	private Double highestGMOB;
-	private Double lastHighestGMOB;
 	private long lastRunTime;
 		
 	public synchronized void checkGMOB(String username) throws Exception {
@@ -55,44 +53,36 @@ public class BidCheckerService {
 		double gmob = maxAndGeometricMeanArray[3];
 		
 		double dailyHigh = tickerResult.get24HoursHigh();
-		
-		if (highestGMOB == null || highestGMOB < gmob) {
-			highestGMOB = gmob;
-		}
-		
-		if (lastHighestGMOB == null) {
-			lastHighestGMOB = highestGMOB;
-		}
-		
-		double price = highestBid + ((lowestAsk - highestBid) / 2.0);
-		double checkDelta = cfgService.getBuyOrderHighestGmobLastGmobDelta();		
-		
-		if (lastHighestGMOB < highestGMOB) {
-			checkDelta += (highestGMOB - lastHighestGMOB) / 4.0;
-		}
-		
+				
 		Statistics statistics = new Statistics();
 		statistics.setGmoa(gmoa);
 		statistics.setGmob(gmob);
 		statistics.setHighestBid(highestBid);
-		statistics.setHighestGmob(highestGMOB);
-		statistics.setLastHighestGmob(lastHighestGMOB);
 		statistics.setLowestAsk(lowestAsk);
-		statistics.setCheckDelta(checkDelta);
-		statistics.setHighestGmobPriceDiff(highestGMOB - price);
-		statistics.setHighestLastGmobDiff(highestGMOB - lastHighestGMOB);
+		statistics.setDailyHigh(dailyHigh);
 		
-		if (highestBid < dailyHigh - cfgService.getAutoUpdateRange() && highestGMOB - price > checkDelta) {
+		statisticsDao.save(statistics);
+		
+		if (Calendar.getInstance().getTimeInMillis() - lastRunTime >= cfgService.getBidCheckerBuyOrderCheckInterval() * 1000) {
+			
+			List<Statistics> latestStatistics = statisticsDao.findLatestNStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
+			PriceAnalyzer pa = new PriceAnalyzer(latestStatistics, 33);
+			
+			if (!pa.isPriceIncreasing() || highestBid <= pa.getPreviosGmob()) {
+				return;
+			}
+			
 			Double pendingAmount = userOrderDao.queryTotalPendingAutoUpdateOrderAmount(username, 9);
 			
 			if (pendingAmount == null ||
-					cfgService.getAutoTradeTotalAmount() - pendingAmount >= cfgService.getAutoTradeBuyOrderAmount()) {
+					cfgService.getAutoTradeTotalAmount() - pendingAmount >= cfgService.getAutoTradeBuyOrderAmount()) {				
+				
 				UserOrder order = new UserOrder();
 				order.setUsername(username);
 				order.setBasePrice(highestBid);
-				order.setPrice(highestBid - cfgService.getBuyOrderDelta());
+				order.setPrice(pa.getPreviosGmob());
 				order.setAmount(cfgService.getAutoTradeBuyOrderAmount());
-				order.setHighestGmob(highestGMOB);
+				order.setHighestGmob(gmob);
 				order.addGmoa(gmoa, cfgService.getCheckLastGmobCountBuyOrder());
 				order.addGmob(gmob, cfgService.getCheckLastGmobCountBuyOrder());
 				order.setAutoUpdate(true);
@@ -100,45 +90,24 @@ public class BidCheckerService {
 				order.setStatus(OrderStatus.NEW.getCode());			
 				
 				buyOrderService.buyOrder(order);
-				
-				lastHighestGMOB = highestGMOB;
-				highestGMOB = gmob;
 			}
-		}
-		
-		statisticsDao.save(statistics);
-		
-		if (Calendar.getInstance().getTimeInMillis() - lastRunTime >= cfgService.getNonAutoUpdateOrderCheckInterval() * 1000 &&
-				highestBid < dailyHigh - cfgService.getAutoUpdateRange()) {
-			lastRunTime = Calendar.getInstance().getTimeInMillis();
-			checkOnlyAutoTradeOrder(username, highestBid, gmob);			
+			
+			pendingAmount = userOrderDao.queryTotalPendingNonUpdateOrderAmount(username, 9);
+			
+			if (pendingAmount == null ||
+					cfgService.getNonAutoUpdateTotalAmount() - pendingAmount >= cfgService.getNonAutoUpdateBuyOrderAmount()) {
+							
+				UserOrder order = new UserOrder();
+				order.setUsername(username);
+				order.setBasePrice(highestBid);
+				order.setPrice(highestBid > pa.getPreviosGmob() ? pa.getPreviosGmob() : highestBid);
+				order.setAmount(cfgService.getNonAutoUpdateBuyOrderAmount());
+				order.setHighestGmob(gmob);
+				order.setAutoUpdate(false);
+				order.setAutoTrade(true);		
+				
+				buyOrderService.buyOrder(order);
+			}
 		}		
-	}
-	
-	private void checkOnlyAutoTradeOrder(String username, double highestBid, double gmob) throws Exception {
-		Double pendingAmount = userOrderDao.queryTotalPendingNonUpdateOrderAmount(username, 9);
-		
-		if (pendingAmount != null &&
-				cfgService.getNonAutoUpdateTotalAmount() - pendingAmount < cfgService.getNonAutoUpdateBuyOrderAmount()) {
-			return;
-		}
-		
-		List<Statistics> latestStatistics = statisticsDao.findLatestNStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
-		PriceAnalyzer pa = new PriceAnalyzer(latestStatistics, 33);
-		
-		if (!pa.isPriceIncreasing()) {
-			return;
-		}
-		
-		UserOrder order = new UserOrder();
-		order.setUsername(username);
-		order.setBasePrice(highestBid);
-		order.setPrice(highestBid > pa.getPreviosGmob() ? pa.getPreviosGmob() : highestBid);
-		order.setAmount(cfgService.getNonAutoUpdateBuyOrderAmount());
-		order.setHighestGmob(highestGMOB);
-		order.setAutoUpdate(false);
-		order.setAutoTrade(true);		
-		
-		buyOrderService.buyOrder(order);		
 	}
 }

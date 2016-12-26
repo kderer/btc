@@ -16,7 +16,6 @@ public class BidCheckerTask {
 	public void sweep() {
 		try {
 			if (cfgService.isAutoTradeEnabled()) {
-				Thread.sleep(cfgService.getBidCheckerTaskWaitDuration() * 1000);
 				bidCheckerService.checkGMOB("kadir");
 			}
 		} catch (Exception e) {

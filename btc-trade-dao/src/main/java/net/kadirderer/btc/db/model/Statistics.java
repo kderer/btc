@@ -18,16 +18,7 @@ public class Statistics {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID")
-	private Long id;
-	
-	@Column(name = "CHECKDELTA")
-	private Double checkDelta;
-	
-	@Column(name = "HLGD")
-	private Double highestLastGmobDiff;
-	
-	@Column(name = "HGPD")
-	private Double highestGmobPriceDiff;	
+	private Long id;	
 	
 	@Column(name = "LOWESTASK")
 	private Double lowestAsk;
@@ -41,11 +32,8 @@ public class Statistics {
 	@Column(name = "GMOB")
 	private Double gmob;
 	
-	@Column(name = "HGMOB")
-	private Double highestGmob;
-	
-	@Column(name = "LHGMOB")
-	private Double lastHighestGmob;
+	@Column(name = "DAILY_HIGH")
+	private Double dailyHigh;
 	
 	@Column(name = "CREATETIME")
 	private Date createTime;
@@ -63,31 +51,7 @@ public class Statistics {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	public Double getCheckDelta() {
-		return checkDelta;
-	}
-
-	public void setCheckDelta(Double checkDelta) {
-		this.checkDelta = checkDelta;
-	}
-
-	public Double getHighestLastGmobDiff() {
-		return highestLastGmobDiff;
-	}
-
-	public void setHighestLastGmobDiff(Double highestLastGmobDiff) {
-		this.highestLastGmobDiff = highestLastGmobDiff;
-	}
-
-	public Double getHighestGmobPriceDiff() {
-		return highestGmobPriceDiff;
-	}
-
-	public void setHighestGmobPriceDiff(Double highestGmobPriceDiff) {
-		this.highestGmobPriceDiff = highestGmobPriceDiff;
-	}
-
+	
 	public Double getLowestAsk() {
 		return lowestAsk;
 	}
@@ -118,23 +82,7 @@ public class Statistics {
 
 	public void setGmob(Double gmob) {
 		this.gmob = gmob;
-	}
-
-	public Double getHighestGmob() {
-		return highestGmob;
-	}
-
-	public void setHighestGmob(Double highestGmob) {
-		this.highestGmob = highestGmob;
-	}
-
-	public Double getLastHighestGmob() {
-		return lastHighestGmob;
-	}
-
-	public void setLastHighestGmob(Double lastHighestGmob) {
-		this.lastHighestGmob = lastHighestGmob;
-	}
+	}	
 
 	public Date getCreateTime() {
 		return createTime;
@@ -144,6 +92,14 @@ public class Statistics {
 		this.createTime = createTime;
 	}
 	
+	public Double getDailyHigh() {
+		return dailyHigh;
+	}
+
+	public void setDailyHigh(Double dailyHigh) {
+		this.dailyHigh = dailyHigh;
+	}
+
 	public String getFormattedTime() {
 		if (formattedTime == null) {
 			formattedTime = sdf.format(createTime);
