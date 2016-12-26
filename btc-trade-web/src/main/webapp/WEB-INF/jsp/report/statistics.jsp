@@ -48,7 +48,8 @@
 				gmoaData.visible = false;
 				highestBidData.name = 'Highest Bid';
 				gmobData.name = 'GMOB';
-				dailyHighData.name = 'Daily High';				
+				dailyHighData.name = 'Daily High';
+				dailyHighData.visible = false;
 				lowestAskData.data = [];
 				gmoaData.data = [];
 				highestBidData.data = [];
