@@ -73,10 +73,13 @@ public class BidCheckerService {
 				return;
 			}
 			
-			double diff = highestBid - pa.getPreviosGmob();
+			double diff = pa.getLastGmob() - pa.getPreviosGmob();		
 			
-			if (diff < 0.1) {
-				diff = 0.1;
+			if (diff < 1 ) {
+				diff = 1.0; 
+			}
+			else {
+				diff = Math.log10(10.0 * diff);
 			}
 			
 			diff = (highestBid - dailLow) / (10.0 * diff);
