@@ -53,6 +53,7 @@ public class BidCheckerService {
 		double gmob = maxAndGeometricMeanArray[3];
 		
 		double dailyHigh = tickerResult.get24HoursHigh();
+		double dailLow = tickerResult.get24HoursLow();
 				
 		Statistics statistics = new Statistics();
 		statistics.setGmoa(gmoa);
@@ -72,6 +73,9 @@ public class BidCheckerService {
 				return;
 			}
 			
+			double diff = (highestBid - dailLow) / (highestBid - pa.getPreviosGmob());
+			double price = pa.getPreviosGmob() - diff;
+			
 			Double pendingAmount = userOrderDao.queryTotalPendingAutoUpdateOrderAmount(username, 9);
 			
 			if (pendingAmount == null ||
@@ -80,7 +84,7 @@ public class BidCheckerService {
 				UserOrder order = new UserOrder();
 				order.setUsername(username);
 				order.setBasePrice(highestBid);
-				order.setPrice(pa.getPreviosGmob());
+				order.setPrice(price);
 				order.setAmount(cfgService.getAutoTradeBuyOrderAmount());
 				order.setHighestGmob(gmob);
 				order.addGmoa(gmoa, cfgService.getCheckLastGmobCountBuyOrder());
@@ -100,7 +104,7 @@ public class BidCheckerService {
 				UserOrder order = new UserOrder();
 				order.setUsername(username);
 				order.setBasePrice(highestBid);
-				order.setPrice(highestBid > pa.getPreviosGmob() ? pa.getPreviosGmob() : highestBid);
+				order.setPrice(price);
 				order.setAmount(cfgService.getNonAutoUpdateBuyOrderAmount());
 				order.setHighestGmob(gmob);
 				order.setAutoUpdate(false);
