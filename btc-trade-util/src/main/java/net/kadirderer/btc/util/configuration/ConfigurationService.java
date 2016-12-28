@@ -39,6 +39,7 @@ public class ConfigurationService {
 	private static final String NON_AUTO_UPDATE_BUY_ORDER_AMOUNT = "non_auto_update_buy_order_amount";
 	private static final String BID_CHECKER_BUY_ORDER_CHECK_LAST_STATISTICS_COUNT = "bid_checker_buy_order_check_last_statistics_count";
 	private static final String NON_AUTO_UPDATE_ORDER_CHECK_INTERVAL = "non_auto_update_order_check_interval";
+	private static final String BID_CHECKER_BUY_ORDER_LOGARITHM_CONSTANT = "bid_checker_buy_order_logarithm_constant";	
 
 	@Autowired
 	private Configuration configuration;
@@ -185,5 +186,9 @@ public class ConfigurationService {
 	
 	public double getNonAutoUpdateBuyOrderAmount() {
 		return configuration.getDouble(NON_AUTO_UPDATE_BUY_ORDER_AMOUNT);
+	}
+	
+	public double getBidCheckerBuyOrderLogarithmConstant() {
+		return configuration.getDouble(BID_CHECKER_BUY_ORDER_LOGARITHM_CONSTANT);
 	}
 }

@@ -74,7 +74,7 @@ public class BidCheckerService {
 			}
 			
 			double diff = pa.getLastGmob() - pa.getPreviosGmob();		
-			diff = Math.log(5.0 * diff);			
+			diff = Math.log(cfgService.getBidCheckerBuyOrderLogarithmConstant() * diff);			
 			
 			if (diff < 1 ) {
 				diff = 1; 
