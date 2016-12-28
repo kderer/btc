@@ -73,7 +73,7 @@ public class BidCheckerService {
 				return;
 			}
 			
-			double diff = (highestBid - dailLow) / (highestBid - pa.getPreviosGmob());
+			double diff = (highestBid - dailLow) / (10.0 * (highestBid - pa.getPreviosGmob()));
 			double price = pa.getPreviosGmob() - diff;
 			
 			Double pendingAmount = userOrderDao.queryTotalPendingAutoUpdateOrderAmount(username, 9);
