@@ -79,7 +79,7 @@ public class BidCheckerService {
 				diff = 1.0; 
 			}
 			else {
-				diff = Math.log10(10.0 * diff);
+				diff = Math.log(5.0 * diff);
 			}
 			
 			diff = (highestBid - dailLow) / (10.0 * diff);
