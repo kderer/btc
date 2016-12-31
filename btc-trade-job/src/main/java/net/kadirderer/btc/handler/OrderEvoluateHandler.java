@@ -59,9 +59,9 @@ public class OrderEvoluateHandler implements Runnable {
 			double gmoa = maxAndGeometricMeanArray[1];
 			double lowestAsk = maxAndGeometricMeanArray[0];
 			
-			if (uo.isAutoTrade() && uo.isAutoUpdate() &&
-					uo.getStatus() == OrderStatus.PENDING.getCode() &&
-					uo.getOrderType() == OrderType.SELL.getCode()) {				
+			if (uo.getStatus() == OrderStatus.PENDING.getCode() &&
+					((uo.isAutoTrade() && uo.isAutoUpdate() && uo.getOrderType() == OrderType.SELL.getCode()) ||
+							(uo.isAutoTrade() && uo.getOrderType() == OrderType.BUY.getCode()))) {				
 				double priceHighestBidDiff = uo.getPrice() - highestBid;
 				double lastBidPriceCheckDelta = cfgService.getLastBidPriceCheckDelta();				
 				
@@ -115,15 +115,6 @@ public class OrderEvoluateHandler implements Runnable {
 			else if (uo.isAutoTrade() && uo.getStatus() == OrderStatus.DONE.getCode()) {
 				createOrderForDoneOrder(uo, highestBid);
 			}
-			else if (uo.isAutoTrade() && isTimeOut(uo) && 
-					uo.getOrderType() == OrderType.BUY.getCode()) {
-				List<Statistics> statisticsList = autoTradeService.findLastStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
-				PriceAnalyzer pa = new PriceAnalyzer(statisticsList, 33);
-				
-				if (pa.isPriceIncreasing()) {
-					autoTradeService.cancelOrder(uo.getUsername(), uo.getReturnId());
-				}
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -133,6 +124,24 @@ public class OrderEvoluateHandler implements Runnable {
 	
 	private boolean isThisTheTime(UserOrder uo, double gmob, double gmoa,
 			double highestBid, double lowestAsk, double dailyHigh) {		
+		if (uo.getOrderType() == OrderType.BUY.getCode()) {
+			List<Statistics> statisticsList = autoTradeService.findLastStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
+			PriceAnalyzer pa = new PriceAnalyzer(statisticsList, 33);
+			
+			if (highestBid <= uo.getTarget() && pa.isPriceIncreasing()) {
+				return true;
+			}
+			
+			if (pa.isPriceIncreasing() && isTimeOut(uo)) {
+				try {
+					autoTradeService.cancelOrder(uo.getUsername(), uo.getReturnId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return false;
+			}
+		}
+		
 		String[] lastGmobArray = StringUtil.generateArrayFromDeliminatedString('|', uo.getLastGmobArray());
 		if (lastGmobArray == null) {
 			return false;

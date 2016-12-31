@@ -48,7 +48,10 @@ public class UserOrder {
 	private double basePrice;
 	
 	@Column(name = "PRICE")
-	private double price;	
+	private double price;
+	
+	@Column(name = "TARGET")
+	private double target;
 	
 	@Column(name = "AMOUNT")
 	private double amount;
@@ -235,6 +238,17 @@ public class UserOrder {
 
 	public void setHighestGmob(Double highestGmob) {
 		this.highestGmob = highestGmob;
+	}	
+
+	public double getTarget() {
+		if (target == 0.0) {
+			target = price;
+		}
+		return target;
+	}
+
+	public void setTarget(double target) {
+		this.target = target;
 	}
 
 	public void addGmob(double gmob, int checkLastGmobCount) {

@@ -92,7 +92,8 @@ public class BidCheckerService {
 				UserOrder order = new UserOrder();
 				order.setUsername(username);
 				order.setBasePrice(highestBid);
-				order.setPrice(price);
+				order.setPrice(highestBid - cfgService.getBuyOrderDelta());
+				order.setTarget(price);
 				order.setAmount(cfgService.getAutoTradeBuyOrderAmount());
 				order.setHighestGmob(gmob);
 				order.addGmoa(gmoa, cfgService.getCheckLastGmobCountBuyOrder());
@@ -112,7 +113,8 @@ public class BidCheckerService {
 				UserOrder order = new UserOrder();
 				order.setUsername(username);
 				order.setBasePrice(highestBid);
-				order.setPrice(price);
+				order.setPrice(highestBid - cfgService.getBuyOrderDelta());
+				order.setTarget(price);
 				order.setAmount(cfgService.getNonAutoUpdateBuyOrderAmount());
 				order.setHighestGmob(gmob);
 				order.setAutoUpdate(false);

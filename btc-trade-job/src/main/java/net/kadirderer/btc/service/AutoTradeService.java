@@ -82,9 +82,7 @@ public abstract class AutoTradeService {
 					Calendar.getInstance().getTimeInMillis() - lastNonAutoUpdateCheckTime >= cfgService.getNonAutoUpdateOrderCheckInterval() * 1000) {
 				queryOrder(pendingOrder.getUsername(), pendingOrder.getReturnId(), true);
 				
-				if (pendingOrder.isAutoTrade()) {
-					OrderEvoluateHandler.evoluate(this, pendingOrder.getId(), cfgService);
-				}
+				OrderEvoluateHandler.evoluate(this, pendingOrder.getId(), cfgService);
 			}
 			else if (!pendingOrder.isAutoUpdate() && !pendingOrder.isAutoTrade() && 
 					Calendar.getInstance().getTimeInMillis() - lastAutoTradeCheckTime >= 60000) {
