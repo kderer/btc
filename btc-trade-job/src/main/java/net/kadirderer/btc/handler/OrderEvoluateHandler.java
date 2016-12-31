@@ -128,7 +128,7 @@ public class OrderEvoluateHandler implements Runnable {
 			List<Statistics> statisticsList = autoTradeService.findLastStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
 			PriceAnalyzer pa = new PriceAnalyzer(statisticsList, 33);
 			
-			if (highestBid <= uo.getTarget() && pa.isPriceIncreasing()) {
+			if (highestBid + (lowestAsk - highestBid) / 2.0 <= uo.getTarget() && pa.isPriceIncreasing()) {
 				return true;
 			}
 			
