@@ -40,7 +40,9 @@ public class ConfigurationService {
 	private static final String BID_CHECKER_BUY_ORDER_CHECK_LAST_STATISTICS_COUNT = "bid_checker_buy_order_check_last_statistics_count";
 	private static final String NON_AUTO_UPDATE_ORDER_CHECK_INTERVAL = "non_auto_update_order_check_interval";
 	private static final String BID_CHECKER_BUY_ORDER_LOGARITHM_CONSTANT = "bid_checker_buy_order_logarithm_constant";
-	private static final String BID_CHECKER_BUY_ORDER_DIFF_DIVIDER = "bid_checker_buy_order_diff_divider";	
+	private static final String BID_CHECKER_BUY_ORDER_DIFF_DIVIDER = "bid_checker_buy_order_diff_divider";
+	private static final String BID_CHECKER_ADD_BUFFER_TO_BUY_ORDER = "bid_checker_add_buffer_to_buy_order";
+	private static final String USE_PRICE_ANALYZER_FOR_SELL_ORDER = "use_price_analyzer_for_sell_order";	
 
 	@Autowired
 	private Configuration configuration;
@@ -195,5 +197,13 @@ public class ConfigurationService {
 
 	public double getBidCheckerBuyOrderDiffDivider() {
 		return configuration.getDouble(BID_CHECKER_BUY_ORDER_DIFF_DIVIDER);
+	}
+	
+	public boolean isBidCheckerAddBufferToBuyOrder() {
+		return configuration.getBoolean(BID_CHECKER_ADD_BUFFER_TO_BUY_ORDER);
+	}
+	
+	public boolean isUsePriceAnalyzerForSellOrder() {
+		return configuration.getBoolean(USE_PRICE_ANALYZER_FOR_SELL_ORDER);
 	}
 }

@@ -104,6 +104,7 @@ public class OrderEvoluateHandler implements Runnable {
 					
 					if (pa.isPriceIncreasing()) {
 						autoTradeService.cancelOrder(uo.getUsername(), uo.getReturnId());
+						uo.setStatus(OrderStatus.CANCELLED.getCode());
 					}
 				}
 				
@@ -136,16 +137,27 @@ public class OrderEvoluateHandler implements Runnable {
 	
 	private boolean isThisTheTime(UserOrder uo, double gmob, double gmoa,
 			double highestBid, double lowestAsk, double dailyHigh) {		
-		if (uo.getOrderType() == OrderType.BUY.getCode()) {
-			List<Statistics> statisticsList = autoTradeService.findLastStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
-			PriceAnalyzer pa = new PriceAnalyzer(statisticsList, 33);
-			
+		
+		List<Statistics> statisticsList = autoTradeService.findLastStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
+		PriceAnalyzer pa = new PriceAnalyzer(statisticsList, 33);
+		
+		if (uo.getOrderType() == OrderType.BUY.getCode()) {			
 			if (highestBid + (lowestAsk - highestBid) / 2.0 <= uo.getTarget() && pa.isPriceIncreasing()) {
 				return true;
 			}
 			
 			return false;
 		}
+		
+		if (cfgService.isUsePriceAnalyzerForSellOrder()) {
+			if (uo.getOrderType() == OrderType.SELL.getCode()) {
+				if (pa.getLastGmob() < pa.getPreviosGmob() && highestBid + (lowestAsk - highestBid) / 2.0 >= uo.getBasePrice()) {
+					return true;
+				}
+				
+				return false;
+			}
+		}		
 		
 		String[] lastGmobArray = StringUtil.generateArrayFromDeliminatedString('|', uo.getLastGmobArray());
 		if (lastGmobArray == null) {

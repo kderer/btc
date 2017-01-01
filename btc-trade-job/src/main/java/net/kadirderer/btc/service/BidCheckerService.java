@@ -73,16 +73,20 @@ public class BidCheckerService {
 				return;
 			}
 			
-			double diff = pa.getLastGmob() - pa.getPreviosGmob();		
-			double log = Math.log(cfgService.getBidCheckerBuyOrderLogarithmConstant() * diff);			
+			double price = pa.getPreviosGmob();
 			
-			if (log < 1 ) {
-				log = 1; 
+			if (cfgService.isBidCheckerAddBufferToBuyOrder()) {			
+				double diff = pa.getLastGmob() - pa.getPreviosGmob();		
+				double log = Math.log(cfgService.getBidCheckerBuyOrderLogarithmConstant() * diff);			
+				
+				if (log < 1 ) {
+					log = 1; 
+				}
+				
+				diff = (highestBid - dailLow) / cfgService.getBidCheckerBuyOrderDiffDivider();
+				diff = (highestBid - dailLow) / (diff * log);			
+				price = pa.getPreviosGmob() - diff;
 			}
-			
-			diff = (highestBid - dailLow) / cfgService.getBidCheckerBuyOrderDiffDivider();
-			diff = (highestBid - dailLow) / (diff * log);			
-			double price = pa.getPreviosGmob() - diff;
 			
 			Double pendingAmount = userOrderDao.queryTotalPendingAutoUpdateOrderAmount(username, 9);
 			
