@@ -63,7 +63,11 @@ public class OrderEvoluateHandler implements Runnable {
 					((uo.isAutoTrade() && uo.isAutoUpdate() && uo.getOrderType() == OrderType.SELL.getCode()) ||
 							(uo.isAutoTrade() && uo.getOrderType() == OrderType.BUY.getCode()))) {				
 				double priceHighestBidDiff = uo.getPrice() - highestBid;
-				double lastBidPriceCheckDelta = cfgService.getLastBidPriceCheckDelta();				
+				double lastBidPriceCheckDelta = cfgService.getLastBidPriceCheckDelta();
+				
+				if (uo.getOrderType() == OrderType.BUY.getCode()) {
+					priceHighestBidDiff = highestBid - uo.getPrice();
+				}
 				
 				double dailyHigh = autoTradeService.get24HoursHigh();
 				
@@ -79,7 +83,7 @@ public class OrderEvoluateHandler implements Runnable {
 					}					
 					
 					result = autoTradeService.updateOrder(uo, amount, price);
-				}
+				}				
 				else if (lastBidPriceCheckDelta >= priceHighestBidDiff) {
 					double price = uo.getPrice();
 					double amount = uo.getAmount();
@@ -93,6 +97,14 @@ public class OrderEvoluateHandler implements Runnable {
 					}
 					 
 					result = autoTradeService.updateOrder(uo, amount, price);
+				}
+				else if (uo.getOrderType() == OrderType.BUY.getCode() && isTimeOut(uo)) {
+					List<Statistics> latestStatistics = autoTradeService.findLastStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
+					PriceAnalyzer pa = new PriceAnalyzer(latestStatistics, 33);
+					
+					if (pa.isPriceIncreasing()) {
+						autoTradeService.cancelOrder(uo.getUsername(), uo.getReturnId());
+					}
 				}
 				
 				int checkLastGmobCount = cfgService.getCheckLastGmobCountBuyOrder();
@@ -132,14 +144,7 @@ public class OrderEvoluateHandler implements Runnable {
 				return true;
 			}
 			
-			if (pa.isPriceIncreasing() && isTimeOut(uo)) {
-				try {
-					autoTradeService.cancelOrder(uo.getUsername(), uo.getReturnId());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				return false;
-			}
+			return false;
 		}
 		
 		String[] lastGmobArray = StringUtil.generateArrayFromDeliminatedString('|', uo.getLastGmobArray());
