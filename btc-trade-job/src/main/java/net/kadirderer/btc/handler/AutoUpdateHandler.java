@@ -6,7 +6,6 @@ import net.kadirderer.btc.db.model.UserOrder;
 import net.kadirderer.btc.service.AutoTradeService;
 import net.kadirderer.btc.util.configuration.ConfigurationService;
 import net.kadirderer.btc.util.enumaration.OrderStatus;
-import net.kadirderer.btc.util.enumaration.OrderType;
 
 public class AutoUpdateHandler implements Runnable {
 	
@@ -40,26 +39,28 @@ public class AutoUpdateHandler implements Runnable {
 			
 			autoTradeService.saveUserOrder(uo);		
 			
-			long interval = cfgService.getAutoUpdateCheckInterval() * 1000;
+			long interval = cfgService.getAutoUpdateCheckInterval() * 1000;			
 			
-			while ((uo.getStatus() == OrderStatus.PENDING.getCode() ||  uo.getStatus() == OrderStatus.CANCELLED.getCode()) &&
+			while ((uo.getStatus() == OrderStatus.PENDING.getCode() || uo.getStatus() == OrderStatus.UPDATING.getCode()) &&
 					cfgService.isAutoTradeEnabled()) {
 				
 				try {
-					if (uo.getStatus() == OrderStatus.CANCELLED.getCode()) {
-						int waitForSecond = cfgService.getWaitTimeAfterCancelBuyOrder();
-						
-						if (uo.getOrderType() == OrderType.SELL.getCode()) {
-							waitForSecond = cfgService.getWaitTimeAfterCancelSellOrder();
-						}
-						
-						Thread.sleep(2 * waitForSecond * 1000);
-						
+					int retryCount = 0;
+					while (uo.getStatus() == OrderStatus.UPDATING.getCode()) {				
+						Thread.sleep(interval);				
 						uo = autoTradeService.findUserOrderById(userOrderId);
 						
-						if (uo.getStatus() != OrderStatus.PENDING.getCode()) {
+						if (uo.getStatus() == OrderStatus.PENDING.getCode()) {
+							retryCount = 0;
+						}
+						
+						if (retryCount == 5) {
+							uo.setStatus(OrderStatus.CANCELLED.getCode());
+							autoTradeService.saveUserOrder(uo);
 							return;
 						}
+						
+						retryCount += 1;
 					}
 					
 					if (Calendar.getInstance().getTimeInMillis() - uo.getCreateDate().getTime() >= interval && 
