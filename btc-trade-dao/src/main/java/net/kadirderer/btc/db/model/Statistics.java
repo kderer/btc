@@ -35,6 +35,9 @@ public class Statistics {
 	@Column(name = "DAILY_HIGH")
 	private Double dailyHigh;
 	
+	@Column(name = "DAILY_LOW")
+	private Double dailyLow;
+	
 	@Column(name = "CREATETIME")
 	private Date createTime;
 	
@@ -99,6 +102,14 @@ public class Statistics {
 	public void setDailyHigh(Double dailyHigh) {
 		this.dailyHigh = dailyHigh;
 	}
+	
+	public Double getDailyLow() {
+		return dailyLow;
+	}
+
+	public void setDailyLow(Double dailyLow) {
+		this.dailyLow = dailyLow;
+	}
 
 	public String getFormattedTime() {
 		if (formattedTime == null) {
@@ -106,5 +117,5 @@ public class Statistics {
 		}
 		
 		return formattedTime;
-	}
+	}	
 }

@@ -47,22 +47,11 @@ public class BidCheckerService {
 		TickerResult tickerResult = tickerService.getTicker(9);
 		
 		double[] maxAndGeometricMeanArray = result.getMaxAndGeometricMean();
-		double lowestAsk = maxAndGeometricMeanArray[0];
 		double gmoa = maxAndGeometricMeanArray[1];
 		double highestBid = maxAndGeometricMeanArray[2];
-		double gmob = maxAndGeometricMeanArray[3];
+		double gmob = maxAndGeometricMeanArray[3];		
 		
-		double dailyHigh = tickerResult.get24HoursHigh();
-		double dailLow = tickerResult.get24HoursLow();
-				
-		Statistics statistics = new Statistics();
-		statistics.setGmoa(gmoa);
-		statistics.setGmob(gmob);
-		statistics.setHighestBid(highestBid);
-		statistics.setLowestAsk(lowestAsk);
-		statistics.setDailyHigh(dailyHigh);
-		
-		statisticsDao.save(statistics);
+		double dailyLow = tickerResult.get24HoursLow();
 		
 		if (Calendar.getInstance().getTimeInMillis() - lastRunTime >= cfgService.getBidCheckerBuyOrderCheckInterval() * 1000) {
 			
@@ -88,8 +77,8 @@ public class BidCheckerService {
 						log = 1; 
 					}
 					
-					diff = (highestBid - dailLow) / cfgService.getBidCheckerBuyOrderDiffDivider();
-					diff = (highestBid - dailLow) / (diff * log);			
+					diff = (highestBid - dailyLow) / cfgService.getBidCheckerBuyOrderDiffDivider();
+					diff = (highestBid - dailyLow) / (diff * log);			
 					price = pa.getPreviosGmob() - diff;
 				}				
 				
@@ -121,8 +110,8 @@ public class BidCheckerService {
 					log = 1; 
 				}
 				
-				diff = (highestBid - dailLow) / cfgService.getBidCheckerBuyOrderDiffDivider();
-				diff = (highestBid - dailLow) / (diff * log);			
+				diff = (highestBid - dailyLow) / cfgService.getBidCheckerBuyOrderDiffDivider();
+				diff = (highestBid - dailyLow) / (diff * log);			
 				price = pa.getPreviosGmob() - diff;				
 				
 				UserOrder order = new UserOrder();

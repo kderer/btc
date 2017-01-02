@@ -41,7 +41,8 @@
 					gmoaData = {},
 					highestBidData = {},
 					gmobData = {},
-					dailyHighData = {};
+					dailyHighData = {},
+					dailyLowData = {};
 				
 				lowestAskData.name = 'Lowest Ask';
 				gmoaData.name = 'GMOA';
@@ -50,11 +51,14 @@
 				gmobData.name = 'GMOB';
 				dailyHighData.name = 'Daily High';
 				dailyHighData.visible = false;
+				dailyLowData.name = 'Daily Low';
+				dailyLowData.visible = false;
 				lowestAskData.data = [];
 				gmoaData.data = [];
 				highestBidData.data = [];
 				gmobData.data = [];
 				dailyHighData.data = [];
+				dailyLowData.data = [];
 				createTimes = [];
 	
 				for (var index in data) {
@@ -63,6 +67,7 @@
 					highestBidData.data.push(data[index].highestBid);
 					gmobData.data.push(data[index].gmob);
 					dailyHighData.data.push(data[index].dailyHigh);
+					dailyLowData.data.push(data[index].dailyLow);
 					createTimes.push(data[index].formattedTime);
 				}
 				
@@ -70,7 +75,8 @@
 				statisticSeries.push(gmoaData);
 				statisticSeries.push(highestBidData);
 				statisticSeries.push(gmobData);
-				statisticSeries.push(dailyHighData);			
+				statisticSeries.push(dailyHighData);
+				statisticSeries.push(dailyLowData);
 	
 				$('#statisticsChartContainer').highcharts({
 					title : {
