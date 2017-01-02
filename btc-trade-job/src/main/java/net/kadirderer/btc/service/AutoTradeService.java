@@ -46,7 +46,7 @@ public abstract class AutoTradeService {
 	
 	public abstract QueryOrderResult queryOrder(String username, String orderId, boolean updateDbStatus) throws Exception;
 	
-	public abstract CancelOrderResult cancelOrder(String username, String orderId) throws Exception;
+	public abstract CancelOrderResult cancelOrder(String username, String orderId, boolean forUpdate) throws Exception;
 	
 	public abstract SellOrderResult sellOrder(UserOrder order) throws Exception;
 	

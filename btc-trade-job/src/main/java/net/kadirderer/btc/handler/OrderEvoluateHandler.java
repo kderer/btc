@@ -103,7 +103,7 @@ public class OrderEvoluateHandler implements Runnable {
 					PriceAnalyzer pa = new PriceAnalyzer(latestStatistics, cfgService.getOrderEvoluaterPriceAnalyzerPercentage());
 					
 					if (pa.isPriceIncreasing()) {
-						autoTradeService.cancelOrder(uo.getUsername(), uo.getReturnId());
+						autoTradeService.cancelOrder(uo.getUsername(), uo.getReturnId(), false);
 						uo.setStatus(OrderStatus.CANCELLED.getCode());
 					}
 				}
@@ -326,7 +326,8 @@ public class OrderEvoluateHandler implements Runnable {
 				}
 			}
 			
-			BtcChinaCancelOrderResult cancelResult = (BtcChinaCancelOrderResult)autoTradeService.cancelOrder(order.getUsername(), order.getReturnId());
+			BtcChinaCancelOrderResult cancelResult = (BtcChinaCancelOrderResult)autoTradeService.cancelOrder(
+					order.getUsername(), order.getReturnId(), false);
 			
 			if (cancelResult.getError() != null) {
 				return false;
@@ -346,7 +347,7 @@ public class OrderEvoluateHandler implements Runnable {
 		
 		if (userOrder.getOrderType() == OrderType.BUY.getCode()) {
 			try {
-				autoTradeService.cancelOrder(userOrder.getUsername(), userOrder.getReturnId());
+				autoTradeService.cancelOrder(userOrder.getUsername(), userOrder.getReturnId(), false);
 				
 				double oldCost = userOrder.getPrice() * userOrder.getAmount();
 				double price = lowestAsk - cfgService.getNonAutoUpdateOrderDelta();
@@ -371,7 +372,7 @@ public class OrderEvoluateHandler implements Runnable {
 			}			
 		} else {
 			try {
-				autoTradeService.cancelOrder(userOrder.getUsername(), userOrder.getReturnId());
+				autoTradeService.cancelOrder(userOrder.getUsername(), userOrder.getReturnId(), false);
 				double price = highestBid + cfgService.getNonAutoUpdateOrderDelta();
 				
 				Thread.sleep(cfgService.getWaitTimeAfterCancelSellOrder() * 1000);

@@ -99,7 +99,7 @@ public class UserOrderController {
 			@RequestParam(value = "returnId") @NotNull String returnId, RedirectAttributes redirectAttributes) {
 		
 		try {
-			userOrderService.cancelOrder(getLoggedInUsername(), returnId);			
+			userOrderService.cancelOrder(getLoggedInUsername(), returnId, false);			
 			WebUtil.addMessage(model, "message.listorder.cancelorder.successfull", true);			
 		} catch(Exception e) {
 			WebUtil.addMessage(model, "message.listorder.cancelorder.error", false);

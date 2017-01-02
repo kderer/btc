@@ -6,6 +6,7 @@ public enum OrderStatus {
 	PENDING("label.orderstatus.pending", 'P'),
 	DONE("label.orderstatus.done", 'D'),
 	CANCELLED("label.orderstatus.cancelled", 'C'),
+	UPDATING("label.order.status.updating", 'U'),
 	NEW("label.orderstatus.new", 'N'),
 	FAILED("label.orderstatus.failed", 'F'),
 	CANCEL_FAILED("label.orderstatus.cancel.failed", 'R');

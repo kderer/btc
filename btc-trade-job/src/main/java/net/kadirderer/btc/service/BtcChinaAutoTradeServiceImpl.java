@@ -111,9 +111,9 @@ public class BtcChinaAutoTradeServiceImpl extends AutoTradeService {
 	}
 
 	@Override
-	public CancelOrderResult cancelOrder(String username, String orderId)
+	public CancelOrderResult cancelOrder(String username, String orderId, boolean forUpdate)
 			throws Exception {
-		return coService.cancelOrder(username, orderId);
+		return coService.cancelOrder(username, orderId, forUpdate);
 	}
 
 	@Override

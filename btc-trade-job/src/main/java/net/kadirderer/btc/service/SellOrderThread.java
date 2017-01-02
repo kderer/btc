@@ -77,7 +77,7 @@ public class SellOrderThread implements Runnable {
 				buyOrderService.buyOrder(order);
 			}
 			
-			cancelOrderService.cancelOrder(username, orderId);
+			cancelOrderService.cancelOrder(username, orderId, false);
 			
 			if (qor.getAmount() > 0) {
 				UserOrder order = new UserOrder();
@@ -135,7 +135,7 @@ public class SellOrderThread implements Runnable {
 		}
 		
 		try {
-			cancelOrderService.cancelOrder(username, orderId);
+			cancelOrderService.cancelOrder(username, orderId, false);
 			
 			if (qor.getAmount() <= 0) {
 				return;

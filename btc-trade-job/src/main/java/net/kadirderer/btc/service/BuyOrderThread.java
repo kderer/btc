@@ -74,7 +74,7 @@ public class BuyOrderThread implements Runnable {
 				sellOrderService.sellOrder(order);
 			}
 			
-			cancelOrderService.cancelOrder(username, orderId);
+			cancelOrderService.cancelOrder(username, orderId, false);
 			
 			if (qor.getAmount() > 0) {
 				double balance = qor.getAmount() * qor.getPrice();
@@ -148,7 +148,7 @@ public class BuyOrderThread implements Runnable {
 		}
 		
 		try {
-			cancelOrderService.cancelOrder(username, orderId);
+			cancelOrderService.cancelOrder(username, orderId, false);
 			
 			if (qor.getAmount() > 0) {
 				double balance = qor.getAmount() * qor.getPrice();

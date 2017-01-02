@@ -61,8 +61,8 @@ public class UserOrderServiceImpl implements UserOrderService {
 	}
 
 	@Override
-	public void cancelOrder(String username, String orderId) throws Exception {
-		cancelOrderService.cancelOrder(username, orderId);
+	public void cancelOrder(String username, String orderId, boolean forUpdate) throws Exception {
+		cancelOrderService.cancelOrder(username, orderId, forUpdate);
 	}
 
 	@Override

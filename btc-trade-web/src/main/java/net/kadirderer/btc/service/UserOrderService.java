@@ -23,5 +23,5 @@ public interface UserOrderService {
 	
 	public UserOrder findUserOrder(int userOrderId);
 	
-	public void cancelOrder(String username, String orderId) throws Exception;
+	public void cancelOrder(String username, String orderId, boolean forUpdate) throws Exception;
 }

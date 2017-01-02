@@ -47,7 +47,7 @@ public class BtcChinaUpdateOrderService implements UpdateOrderService {
 			throws Exception {
 		
 		BtcChinaCancelOrderResult cancelOrderResult = (BtcChinaCancelOrderResult) cancelOrderService.cancelOrder(
-				order.getUsername(), order.getReturnId());
+				order.getUsername(), order.getReturnId(), true);
 		
 		BtcChinaUpdateOrderResult result = new BtcChinaUpdateOrderResult();
 		

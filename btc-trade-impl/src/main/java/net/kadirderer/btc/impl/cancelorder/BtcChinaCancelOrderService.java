@@ -33,20 +33,20 @@ public class BtcChinaCancelOrderService implements CancelOrderService, BtcChinaA
 	
 	@Override
 	@Transactional
-	public CancelOrderResult cancelOrder(String username, String orderId)
+	public CancelOrderResult cancelOrder(String username, String orderId, boolean forUpdate)
 			throws Exception {		
 		String jsonResult = btccClient.callApi(this, username, orderId);
 
 		ObjectMapper om = new ObjectMapper();
 		BtcChinaCancelOrderResult result = om.readValue(jsonResult, BtcChinaCancelOrderResult.class);
 		
-		updateOrder(username, orderId, result);	
+		updateOrder(username, orderId, result, forUpdate);	
 		
 		return result;
 	}
 	
 	
-	private void updateOrder(String username, String orderId, BtcChinaCancelOrderResult result) {		
+	private void updateOrder(String username, String orderId, BtcChinaCancelOrderResult result, boolean forUpdate) {		
 		BtcPlatform btcChina = btcPlatformDao.queryByCode("BTCCHINA");		
 		UserOrder uo = uoDao.findByOrderId(username, btcChina.getId(), orderId);
 		
@@ -63,6 +63,10 @@ public class BtcChinaCancelOrderService implements CancelOrderService, BtcChinaA
 		}
 		else {
 			uo.setStatus(OrderStatus.CANCEL_FAILED.getCode());
+		}
+		
+		if (forUpdate) {
+			uo.setStatus(OrderStatus.UPDATING.getCode());
 		}
 		
 		uo.setUpdateDate(Calendar.getInstance().getTime());
