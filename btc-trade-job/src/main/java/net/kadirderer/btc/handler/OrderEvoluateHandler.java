@@ -99,8 +99,8 @@ public class OrderEvoluateHandler implements Runnable {
 					result = autoTradeService.updateOrder(uo, amount, price);
 				}
 				else if (uo.getOrderType() == OrderType.BUY.getCode() && isTimeOut(uo)) {
-					List<Statistics> latestStatistics = autoTradeService.findLastStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
-					PriceAnalyzer pa = new PriceAnalyzer(latestStatistics, 33);
+					List<Statistics> latestStatistics = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterCheckLastGmob());
+					PriceAnalyzer pa = new PriceAnalyzer(latestStatistics, cfgService.getOrderEvoluaterPriceAnalyzerPercentage());
 					
 					if (pa.isPriceIncreasing()) {
 						autoTradeService.cancelOrder(uo.getUsername(), uo.getReturnId());
@@ -138,8 +138,8 @@ public class OrderEvoluateHandler implements Runnable {
 	private boolean isThisTheTime(UserOrder uo, double gmob, double gmoa,
 			double highestBid, double lowestAsk, double dailyHigh) {		
 		
-		List<Statistics> statisticsList = autoTradeService.findLastStatistics(cfgService.getBidCheckerBuyOrderCheckLastStatisticsCount());
-		PriceAnalyzer pa = new PriceAnalyzer(statisticsList, 33);
+		List<Statistics> statisticsList = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterCheckLastGmob());
+		PriceAnalyzer pa = new PriceAnalyzer(statisticsList, cfgService.getOrderEvoluaterPriceAnalyzerPercentage());
 		
 		if (uo.getOrderType() == OrderType.BUY.getCode()) {			
 			if (highestBid + (lowestAsk - highestBid) / 2.0 <= uo.getTarget() && pa.isPriceIncreasing()) {

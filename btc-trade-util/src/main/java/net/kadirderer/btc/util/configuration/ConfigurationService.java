@@ -42,7 +42,9 @@ public class ConfigurationService {
 	private static final String BID_CHECKER_BUY_ORDER_LOGARITHM_CONSTANT = "bid_checker_buy_order_logarithm_constant";
 	private static final String BID_CHECKER_BUY_ORDER_DIFF_DIVIDER = "bid_checker_buy_order_diff_divider";
 	private static final String BID_CHECKER_ADD_BUFFER_TO_BUY_ORDER = "bid_checker_add_buffer_to_buy_order";
-	private static final String USE_PRICE_ANALYZER_FOR_SELL_ORDER = "use_price_analyzer_for_sell_order";	
+	private static final String USE_PRICE_ANALYZER_FOR_SELL_ORDER = "use_price_analyzer_for_sell_order";
+	private static final String ORDER_EVOLUATER_CHECK_LAST_GMOB_COUNT = "order_evoluater_check_last_gmob_count";
+	private static final String ORDER_EVOLUATER_PRICE_ANALYZER_PERCENTAGE = "order_evoluater_price_analyzer_percentage";
 
 	@Autowired
 	private Configuration configuration;
@@ -205,5 +207,13 @@ public class ConfigurationService {
 	
 	public boolean isUsePriceAnalyzerForSellOrder() {
 		return configuration.getBoolean(USE_PRICE_ANALYZER_FOR_SELL_ORDER);
+	}
+	
+	public int getOrderEvoluaterCheckLastGmob() {
+		return configuration.getInt(ORDER_EVOLUATER_CHECK_LAST_GMOB_COUNT);
+	}
+	
+	public int getOrderEvoluaterPriceAnalyzerPercentage() {
+		return configuration.getInt(ORDER_EVOLUATER_PRICE_ANALYZER_PERCENTAGE);
 	}
 }
