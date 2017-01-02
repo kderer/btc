@@ -73,25 +73,25 @@ public class BidCheckerService {
 				return;
 			}
 			
-			double price = pa.getPreviosGmob();
-			
-			if (cfgService.isBidCheckerAddBufferToBuyOrder()) {			
-				double diff = pa.getLastGmob() - pa.getPreviosGmob();		
-				double log = Math.log(cfgService.getBidCheckerBuyOrderLogarithmConstant() * diff);			
-				
-				if (log < 1 ) {
-					log = 1; 
-				}
-				
-				diff = (highestBid - dailLow) / cfgService.getBidCheckerBuyOrderDiffDivider();
-				diff = (highestBid - dailLow) / (diff * log);			
-				price = pa.getPreviosGmob() - diff;
-			}
+			double price = pa.getPreviosGmob();			
 			
 			Double pendingAmount = userOrderDao.queryTotalPendingAutoUpdateOrderAmount(username, 9);
 			
 			if (pendingAmount == null ||
 					cfgService.getAutoTradeTotalAmount() - pendingAmount >= cfgService.getAutoTradeBuyOrderAmount()) {				
+				
+				if (cfgService.isBidCheckerAddBufferToBuyOrder()) {			
+					double diff = pa.getLastGmob() - pa.getPreviosGmob();		
+					double log = Math.log(cfgService.getBidCheckerBuyOrderLogarithmConstant() * diff);			
+					
+					if (log < 1 ) {
+						log = 1; 
+					}
+					
+					diff = (highestBid - dailLow) / cfgService.getBidCheckerBuyOrderDiffDivider();
+					diff = (highestBid - dailLow) / (diff * log);			
+					price = pa.getPreviosGmob() - diff;
+				}				
 				
 				UserOrder order = new UserOrder();
 				order.setUsername(username);
@@ -114,6 +114,17 @@ public class BidCheckerService {
 			if (pendingAmount == null ||
 					cfgService.getNonAutoUpdateTotalAmount() - pendingAmount >= cfgService.getNonAutoUpdateBuyOrderAmount()) {
 							
+				double diff = pa.getLastGmob() - pa.getPreviosGmob();		
+				double log = Math.log(cfgService.getBidCheckerBuyOrderLogarithmConstant() * diff);			
+				
+				if (log < 1 ) {
+					log = 1; 
+				}
+				
+				diff = (highestBid - dailLow) / cfgService.getBidCheckerBuyOrderDiffDivider();
+				diff = (highestBid - dailLow) / (diff * log);			
+				price = pa.getPreviosGmob() - diff;				
+				
 				UserOrder order = new UserOrder();
 				order.setUsername(username);
 				order.setBasePrice(highestBid);
