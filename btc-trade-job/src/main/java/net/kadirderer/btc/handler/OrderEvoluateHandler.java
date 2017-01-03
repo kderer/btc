@@ -99,8 +99,8 @@ public class OrderEvoluateHandler implements Runnable {
 					result = autoTradeService.updateOrder(uo, amount, price);
 				}
 				else if (uo.getOrderType() == OrderType.BUY.getCode() && isTimeOut(uo)) {
-					List<Statistics> latestStatistics = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterCheckLastGmob());
-					PriceAnalyzer pa = new PriceAnalyzer(latestStatistics, cfgService.getOrderEvoluaterPriceAnalyzerPercentage());
+					List<Statistics> latestStatistics = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterBoCheckLastGmob());
+					PriceAnalyzer pa = new PriceAnalyzer(latestStatistics, cfgService.getOrderEvoluaterBoPriceAnalyzerPercentage());
 					
 					if (pa.isPriceIncreasing()) {
 						autoTradeService.cancelOrder(uo.getUsername(), uo.getReturnId(), false);
@@ -138,8 +138,8 @@ public class OrderEvoluateHandler implements Runnable {
 	private boolean isThisTheTime(UserOrder uo, double gmob, double gmoa,
 			double highestBid, double lowestAsk, double dailyHigh) {		
 		
-		List<Statistics> statisticsList = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterCheckLastGmob());
-		PriceAnalyzer pa = new PriceAnalyzer(statisticsList, cfgService.getOrderEvoluaterPriceAnalyzerPercentage());
+		List<Statistics> statisticsList = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterBoCheckLastGmob());
+		PriceAnalyzer pa = new PriceAnalyzer(statisticsList, cfgService.getOrderEvoluaterBoPriceAnalyzerPercentage());
 		
 		if (uo.getOrderType() == OrderType.BUY.getCode()) {			
 			if (highestBid + (lowestAsk - highestBid) / 2.0 <= uo.getTarget() && pa.isPriceIncreasing()) {
@@ -149,14 +149,15 @@ public class OrderEvoluateHandler implements Runnable {
 			return false;
 		}
 		
-		if (cfgService.isUsePriceAnalyzerForSellOrder()) {
-			if (uo.getOrderType() == OrderType.SELL.getCode()) {
-				if (pa.getLastGmob() < pa.getPreviosGmob() && highestBid + (lowestAsk - highestBid) / 2.0 >= uo.getBasePrice()) {
-					return true;
-				}
-				
-				return false;
+		if (uo.getOrderType() == OrderType.SELL.getCode() && cfgService.isUsePriceAnalyzerForSellOrder()) {			
+			statisticsList = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterSoCheckLastGmob());
+			pa = new PriceAnalyzer(statisticsList, cfgService.getOrderEvoluaterSoPriceAnalyzerPercentage());
+			
+			if (pa.getLastGmob() < pa.getPreviosGmob() && highestBid + (lowestAsk - highestBid) / 2.0 >= uo.getBasePrice()) {
+				return true;
 			}
+			
+			return false;
 		}		
 		
 		String[] lastGmobArray = StringUtil.generateArrayFromDeliminatedString('|', uo.getLastGmobArray());
