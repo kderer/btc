@@ -98,7 +98,7 @@ public class OrderEvoluateHandler implements Runnable {
 					 
 					result = autoTradeService.updateOrder(uo, amount, price);
 				}
-				else if (uo.getOrderType() == OrderType.BUY.getCode() && isTimeOut(uo)) {
+				else if (uo.getOrderType() == OrderType.BUY.getCode() && isTimeOut(uo) && gmob > uo.getTarget()) {
 					List<Statistics> latestStatistics = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterBoCheckLastGmob());
 					PriceAnalyzer pa = new PriceAnalyzer(latestStatistics, cfgService.getOrderEvoluaterBoPriceAnalyzerPercentage());
 					
