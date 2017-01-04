@@ -125,6 +125,18 @@ public class OrderEvoluateHandler implements Runnable {
 					evoluateUpdateOrderResult((BtcChinaUpdateOrderResult)result, uo);
 				}
 			}
+			else if (uo.getStatus() == OrderStatus.PENDING.getCode() &&
+					(uo.isAutoTrade() && uo.getOrderType() == OrderType.SELL.getCode())) {
+				int checkLastGmobCount = cfgService.getCheckLastGmobCountSellOrder();
+				uo.addGmob(gmob, checkLastGmobCount);
+				uo.addGmoa(gmoa, checkLastGmobCount);
+				
+				if (uo.getHighestGmob() == null || gmob > uo.getHighestGmob()) {
+					uo.setHighestGmob(gmob);
+				}
+				
+				autoTradeService.saveUserOrder(uo);
+			}
 			else if (uo.isAutoTrade() && uo.getStatus() == OrderStatus.DONE.getCode()) {
 				createOrderForDoneOrder(uo, highestBid);
 			}
