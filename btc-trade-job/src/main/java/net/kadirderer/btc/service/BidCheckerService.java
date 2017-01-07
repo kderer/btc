@@ -38,7 +38,7 @@ public class BidCheckerService {
 	private StatisticsDao statisticsDao;
 	
 	@Autowired
-	private TickerService tickerService;
+	private TickerService tickerService;	
 	
 	private long lastRunTime;
 		
@@ -98,34 +98,29 @@ public class BidCheckerService {
 				buyOrderService.buyOrder(order);
 			}
 			
+			/*
 			pendingAmount = userOrderDao.queryTotalPendingNonUpdateOrderAmount(username, 9);
 			
 			if (pendingAmount == null ||
 					cfgService.getNonAutoUpdateTotalAmount() - pendingAmount >= cfgService.getNonAutoUpdateBuyOrderAmount()) {
 							
-				double diff = pa.getLastGmob() - pa.getPreviosGmob();		
-				double log = Math.log(cfgService.getBidCheckerBuyOrderLogarithmConstant() * diff);			
-				
-				if (log < 1 ) {
-					log = 1; 
-				}
-				
-				diff = (highestBid - dailyLow) / cfgService.getBidCheckerBuyOrderDiffDivider();
-				diff = (highestBid - dailyLow) / (diff * log);			
-				price = pa.getPreviosGmob() - diff;				
+				double balance = queryAccountInfoService.queryAccountInfo("kadir").getCurrencyBalance();
+				double amount = cfgService.getNonAutoUpdateBuyOrderAmount() + 0.001;
+				price = balance / amount;
 				
 				UserOrder order = new UserOrder();
 				order.setUsername(username);
 				order.setBasePrice(highestBid);
 				order.setPrice(highestBid - cfgService.getBuyOrderDelta());
-				order.setTarget(price);
-				order.setAmount(cfgService.getNonAutoUpdateBuyOrderAmount());
+				order.setTarget(NumberUtil.format(price));
+				order.setAmount(amount);
 				order.setHighestGmob(gmob);
 				order.setAutoUpdate(false);
 				order.setAutoTrade(true);		
 				
 				buyOrderService.buyOrder(order);
 			}
+			*/
 		}		
 	}
 }

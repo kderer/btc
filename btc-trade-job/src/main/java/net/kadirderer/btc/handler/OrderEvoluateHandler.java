@@ -60,8 +60,8 @@ public class OrderEvoluateHandler implements Runnable {
 			double lowestAsk = maxAndGeometricMeanArray[0];
 			
 			if (uo.getStatus() == OrderStatus.PENDING.getCode() &&
-					((uo.isAutoTrade() && uo.isAutoUpdate() && uo.getOrderType() == OrderType.SELL.getCode()) ||
-							(uo.isAutoTrade() && uo.getOrderType() == OrderType.BUY.getCode()))) {				
+					(uo.getOrderType() == OrderType.SELL.getCode() ||
+							(!uo.isAutoUpdate() && uo.getOrderType() == OrderType.BUY.getCode()))) {				
 				double priceHighestBidDiff = uo.getPrice() - highestBid;
 				double lastBidPriceCheckDelta = cfgService.getLastBidPriceCheckDelta();
 				
@@ -98,7 +98,8 @@ public class OrderEvoluateHandler implements Runnable {
 					 
 					result = autoTradeService.updateOrder(uo, amount, price);
 				}
-				else if (uo.getOrderType() == OrderType.BUY.getCode() && isTimeOut(uo) && gmob > uo.getTarget()) {
+				else if (uo.getOrderType() == OrderType.BUY.getCode() && uo.isAutoUpdate() && 
+						isTimeOut(uo) && gmob > uo.getTarget()) {
 					List<Statistics> latestStatistics = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterBoCheckLastGmob());
 					PriceAnalyzer pa = new PriceAnalyzer(latestStatistics, cfgService.getOrderEvoluaterBoPriceAnalyzerPercentage());
 					
@@ -150,11 +151,25 @@ public class OrderEvoluateHandler implements Runnable {
 	private boolean isThisTheTime(UserOrder uo, double gmob, double gmoa,
 			double highestBid, double lowestAsk, double dailyHigh) {		
 		
-		List<Statistics> statisticsList = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterBoCheckLastGmob());
-		PriceAnalyzer pa = new PriceAnalyzer(statisticsList, cfgService.getOrderEvoluaterBoPriceAnalyzerPercentage());
+		List<Statistics> statisticsList = null;
+		PriceAnalyzer pa = null;
 		
 		if (uo.getOrderType() == OrderType.BUY.getCode()) {			
+			statisticsList = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterBoCheckLastGmob());
+			pa = new PriceAnalyzer(statisticsList, cfgService.getOrderEvoluaterBoPriceAnalyzerPercentage());
+			
 			if (highestBid + (lowestAsk - highestBid) / 2.0 <= uo.getTarget() && pa.isPriceIncreasing()) {
+				return true;
+			}
+			
+			return false;
+		}
+		
+		if (uo.getOrderType() == OrderType.SELL.getCode() && uo.isAutoTrade() && !uo.isAutoUpdate()) {
+			statisticsList = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterSoCheckLastGmob());
+			pa = new PriceAnalyzer(statisticsList, cfgService.getOrderEvoluaterSoPriceAnalyzerPercentage());
+			
+			if (highestBid + (lowestAsk - highestBid) / 2.0 >= uo.getTarget() && !pa.isPriceIncreasing()) {
 				return true;
 			}
 			
@@ -411,15 +426,7 @@ public class OrderEvoluateHandler implements Runnable {
 		double amount = userOrder.getAmount();
 		
 		if (userOrder.getOrderType() == OrderType.BUY.getCode()) {
-			double price = userOrder.getPrice() + cfgService.getSellOrderDelta();
-			
-			if (!userOrder.isAutoUpdate()) {
-				price = userOrder.getPrice() + ((userOrder.getBasePrice() - userOrder.getPrice()) / 2.0);
-					
-				if (highestBid > price) {
-					price = highestBid;
-				}
-			}
+			double price = userOrder.getPrice() + cfgService.getSellOrderDelta();			
 			
 			UserOrder order = new UserOrder();
 			try {				
@@ -433,12 +440,44 @@ public class OrderEvoluateHandler implements Runnable {
 				
 				if (userOrder.isAutoTrade() && userOrder.isAutoUpdate()) {
 					order.setStatus(OrderStatus.NEW.getCode());
+				} 
+				else if (userOrder.isAutoTrade() && !userOrder.isAutoUpdate()) {
+					double target = userOrder.getAmount() * userOrder.getPrice();
+					target = target / (userOrder.getAmount() - 0.0001);
+					
+					order.setTarget(target);
+					order.setPrice(target + cfgService.getSellOrderDelta());
 				}
 				
 				autoTradeService.sellOrder(order);				
 			} catch (Exception e) {
 				e.printStackTrace();
 				Thread.sleep(cfgService.getWaitTimeAfterCancelBuyOrder() * 1000);
+				order.setId(null);
+				autoTradeService.sellOrder(order);
+			}
+		}
+		else if (userOrder.getOrderType() == OrderType.SELL.getCode() && userOrder.isAutoTrade() &&
+				!userOrder.isAutoUpdate()) {
+			double balance = userOrder.getPrice() * userOrder.getAmount();
+			amount = userOrder.getAmount() + 0.0001;
+			double target = balance / amount;
+			
+			UserOrder order = new UserOrder();
+			try {				
+				order.setUsername(userOrder.getUsername());
+				order.setBasePrice(userOrder.getPrice());
+				order.setParentId(userOrder.getId());
+				order.setPrice(target - cfgService.getBuyOrderDelta());
+				order.setAmount(amount);
+				order.setAutoUpdate(userOrder.isAutoUpdate());
+				order.setAutoTrade(userOrder.isAutoTrade());
+				order.setTarget(target);
+				
+				autoTradeService.buyOrder(order);				
+			} catch (Exception e) {
+				e.printStackTrace();
+				Thread.sleep(cfgService.getWaitTimeAfterCancelSellOrder() * 1000);
 				order.setId(null);
 				autoTradeService.buyOrder(order);
 			}
