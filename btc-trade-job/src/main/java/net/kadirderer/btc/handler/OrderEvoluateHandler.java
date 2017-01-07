@@ -79,7 +79,12 @@ public class OrderEvoluateHandler implements Runnable {
 					double amount = uo.getAmount();
 					
 					if (uo.getOrderType() == OrderType.BUY.getCode()) {
-						amount = (uo.getBasePrice() * amount) / price;
+						if (uo.getParentId() != null) {
+							amount = (uo.getBasePrice() * amount) / price;
+						} 
+						else {
+							amount = (uo.getTarget() * amount) / price;
+						}
 					}					
 					
 					result = autoTradeService.updateOrder(uo, amount, price);
@@ -154,9 +159,17 @@ public class OrderEvoluateHandler implements Runnable {
 		List<Statistics> statisticsList = null;
 		PriceAnalyzer pa = null;
 		
-		if (uo.getOrderType() == OrderType.BUY.getCode()) {			
-			statisticsList = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterBoCheckLastGmob());
-			pa = new PriceAnalyzer(statisticsList, cfgService.getOrderEvoluaterBoPriceAnalyzerPercentage());
+		if (uo.getOrderType() == OrderType.BUY.getCode()) {
+			int statisticsCount = cfgService.getOrderEvoluaterBoCheckLastGmob();
+			int paPercentage = cfgService.getOrderEvoluaterBoPriceAnalyzerPercentage();
+			
+			if (!uo.isAutoUpdate()) {
+				statisticsCount = cfgService.getOrderEvoluaterSoCheckLastGmob();
+				paPercentage = cfgService.getOrderEvoluaterSoPriceAnalyzerPercentage();
+			}
+			
+			statisticsList = autoTradeService.findLastStatistics(statisticsCount);
+			pa = new PriceAnalyzer(statisticsList, paPercentage);
 			
 			if (highestBid + (lowestAsk - highestBid) / 2.0 <= uo.getTarget() && pa.isPriceIncreasing()) {
 				return true;
