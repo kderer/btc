@@ -47,6 +47,10 @@ public class ConfigurationService {
 	private static final String ORDER_EVOLUATER_BO_PRICE_ANALYZER_PERCENTAGE = "order_evoluater_bo_price_analyzer_percentage";
 	private static final String ORDER_EVOLUATER_SO_CHECK_LAST_GMOB_COUNT = "order_evoluater_so_check_last_gmob_count";
 	private static final String ORDER_EVOLUATER_SO_PRICE_ANALYZER_PERCENTAGE = "order_evoluater_so_price_analyzer_percentage";
+	private static final String NON_AUTO_UPDATE_BO_REORDER_DELTA = "non_auto_update_bo_reorder_delta";
+	private static final String NON_AUTO_UPDATE_SO_REORDER_DELTA = "non_auto_update_so_reorder_delta";
+	
+	
 
 	@Autowired
 	private Configuration configuration;
@@ -225,5 +229,13 @@ public class ConfigurationService {
 	
 	public int getOrderEvoluaterSoPriceAnalyzerPercentage() {
 		return configuration.getInt(ORDER_EVOLUATER_SO_PRICE_ANALYZER_PERCENTAGE);
+	}
+	
+	public double getNonAutoUpdateBoReorderDelta() {
+		return configuration.getDouble(NON_AUTO_UPDATE_BO_REORDER_DELTA);
+	}
+	
+	public double getNonAutoUpdateSoReorderDelta() {
+		return configuration.getDouble(NON_AUTO_UPDATE_SO_REORDER_DELTA);
 	}
 }

@@ -456,7 +456,7 @@ public class OrderEvoluateHandler implements Runnable {
 				} 
 				else if (userOrder.isAutoTrade() && !userOrder.isAutoUpdate()) {
 					double target = userOrder.getAmount() * userOrder.getPrice();
-					target = target / (userOrder.getAmount() - 0.0001);
+					target = target / (userOrder.getAmount() - cfgService.getNonAutoUpdateSoReorderDelta());
 					
 					order.setTarget(target);
 					order.setPrice(target + cfgService.getSellOrderDelta());
@@ -473,7 +473,7 @@ public class OrderEvoluateHandler implements Runnable {
 		else if (userOrder.getOrderType() == OrderType.SELL.getCode() && userOrder.isAutoTrade() &&
 				!userOrder.isAutoUpdate()) {
 			double balance = userOrder.getPrice() * userOrder.getAmount();
-			amount = userOrder.getAmount() + 0.0001;
+			amount = userOrder.getAmount() + cfgService.getNonAutoUpdateBoReorderDelta();
 			double target = balance / amount;
 			
 			UserOrder order = new UserOrder();
