@@ -79,12 +79,7 @@ public class OrderEvoluateHandler implements Runnable {
 					double amount = uo.getAmount();
 					
 					if (uo.getOrderType() == OrderType.BUY.getCode()) {
-						if (uo.getParentId() != null) {
-							amount = (uo.getBasePrice() * amount) / price;
-						} 
-						else {
-							amount = (uo.getTarget() * amount) / price;
-						}
+						amount = (uo.getPrice() * amount) / price;
 					}					
 					
 					result = autoTradeService.updateOrder(uo, amount, price);
