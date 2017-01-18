@@ -477,7 +477,7 @@ public class OrderEvoluateHandler implements Runnable {
 				order.setBasePrice(userOrder.getPrice());
 				order.setParentId(userOrder.getId());
 				order.setPrice(target - cfgService.getBuyOrderDelta());
-				order.setAmount(amount);
+				order.setAmount(balance / order.getPrice());
 				order.setAutoUpdate(userOrder.isAutoUpdate());
 				order.setAutoTrade(userOrder.isAutoTrade());
 				order.setTarget(target);
