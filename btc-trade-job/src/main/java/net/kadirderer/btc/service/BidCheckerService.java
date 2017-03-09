@@ -9,12 +9,14 @@ import org.springframework.stereotype.Service;
 import net.kadirderer.btc.api.buyorder.BuyOrderService;
 import net.kadirderer.btc.api.marketdepth.MarketDepthResult;
 import net.kadirderer.btc.api.marketdepth.MarketDepthService;
+import net.kadirderer.btc.api.queryaccountinfo.QueryAccountInfoService;
 import net.kadirderer.btc.api.ticker.TickerResult;
 import net.kadirderer.btc.api.ticker.TickerService;
 import net.kadirderer.btc.db.dao.StatisticsDao;
 import net.kadirderer.btc.db.dao.UserOrderDao;
 import net.kadirderer.btc.db.model.Statistics;
 import net.kadirderer.btc.db.model.UserOrder;
+import net.kadirderer.btc.impl.util.NumberUtil;
 import net.kadirderer.btc.impl.util.PriceAnalyzer;
 import net.kadirderer.btc.util.configuration.ConfigurationService;
 import net.kadirderer.btc.util.enumaration.OrderStatus;
@@ -38,7 +40,10 @@ public class BidCheckerService {
 	private StatisticsDao statisticsDao;
 	
 	@Autowired
-	private TickerService tickerService;	
+	private TickerService tickerService;
+	
+	@Autowired
+	private QueryAccountInfoService queryAccountInfoService;
 	
 	private long lastRunTime;
 		
@@ -66,7 +71,7 @@ public class BidCheckerService {
 			
 			Double pendingAmount = userOrderDao.queryTotalPendingAutoUpdateOrderAmount(username, 9);
 			
-			if (pendingAmount == null ||
+			if ((pendingAmount == null && cfgService.getAutoTradeTotalAmount() > 0.0) ||
 					cfgService.getAutoTradeTotalAmount() - pendingAmount >= cfgService.getAutoTradeBuyOrderAmount()) {				
 				
 				if (cfgService.isBidCheckerAddBufferToBuyOrder()) {			
@@ -98,10 +103,9 @@ public class BidCheckerService {
 				buyOrderService.buyOrder(order);
 			}
 			
-			/*
 			pendingAmount = userOrderDao.queryTotalPendingNonUpdateOrderAmount(username, 9);
 			
-			if (pendingAmount == null ||
+			if ((pendingAmount == null && cfgService.getNonAutoUpdateTotalAmount() > 0.0) ||
 					cfgService.getNonAutoUpdateTotalAmount() - pendingAmount >= cfgService.getNonAutoUpdateBuyOrderAmount()) {
 							
 				double balance = queryAccountInfoService.queryAccountInfo("kadir").getCurrencyBalance();
@@ -120,7 +124,6 @@ public class BidCheckerService {
 				
 				buyOrderService.buyOrder(order);
 			}
-			*/
 		}		
 	}
 }
