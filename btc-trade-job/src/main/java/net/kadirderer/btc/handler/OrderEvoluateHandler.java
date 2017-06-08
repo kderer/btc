@@ -75,15 +75,18 @@ public class OrderEvoluateHandler implements Runnable {
 				boolean isThisTheTime = isThisTheTime(uo, gmob, gmoa, highestBid, lowestAsk, dailyHigh);
 				
 				if (isThisTheTime) {
-					double price = highestBid + (lowestAsk - highestBid) / 2.0;
+					double price = lowestAsk - ((lowestAsk - uo.getTarget()) * 0.5D);					
 					double amount = uo.getAmount();
 					
 					if (uo.getOrderType() == OrderType.BUY.getCode()) {
 						boolean amountCalculated = false;
+						price = highestBid + ((uo.getTarget() - highestBid) * 0.5D);
+						
 						if (uo.getParentId() != null) {
 							UserOrder parent = autoTradeService.findUserOrderById(uo.getParentId());
 							if (parent != null) {
 								double balance = parent.getPrice() * parent.getAmount();
+								balance = balance - (balance * 0.002D);
 								amount = balance / price;
 								amountCalculated = true;
 							}
@@ -178,7 +181,7 @@ public class OrderEvoluateHandler implements Runnable {
 			statisticsList = autoTradeService.findLastStatistics(statisticsCount);
 			pa = new PriceAnalyzer(statisticsList, paPercentage);
 			
-			if (highestBid + (lowestAsk - highestBid) / 2.0 <= uo.getTarget() && pa.isPriceIncreasing()) {
+			if (highestBid < uo.getTarget() && pa.isPriceIncreasing()) {
 				return true;
 			}
 			
@@ -189,7 +192,7 @@ public class OrderEvoluateHandler implements Runnable {
 			statisticsList = autoTradeService.findLastStatistics(cfgService.getOrderEvoluaterSoCheckLastGmob());
 			pa = new PriceAnalyzer(statisticsList, cfgService.getOrderEvoluaterSoPriceAnalyzerPercentage());
 			
-			if (highestBid + (lowestAsk - highestBid) / 2.0 >= uo.getTarget() && !pa.isPriceIncreasing()) {
+			if (lowestAsk > uo.getTarget() && !pa.isPriceIncreasing()) {
 				return true;
 			}
 			
@@ -454,7 +457,7 @@ public class OrderEvoluateHandler implements Runnable {
 				order.setBasePrice(userOrder.getPrice());
 				order.setParentId(userOrder.getId());
 				order.setPrice(price);
-				order.setAmount(amount - (amount * 3D / 1000D));
+				order.setAmount(amount - (amount * 2D / 1000D));
 				order.setAutoUpdate(userOrder.isAutoUpdate());
 				order.setAutoTrade(userOrder.isAutoTrade());
 				
@@ -480,7 +483,7 @@ public class OrderEvoluateHandler implements Runnable {
 		else if (userOrder.getOrderType() == OrderType.SELL.getCode() && userOrder.isAutoTrade() &&
 				!userOrder.isAutoUpdate()) {
 			double spent = userOrder.getPrice() * userOrder.getAmount();
-			double balance = spent - (spent * 3D / 1000D);
+			double balance = spent - (spent * 2D / 1000D);
 			amount = userOrder.getAmount() + cfgService.getNonAutoUpdateBoReorderDelta();
 			double target = balance / amount;
 			
