@@ -484,7 +484,7 @@ public class OrderEvoluateHandler implements Runnable {
 				!userOrder.isAutoUpdate()) {
 			double spent = userOrder.getPrice() * userOrder.getAmount();
 			double balance = spent - (spent * 2D / 1000D);
-			amount = userOrder.getAmount() + cfgService.getNonAutoUpdateBoReorderDelta();
+			amount = userOrder.getAmount() + cfgService.getNonAutoUpdateBoReorderDelta() + (userOrder.getAmount() * 0.002D);
 			double target = balance / amount;
 			
 			UserOrder order = new UserOrder();
